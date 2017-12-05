@@ -1,6 +1,7 @@
 # TranslateGO
 ## 純前端多語系輔助工具
-### 網址：
+### npm網址：https://www.npmjs.com/package/translate-go
+### git網址：https://github.com/babyblue94520/translate-go
 ### 快速建立翻譯資源檔：https://babyblue94520.github.io/translate-go-tool/dist/#/Index
 #### 前言
 
