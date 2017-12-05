@@ -1,0 +1,28 @@
+{
+  "name": "translate-go",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && npm run rollupbuild && npm run rollupbuild:min",
+    "rollupbuild": "rollup -c rollup.config.js --no-conflict",
+    "rollupbuild:min": "rollup -c rollup.config.min.js"
+  },
+  "author": "clarewu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/babyblue94520/translate-go.git"
+  },
+  "devDependencies": {
+    "@types/node": "~6.0.60",
+    "ts-node": "~3.2.0",
+    "tslint": "~5.7.0",
+    "typescript": "~2.4.2",
+    "rollup-plugin-buble": "^0.18.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-typescript": "^0.8.1",
+    "rollup-plugin-uglify": "^2.0.1"
+  }
+}
