@@ -1,18 +1,18 @@
-# TranslateGO & Tool
+# TranslateGO
 ## 純前端多語系輔助工具
 ### 網址：
-### 快速建立翻譯資源檔：https://babyblue94520.github.io/translate-tool/dist/#/Index
+### 快速建立翻譯資源檔：https://babyblue94520.github.io/translate-go-tool/dist/#/Index
 #### 前言
 
-#### (TranslateGO 前言)  
+#### (TranslateGO 舊前言)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本身是Java後端開發工程師，碰過一些多語系的架構設計，老實說真的很麻煩，很多前後端程式都必須依賴原開發專案多語架構下去開發，就連原本沒有多語系的專案要導入多語系，也需要大改，於是開發這個純前端的多語套件，只要 TranslateGO.js加上自行翻譯的語言包，就可以讓專案有多語的功能，如果要做多語SEO的專案就不太適合喔！
 
-#### (TranslateGO Tool 前言)  
+#### (TranslateGO 前言)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;這陣子開發Angular專案架構，我被Angular擊敗了，原本TranslateGO為了能達到即時翻譯Text物件，監聽DOMNodeInserted跟DOMSubtreeModified等事件，由於Angular渲染畫面時，先appendChild element，然後再給資料綁定的值，則會觸發了DOMNodeInserted、DOMSubtreeModified，想像*ngFor和資料綁定，TranslateGO就炸開了，於是將TranslateGO退為翻譯文字搜集器，協助翻譯資源的產生。  
 
 #### 目的
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用TranslateGO快速搜尋需要被翻譯的文字，再利用[TranslateGOTool](https://babyblue94520.github.io/translate-tool/dist/#/Index)快速製作多語系JS檔、TS檔。  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用TranslateGO快速搜尋需要被翻譯的文字，再利用[TranslateGO Tool](https://babyblue94520.github.io/translate-go-tool/dist/#/Index)快速製作多語系JS檔、TS檔。  
 
 #### TranslateGO功能以下：
 
@@ -58,7 +58,7 @@
 
 8. #### getNonTranslateText：
 
-  	取得無法翻譯的資料，搭配[快速建立翻譯資源檔](https://babyblue94520.github.io/translate-tool/dist/#/Index)，快速建立翻譯檔。  
+  	取得無法翻譯的資料，搭配[快速建立翻譯資源檔](https://babyblue94520.github.io/translate-go-tool/dist/#/Index)，快速建立翻譯檔。  
  	
  	translateGO.getNonTranslateText();//return {"zh-TW":{"key":"text"}};
     
@@ -68,7 +68,7 @@
 ##### 步驟一 蒐集需要翻譯的文字：  
 在自己的網站需要翻譯的頁面，增加以下程式碼：
 
-	<script type="text/javascript" src="https://babyblue94520.github.io/translate-tool/dist/assets/js/translate-go.min.js">	</script>
+	<script type="text/javascript" src="https://babyblue94520.github.io/translate-go/lib/translate-go.min.js">	</script>
 	<script type="text/javascript">
     	// 用英文語系最明顯，true:產生右下角的toolbar
 		var translateGO = new TranslateModule.TranslateGO('en',true);
@@ -98,7 +98,7 @@
 
 加載已產生的翻譯資料，反覆搜尋是否有遺漏的。
 
-	<script type="text/javascript" src="https://babyblue94520.github.io/translate-tool/dist/assets/js/translate-go.min.js">	</script>
+	<script type="text/javascript" src="https://babyblue94520.github.io/translate-go/lib/translate-go.min.js">	</script>
     <script type="text/javascript" src="http://selfhost/TranslateSource.js">	</script>
 	<script type="text/javascript">
     	// 用英文語系最明顯，true:產生右下角的toolbar
@@ -113,7 +113,7 @@
 
 JS使用範例：  
 
-	<script type="text/javascript" src="https://babyblue94520.github.io/translate-tool/dist/assets/js/translate-go.min.js">	</script>
+	<script type="text/javascript" src="https://babyblue94520.github.io/translate-go/lib/translate-go.min.js">	</script>
     <script type="text/javascript" src="http://selfhost/TranslateSource.js">	</script>
 	<script type="text/javascript">
     	// 用英文語系最明顯，true:產生右下角的toolbar
@@ -128,19 +128,27 @@ JS使用範例：
         var testText = TranslateSourceByLang['en']['testKey'];
 	</script>
 
-TS使用範例：  
+Angular TS使用範例：  
 
-	import {TranslateSource} from './TranslateSource.ts';
-    
-    class TestClass{
-    	private testText = TranslateSource.en.testKey;
-    }
+	import { TranslateGO } from 'translate-go';
+	import { TranslateGoSourceWebByLang } from 'ts/translate/TranslateGoSourceWeb';
+
+
+	if (environment.production) {
+		enableProdMode();
+	}
+
+	if (!environment.production) {
+		let translateGO = new TranslateGO('en', true);
+		translateGO.loadLanguageData(TranslateGoSourceWebByLang);
+		translateGO.watch();
+	}
 
 
 ##### 偷懶步驟： 
 
 	var source = document.createElement('script');
-    source.src = 'https://babyblue94520.github.io/translate-tool/dist/assets/js/translate-go.min.js';
+    source.src = 'https://babyblue94520.github.io/translate-go/lib/translate-go.min.js';
     source.onload = function(){
     	// 用英文語系最明顯，true:產生右下角的toolbar
 		window.translateGO = new TranslateModule.TranslateGO('en',true);

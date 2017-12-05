@@ -6,7 +6,7 @@ var TranslateToolBar = (function () {
     function TranslateToolBar(translateGO) {
         var _this = this;
         this.translateGO = translateGO;
-        this.toolUrl = "https://babyblue94520.github.io/translate-tool/dist/#/Index";
+        this.toolUrl = "https://babyblue94520.github.io/translate-go-tool/dist/#/Index";
         this.toolOrigin = "https://babyblue94520.github.io";
         this.start = function (e) {
             _this.translateGO.watch();

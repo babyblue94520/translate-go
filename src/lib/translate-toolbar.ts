@@ -9,10 +9,11 @@ export class TranslateToolBar {
     private _postNonTextButton;
 
     private toolWindow: Window;
-    private toolUrl = "https://babyblue94520.github.io/translate-tool/dist/#/Index";
+    private toolUrl = "https://babyblue94520.github.io/translate-go-tool/dist/#/Index";
     private toolOrigin = "https://babyblue94520.github.io";
     // private toolUrl = "http://127.0.0.1:4300/#/Index";
     // private toolOrigin = "http://127.0.0.1:4300";
+
 
     constructor(private translateGO: TranslateGO) {
         let style = document.createElement('style');
