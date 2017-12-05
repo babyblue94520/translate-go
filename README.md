@@ -138,7 +138,7 @@ TypeScript：
 	translateGO.loadLanguageData(TranslateSourceByLang);
 	translateGO.watch();
 	
-##### 步驟四 開始使用:
+#### 步驟四 開始使用:
 
 JavaScript：  
 
