@@ -18,51 +18,44 @@
 
 ## TranslateGO功能以下：
 
-1. #### translate：
-
+1. translate：  
   	直接翻譯語言包裡有的文字。
- 	
-	translateGO.translate('en');
-
-2. #### wacth：
-
-  	監聽所有DOM增加、減少和改變的事件，動態翻譯文字。  
-
- 	translateGO.watch();
-
-3. #### stop：
-
-  	停止wacth。  
- 	
- 	translateGO.stop();
-		
-4. #### loadLanguageData：  
- 	
-	translateGO.loadLanguageData({"zh-TW":{"key":"text"}});
-
-5. #### getText：
-
-  	取得當前語系的文字。  
- 	
- 	translateGO.getText('Test');//return '測試';
     
-6. #### getTextByKey：
+		translateGO.translate('en');
 
+2. wacth：  
+  	監聽所有DOM增加、減少和改變的事件，動態翻譯文字。  
+    
+ 		translateGO.watch();
+
+3. stop：  
+  	停止wacth。  
+	
+ 		translateGO.stop();
+		
+4. loadLanguageData：  
+ 	
+		translateGO.loadLanguageData({"zh-TW":{"key":"text"}});
+
+5. getText：  
+	取得當前語系的文字。  
+
+		translateGO.getText('Test');//return '測試';
+    
+6. getTextByKey：  
   	依Key取得當前語系的文字。  
  	
- 	translateGO.getTextByKey('key');//return '測試';
+ 		translateGO.getTextByKey('key');//return '測試';
 
-7. #### getLanguage：
-
+7. getLanguage：  
   	取得當前語系。  
  	
- 	translateGO.getLanguage();//return 'zh-TW';
+ 		translateGO.getLanguage();//return 'zh-TW';
 
-8. #### getNonTranslateText：
-
+8. getNonTranslateText：  
   	取得無法翻譯的資料，搭配[快速建立翻譯資源檔](https://babyblue94520.github.io/translate-go-tool/dist/#/Index)，快速建立翻譯檔。  
  	
- 	translateGO.getNonTranslateText();//return {"zh-TW":{"key":"text"}};
+ 		translateGO.getNonTranslateText();//return {"zh-TW":{"key":"text"}};
     
 
 ## 使用方式：
@@ -96,19 +89,23 @@ Angular TypeScript：
 
 #### 步驟二 左下角則會出現Toolbar：  
  
-###### 1.下拉選單:  
+1. 下拉選單:  
 列出目前有的翻譯資料語系，切換可轉換語系。
 
-###### 2.start button:  
+
+2. start button:  
 開始監聽DOM insert、modify和remove事件並翻譯。
 
-###### 3.stop button:  
+
+3. stop button:  
 停止監聽DOM insert、modify和remove事件。
 
-###### 4.open button:  
+
+4. open button:  
 開啟TranslateTool視窗，第一次開啟回延遲2秒傳送無法翻譯的資料到翻譯資料欄位，以便開始製作翻譯資料。
 	
-###### 5.post button:  
+    
+5. post button:  
 傳送無法翻譯的資料到TranslateTool翻譯資料欄位，以便開始製作翻譯資料。
 
 

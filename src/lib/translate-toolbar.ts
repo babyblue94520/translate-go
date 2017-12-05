@@ -27,7 +27,7 @@ export class TranslateToolBar {
             '.translate-toolbar>button:disabled,.translate-toolbar>select:disabled{',
             'background-color:#fff;color:#ccc;',
             'box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 1px',
-            '}',
+            '}'
         ].join('');
 
         document.head.appendChild(style);
