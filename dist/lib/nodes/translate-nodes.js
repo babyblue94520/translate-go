@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var TranslateNodes = (function () {
     function TranslateNodes() {
         this._nodes = [];
@@ -45,5 +43,5 @@ var TranslateNodes = (function () {
     };
     return TranslateNodes;
 }());
-exports.TranslateNodes = TranslateNodes;
+export { TranslateNodes };
 //# sourceMappingURL=translate-nodes.js.map

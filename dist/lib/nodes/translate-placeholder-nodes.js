@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9,8 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-var translate_nodes_1 = require("./translate-nodes");
+import { TranslateNodes } from './translate-nodes';
 var PlaceholderTranslateNodes = (function (_super) {
     __extends(PlaceholderTranslateNodes, _super);
     function PlaceholderTranslateNodes() {
@@ -26,6 +24,6 @@ var PlaceholderTranslateNodes = (function (_super) {
         node.placeholder = text;
     };
     return PlaceholderTranslateNodes;
-}(translate_nodes_1.TranslateNodes));
-exports.PlaceholderTranslateNodes = PlaceholderTranslateNodes;
+}(TranslateNodes));
+export { PlaceholderTranslateNodes };
 //# sourceMappingURL=translate-placeholder-nodes.js.map

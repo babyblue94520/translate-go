@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var TranslateToolBar = (function () {
     // private toolUrl = "http://127.0.0.1:4300/#/Index";
     // private toolOrigin = "http://127.0.0.1:4300";
@@ -74,7 +72,7 @@ var TranslateToolBar = (function () {
             '.translate-toolbar>button:disabled,.translate-toolbar>select:disabled{',
             'background-color:#fff;color:#ccc;',
             'box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 1px',
-            '}',
+            '}'
         ].join('');
         document.head.appendChild(style);
         this._element = document.createElement('div');
@@ -109,5 +107,5 @@ var TranslateToolBar = (function () {
     }
     return TranslateToolBar;
 }());
-exports.TranslateToolBar = TranslateToolBar;
+export { TranslateToolBar };
 //# sourceMappingURL=translate-toolbar.js.map

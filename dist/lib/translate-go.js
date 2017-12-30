@@ -1,23 +1,21 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var translate_db_1 = require("./translate-db");
-var translate_text_nodes_1 = require("./nodes/translate-text-nodes");
-var translate_placeholder_nodes_1 = require("./nodes/translate-placeholder-nodes");
-var translate_toolbar_1 = require("./translate-toolbar");
+import { TranslateDB } from './translate-db';
+import { TextTranslateNodes } from './nodes/translate-text-nodes';
+import { PlaceholderTranslateNodes } from './nodes/translate-placeholder-nodes';
+import { TranslateToolBar } from './translate-toolbar';
 /**
  * 翻譯
  */
 var TranslateGO = (function () {
     function TranslateGO(defaultLanguage, dev) {
         var _this = this;
-        this._db = new translate_db_1.TranslateDB();
+        this._db = new TranslateDB();
         // 需要被翻譯的Node
         this._cacheInputElement = [];
         // 需要被翻譯的Node
         // private _translateNodesArray = [new TextTranslateNodes(), new InputTranslateNodes(), new TextAreaTranslateNodes()];
         // 需要被翻譯的Node
-        this._translateTextNodes = new translate_text_nodes_1.TextTranslateNodes();
-        this._translatePlaceholderNodes = new translate_placeholder_nodes_1.PlaceholderTranslateNodes();
+        this._translateTextNodes = new TextTranslateNodes();
+        this._translatePlaceholderNodes = new PlaceholderTranslateNodes();
         // 忽略標籤
         this._ignoreTagArray = ['SCRIPT', 'LINK', 'META', 'STYLE'];
         this._temp = [];
@@ -87,7 +85,7 @@ var TranslateGO = (function () {
         };
         this._currentLanguage = defaultLanguage || navigator.language;
         if (dev) {
-            this.toolbar = new translate_toolbar_1.TranslateToolBar(this);
+            this.toolbar = new TranslateToolBar(this);
             this.toolbar.updateLanaguageOption(this._db.getLanguages());
             this.toolbar.changeLanaguage(this._currentLanguage);
         }
@@ -282,5 +280,5 @@ var TranslateGO = (function () {
     };
     return TranslateGO;
 }());
-exports.TranslateGO = TranslateGO;
+export { TranslateGO };
 //# sourceMappingURL=translate-go.js.map

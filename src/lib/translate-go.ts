@@ -29,6 +29,8 @@ export class TranslateGO {
     private windowConfirm = window.confirm;
     private toolbar: TranslateToolBar;
 
+    private selectParentElement;
+
     private _count = {
         'DOMNodeInserted': 0,
         'DOMNodeInsertedIntoDocument': 0,
@@ -162,7 +164,6 @@ export class TranslateGO {
         window.confirm = this.windowConfirm;
         document.removeEventListener('DOMNodeInserted', this.delayDOMNodeInserted);
         document.removeEventListener('DOMNodeInsertedIntoDocument', this.delayDOMNodeInserted);
-        document.removeEventListener('DOMSubtreeModified', this.delayDOMNodeInserted);
         if (this.toolbar) {
             this.toolbar.status(false);
         }
@@ -173,7 +174,6 @@ export class TranslateGO {
         window.confirm = this.proxyConfirmHanlder;
         document.addEventListener('DOMNodeInserted', this.delayDOMNodeInserted);
         document.addEventListener('DOMNodeInsertedIntoDocument', this.delayDOMNodeInserted);
-        document.addEventListener('DOMSubtreeModified', this.delayDOMNodeInserted);
     }
 
     private proxyAlertHanlder = (text) => {
@@ -191,8 +191,9 @@ export class TranslateGO {
      * @param 事件
      */
     private delayDOMNodeInserted = (e) => {
-        this._count[e.type]++;
-        this.delayAction('delayDOMNodeInserted', 10, this.delayLoadTextNodes);
+        this.loopNodes(e.target);
+        // this._count[e.type]++;
+        // this.delayAction('delayDOMNodeInserted', 10, this.delayLoadTextNodes);
     }
 
     private delayLoadTextNodes = () => {
@@ -280,14 +281,15 @@ export class TranslateGO {
      * @param node
      */
     private addNode(translateNodes: TranslateNodes, node: ITranslateNode) {
-        if (node.translateTextSource == undefined) {
-            if (this.addTranslateSource(translateNodes, node)) {
-                translateNodes.add(node);
+        if (node.translateTextSource) {
+            if (node.translateTextSource.currentText != translateNodes.getText(node)) {
+                this.addTranslateSource(translateNodes, node);
                 this.doTranslateNodesSetText(translateNodes, node);
             }
         } else {
-            if (node.translateTextSource.currentText != translateNodes.getText(node)) {
-                this.addTranslateSource(translateNodes, node);
+            if (this.addTranslateSource(translateNodes, node)) {
+                translateNodes.add(node);
+                node.addEventListener('DOMSubtreeModified', this.doTranslateNodesSetText.bind(this, translateNodes, node));
                 this.doTranslateNodesSetText(translateNodes, node);
             }
         }
@@ -300,14 +302,6 @@ export class TranslateGO {
     private addTranslateSource(translateNodes: TranslateNodes, node: ITranslateNode) {
         let text = translateNodes.getText(node);
         if (text == undefined || String(text).length == 0) { return false; }
-        let source = this._db.getTranslateSource(text);
-        if (source) {
-            let temp = node;
-            // 記錄起來，因為想要耍廢
-            temp.translateTextSource = source;
-            return true;
-        } else {
-            return false;
-        }
+        return (node.translateTextSource = this._db.getTranslateSource(text));
     }
 }

@@ -1,5 +1,2 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var translate_go_1 = require("./lib/translate-go");
-exports.TranslateGO = translate_go_1.TranslateGO;
+export { TranslateGO } from './lib/translate-go';
 //# sourceMappingURL=index.js.map

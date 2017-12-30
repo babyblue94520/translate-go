@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 翻譯資料庫
  */
@@ -229,5 +227,5 @@ var TranslateDB = (function () {
     };
     return TranslateDB;
 }());
-exports.TranslateDB = TranslateDB;
+export { TranslateDB };
 //# sourceMappingURL=translate-db.js.map
