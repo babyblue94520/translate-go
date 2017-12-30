@@ -8,6 +8,8 @@ export class TextTranslateNodes extends TranslateNodes {
         return node.data;
     }
     setText(node, text: string) {
-        node.data = text;
+        if (text) {
+            node.data = text;
+        }
     }
 }

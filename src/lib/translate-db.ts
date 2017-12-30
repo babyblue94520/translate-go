@@ -134,7 +134,7 @@ export class TranslateDB {
         let regex = source.translateRegexs[source.currentLanguage];
         let translateText = source.wordSource[language];
         if (translateText == undefined) {
-            console.log(source);
+            return;
         }
         // 更新
         source.currentLanguage = language;

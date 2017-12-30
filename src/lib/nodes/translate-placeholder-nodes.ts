@@ -8,6 +8,8 @@ export class PlaceholderTranslateNodes extends TranslateNodes {
         return node.placeholder;
     }
     setText(node, text: string) {
-        node.placeholder = text;
+        if (text) {
+            node.placeholder = text;
+        }
     }
 }
