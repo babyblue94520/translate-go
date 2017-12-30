@@ -191,6 +191,7 @@ export class TranslateGO {
      * @param 事件
      */
     private delayDOMNodeInserted = (e) => {
+        console.log(e.target);
         this.loopNodes(e.target);
         // this._count[e.type]++;
         // this.delayAction('delayDOMNodeInserted', 10, this.delayLoadTextNodes);
