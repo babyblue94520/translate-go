@@ -133,6 +133,9 @@ export class TranslateDB {
     public translateBySource(text: string, source: ITranslateSource, language: string) {
         let regex = source.translateRegexs[source.currentLanguage];
         let translateText = source.wordSource[language];
+        if (translateText == undefined) {
+            console.log(source);
+        }
         // 更新
         source.currentLanguage = language;
         source.translateText = translateText;
