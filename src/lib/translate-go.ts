@@ -29,14 +29,6 @@ export class TranslateGO {
     private windowConfirm = window.confirm;
     private toolbar: TranslateToolBar;
 
-    private selectParentElement;
-
-    private _count = {
-        'DOMNodeInserted': 0,
-        'DOMNodeInsertedIntoDocument': 0,
-        'DOMSubtreeModified': 0
-    };
-
     constructor(defaultLanguage: string, dev?: boolean) {
         this._currentLanguage = defaultLanguage || navigator.language;
         if (dev) {
@@ -93,6 +85,7 @@ export class TranslateGO {
             this.toolbar.updateLanaguageOption(this._db.getLanguages());
             this.toolbar.changeLanaguage(this._currentLanguage);
         }
+        this.loadTextNodes();
     }
 
     /**
@@ -163,7 +156,9 @@ export class TranslateGO {
         window.alert = this.windowAlert;
         window.confirm = this.windowConfirm;
         document.removeEventListener('DOMNodeInserted', this.delayDOMNodeInserted);
+        document.removeEventListener('DOMSubtreeModified', this.delayDOMSubtreeModified);
         document.removeEventListener('DOMNodeInsertedIntoDocument', this.delayDOMNodeInserted);
+
         if (this.toolbar) {
             this.toolbar.status(false);
         }
@@ -173,6 +168,7 @@ export class TranslateGO {
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
         document.addEventListener('DOMNodeInserted', this.delayDOMNodeInserted);
+        document.addEventListener('DOMSubtreeModified', this.delayDOMSubtreeModified);
         document.addEventListener('DOMNodeInsertedIntoDocument', this.delayDOMNodeInserted);
     }
 
@@ -191,21 +187,18 @@ export class TranslateGO {
      * @param 事件
      */
     private delayDOMNodeInserted = (e) => {
-        this.loopNodes(e.target);
-        // this._count[e.type]++;
-        // this.delayAction('delayDOMNodeInserted', 10, this.delayLoadTextNodes);
+        this.nodeHandler(e.target);
     }
 
-    private delayLoadTextNodes = () => {
-        console.log(this._count);
-        this._count = {
-            'DOMNodeInserted': 0,
-            'DOMNodeInsertedIntoDocument': 0,
-            'DOMSubtreeModified': 0
-        };
-        this.loopNodes(document.body.querySelectorAll('*'));
+    /**
+     * 全部文字翻譯
+     * @param 事件
+     */
+    private delayDOMSubtreeModified = (e) => {
+        if (this._translateTextNodes.need(e.target)) {
+            this.addNode.call(this, this._translateTextNodes, e.target);
+        }
     }
-
 
     /**
      * 是否非忽略的標籤
@@ -221,8 +214,7 @@ export class TranslateGO {
      * @param handler
      */
     private nodeHandler(node) {
-        console.log('node', node);
-        if (this.isNonIgnore(node) && node.isConnected) {
+        if (node && this.isNonIgnore(node) && node.isConnected) {
             if (this._translateTextNodes.need(node)) {
                 this.addNode.call(this, this._translateTextNodes, node);
                 return;
@@ -240,7 +232,9 @@ export class TranslateGO {
      * @param handler
      */
     private loopNodes(nodes) {
+        // console.log('nodes', nodes);
         for (let i = 0, l = nodes.length; i < l; i++) {
+            // console.log(i, nodes[i]);
             this.nodeHandler(nodes[i]);
         }
     }
@@ -283,6 +277,7 @@ export class TranslateGO {
      */
     private addNode(translateNodes: TranslateNodes, node: ITranslateNode) {
         if (node.translateTextSource) {
+            let text = translateNodes.getText(node);
             if (node.translateTextSource.currentText != translateNodes.getText(node)) {
                 this.addTranslateSource(translateNodes, node);
                 this.doTranslateNodesSetText(translateNodes, node);
@@ -290,7 +285,6 @@ export class TranslateGO {
         } else {
             if (this.addTranslateSource(translateNodes, node)) {
                 translateNodes.add(node);
-                node.addEventListener('DOMSubtreeModified', this.doTranslateNodesSetText.bind(this, translateNodes, node));
                 this.doTranslateNodesSetText(translateNodes, node);
             }
         }

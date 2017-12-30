@@ -5,11 +5,8 @@
 ### 快速建立翻譯資源檔：https://babyblue94520.github.io/translate-go-tool/dist/#/Index
 #### 前言
 
-###### (TranslateGO 舊前言)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本身是Java後端開發工程師，碰過一些多語系的架構設計，老實說真的很麻煩，很多前後端程式都必須依賴原開發專案多語架構下去開發，就連原本沒有多語系的專案要導入多語系，也需要大改，於是開發這個純前端的多語套件，只要 TranslateGO.js加上自行翻譯的語言包，就可以讓專案有多語的功能，如果要做多語SEO的專案就不太適合喔！
 
-###### (TranslateGO 前言)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;這陣子開發Angular專案架構，我被Angular擊敗了，原本TranslateGO為了能達到即時翻譯Text物件，監聽DOMNodeInserted跟DOMSubtreeModified等事件，由於Angular渲染畫面時，先appendChild element，然後再給資料綁定的值，則會觸發了DOMNodeInserted、DOMSubtreeModified，想像*ngFor和資料綁定，TranslateGO就炸開了，於是將TranslateGO退為翻譯文字搜集器，協助翻譯資源的產生。  
 
 #### 目的
 
@@ -182,4 +179,3 @@ TypeScript：
     
 ## 其他：
 1. ###### 一般網站還是可以直接使用TranslateGO，效能還滿不錯的，第一次翻譯都會比較慢，可以開Console觀察就知道囉！
-2. ###### 大型框架(React、Vue、Angular)不能直接使用TranslateGO，遇到framework畫面渲染處理for loop就會有效能上的問題，除非自行for loop+createElement渲染畫面。(我處理過XD)
