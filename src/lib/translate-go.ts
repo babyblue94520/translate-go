@@ -222,8 +222,8 @@ export class TranslateGO {
      * @param handler
      */
     private nodeHandler(node) {
-        if (this.isNonIgnore(node) && node.isConnected) {
-            if (this._translateTextNodes.need(node)) {
+        if (node.isConnected) {
+            if (this._translateTextNodes.need(node) && this.isNonIgnore(node)) {
                 this.addNode.call(this, this._translateTextNodes, node);
                 return;
             } else if (this._translatePlaceholderNodes.need(node)) {
