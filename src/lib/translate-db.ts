@@ -207,10 +207,9 @@ export class TranslateDB {
             }
         }
         if (this._dev && cleanText) {
-            let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
+            let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
-                console.log(t);
-                this._cacheNonTranslateText[t] = false;
+                this._cacheNonTranslateText[cleanText] = false;
             }
         }
     }
