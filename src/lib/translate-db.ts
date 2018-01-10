@@ -203,7 +203,7 @@ export class TranslateDB {
             }
         }
         if (cleanText) {
-            let t = cleanText.replace(/[-.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
+            let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             if (isNaN(Number(t)) && !/^[a-zA-Z]+$/.test(t)) {
                 console.log(t);
                 this._cacheNonTranslateText[t] = false;
