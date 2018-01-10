@@ -202,7 +202,9 @@ export class TranslateDB {
                 };
             }
         }
-        this._cacheNonTranslateText[cleanText] = false;
+        if (cleanText && isNaN(Number(cleanText.trim()))) {
+            this._cacheNonTranslateText[cleanText] = false;
+        }
     }
 
     /**
