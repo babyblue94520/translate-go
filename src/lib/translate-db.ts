@@ -204,8 +204,8 @@ export class TranslateDB {
         }
         if (cleanText) {
             let t = cleanText.replace(/[-.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
+            console.log(t, isNaN(Number(t)), /^[a-zA-Z]+$/.test('asdfa'));
             if (isNaN(Number(t)) && !/^[a-zA-Z]+$/.test('asdfa')) {
-                console.log(t);
                 this._cacheNonTranslateText[t] = false;
             }
         }
