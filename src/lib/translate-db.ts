@@ -30,6 +30,10 @@ export class TranslateDB {
     // 無法翻譯資料
     private _cacheNonTranslateText = {};
 
+    constructor(private _dev) {
+
+    }
+
     public getLanguages(): Array<string> {
         return this._langs;
     }
@@ -202,9 +206,9 @@ export class TranslateDB {
                 };
             }
         }
-        if (cleanText) {
+        if (this._dev && cleanText) {
             let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
-            if (isNaN(Number(t)) && !/^[a-zA-Z]+$/.test(t)) {
+            if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
                 console.log(t);
                 this._cacheNonTranslateText[t] = false;
             }

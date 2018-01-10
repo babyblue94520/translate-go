@@ -10,7 +10,7 @@ import { TranslateToolBar } from './translate-toolbar';
  * 翻譯
  */
 export class TranslateGO {
-    private _db = new TranslateDB();
+    private _db;
     // 當前語系
     private _currentLanguage;
     // 需要被翻譯的Node
@@ -31,6 +31,7 @@ export class TranslateGO {
 
     constructor(defaultLanguage: string, dev?: boolean) {
         this._currentLanguage = defaultLanguage || navigator.language;
+        this._db = new TranslateDB(dev);
         if (dev) {
             this.toolbar = new TranslateToolBar(this);
             this.toolbar.updateLanaguageOption(this._db.getLanguages());
