@@ -6,7 +6,7 @@ import { ITranslateSource, ITranslateRegexs, ITextLanguage } from './translate.i
  */
 export class TranslateDB {
     // 盡量搜尋純文字的內容
-    private _specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
+    private _specialChars = '[.。:：;；!！?？{}()=＊*/\\[\\]\\s\\r\\n]';
     private _startRegexStr = '(' + this._specialChars + '|^)';
     private _endRegexStr = '(' + this._specialChars + '|$)';
     // 換行等等
@@ -202,9 +202,12 @@ export class TranslateDB {
                 };
             }
         }
-        if (cleanText && isNaN(Number(cleanText.trim()))) {
-            console.log(cleanText);
-            this._cacheNonTranslateText[cleanText] = false;
+        if (cleanText) {
+            let t = cleanText.replace(/[-.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
+            if (isNaN(Number(t)) && !/^[a-zA-Z]+$/.test('asdfa')) {
+                console.log(t);
+                this._cacheNonTranslateText[t] = false;
+            }
         }
     }
 
