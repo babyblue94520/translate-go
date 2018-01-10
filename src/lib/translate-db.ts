@@ -203,6 +203,7 @@ export class TranslateDB {
             }
         }
         if (cleanText && isNaN(Number(cleanText.trim()))) {
+            console.log(cleanText);
             this._cacheNonTranslateText[cleanText] = false;
         }
     }
