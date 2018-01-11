@@ -6,7 +6,7 @@ import { ITranslateSource, ITranslateRegexs, ITextLanguage } from './translate.i
  */
 export class TranslateDB {
     // 盡量搜尋純文字的內容
-    private _specialChars = '[.。:：;；!！?？{}()=＊*/\\[\\]\\s\\r\\n]';
+    private _specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
     private _startRegexStr = '(' + this._specialChars + '|^)';
     private _endRegexStr = '(' + this._specialChars + '|$)';
     // 換行等等
