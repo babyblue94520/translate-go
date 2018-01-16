@@ -21,7 +21,7 @@ export class TranslateGO {
     private _translateTextNodes = new TextTranslateNodes();
     private _translatePlaceholderNodes = new PlaceholderTranslateNodes();
     // 忽略標籤
-    private _ignoreTagArray = ['SCRIPT', 'LINK', 'META', 'STYLE'];
+    private _ignoreTagArray = ['SCRIPT', 'LINK', 'META', 'STYLE', 'NO-TRANSLATE'];
 
     private _temp = [];
 
