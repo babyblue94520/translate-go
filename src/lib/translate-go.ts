@@ -174,7 +174,6 @@ export class TranslateGO {
     }
 
     private proxyAlertHanlder = (text) => {
-        console.log(this.windowAlert);
         this.windowAlert.call(window, this.getText(text));
     }
 

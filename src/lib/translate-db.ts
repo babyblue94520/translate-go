@@ -72,7 +72,6 @@ export class TranslateDB {
                 this._textLanguageData[word] = lang;
             }
         }
-        console.log(this._wordSource, this._wordRegexs, this._textLanguageData);
         console.log('_loadLanguageData end', (performance.now() - t));
     }
 

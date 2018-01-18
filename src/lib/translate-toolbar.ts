@@ -110,7 +110,6 @@ export class TranslateToolBar {
 
     public updateLanaguageOption = (array: Array<string>) => {
         if (this._languageSelect) {
-            console.log(this._languageSelect.value);
             this._languageSelect.innerHTML = '';
             let option, lang;
             for (let i in array) {
