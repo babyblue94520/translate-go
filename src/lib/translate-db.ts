@@ -209,7 +209,7 @@ export class TranslateDB {
             let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             // if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
             if (isNaN(Number(t)) && !/^[0-9]+$/.test(t)) {
-                this._cacheNonTranslateText[text] = false;
+                this._cacheNonTranslateText[cleanText] = false;
             }
         }
     }
