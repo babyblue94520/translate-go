@@ -21,7 +21,9 @@ var PlaceholderTranslateNodes = (function (_super) {
         return node.placeholder;
     };
     PlaceholderTranslateNodes.prototype.setText = function (node, text) {
-        node.placeholder = text;
+        if (text) {
+            node.placeholder = text;
+        }
     };
     return PlaceholderTranslateNodes;
 }(TranslateNodes));

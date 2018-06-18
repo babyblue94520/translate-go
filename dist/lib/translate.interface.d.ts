@@ -1,5 +1,6 @@
 export interface ITranslateNode extends Text {
     translateTextSource: ITranslateSource;
+    translated: boolean;
 }
 export interface ITranslateSource {
     wordSource: object;

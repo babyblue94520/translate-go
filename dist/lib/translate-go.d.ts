@@ -13,7 +13,6 @@ export declare class TranslateGO {
     private windowAlert;
     private windowConfirm;
     private toolbar;
-    private _count;
     constructor(defaultLanguage: string, dev?: boolean);
     /**
      * 延遲執行方法
@@ -67,7 +66,11 @@ export declare class TranslateGO {
      * @param 事件
      */
     private delayDOMNodeInserted;
-    private delayLoadTextNodes;
+    /**
+     * 全部文字翻譯
+     * @param 事件
+     */
+    private delayDOMSubtreeModified;
     /**
      * 是否非忽略的標籤
      * @param element

@@ -8,7 +8,6 @@ import { TranslateToolBar } from './translate-toolbar';
 var TranslateGO = (function () {
     function TranslateGO(defaultLanguage, dev) {
         var _this = this;
-        this._db = new TranslateDB();
         // 需要被翻譯的Node
         this._cacheInputElement = [];
         // 需要被翻譯的Node
@@ -17,15 +16,10 @@ var TranslateGO = (function () {
         this._translateTextNodes = new TextTranslateNodes();
         this._translatePlaceholderNodes = new PlaceholderTranslateNodes();
         // 忽略標籤
-        this._ignoreTagArray = ['SCRIPT', 'LINK', 'META', 'STYLE'];
+        this._ignoreTagArray = ['SCRIPT', 'LINK', 'META', 'STYLE', 'NO-TRANSLATE'];
         this._temp = [];
         this.windowAlert = window.alert;
         this.windowConfirm = window.confirm;
-        this._count = {
-            'DOMNodeInserted': 0,
-            'DOMNodeInsertedIntoDocument': 0,
-            'DOMSubtreeModified': 0
-        };
         /**
          * 延遲執行方法
          * @param name
@@ -56,11 +50,10 @@ var TranslateGO = (function () {
             window.alert = _this.proxyAlertHanlder;
             window.confirm = _this.proxyConfirmHanlder;
             document.addEventListener('DOMNodeInserted', _this.delayDOMNodeInserted);
+            document.addEventListener('DOMSubtreeModified', _this.delayDOMSubtreeModified);
             document.addEventListener('DOMNodeInsertedIntoDocument', _this.delayDOMNodeInserted);
-            document.addEventListener('DOMSubtreeModified', _this.delayDOMNodeInserted);
         };
         this.proxyAlertHanlder = function (text) {
-            console.log(_this.windowAlert);
             _this.windowAlert.call(window, _this.getText(text));
         };
         this.proxyConfirmHanlder = function (text) {
@@ -71,19 +64,19 @@ var TranslateGO = (function () {
          * @param 事件
          */
         this.delayDOMNodeInserted = function (e) {
-            _this._count[e.type]++;
-            _this.delayAction('delayDOMNodeInserted', 10, _this.delayLoadTextNodes);
+            _this.nodeHandler(e.target);
         };
-        this.delayLoadTextNodes = function () {
-            console.log(_this._count);
-            _this._count = {
-                'DOMNodeInserted': 0,
-                'DOMNodeInsertedIntoDocument': 0,
-                'DOMSubtreeModified': 0
-            };
-            _this.loopNodes(document.body.querySelectorAll('*'));
+        /**
+         * 全部文字翻譯
+         * @param 事件
+         */
+        this.delayDOMSubtreeModified = function (e) {
+            if (_this._translateTextNodes.need(e.target)) {
+                _this.addNode.call(_this, _this._translateTextNodes, e.target);
+            }
         };
         this._currentLanguage = defaultLanguage || navigator.language;
+        this._db = new TranslateDB(dev);
         if (dev) {
             this.toolbar = new TranslateToolBar(this);
             this.toolbar.updateLanaguageOption(this._db.getLanguages());
@@ -109,6 +102,7 @@ var TranslateGO = (function () {
             this.toolbar.updateLanaguageOption(this._db.getLanguages());
             this.toolbar.changeLanaguage(this._currentLanguage);
         }
+        this.loadTextNodes();
     };
     /**
      * 取得當前語系
@@ -176,8 +170,8 @@ var TranslateGO = (function () {
         window.alert = this.windowAlert;
         window.confirm = this.windowConfirm;
         document.removeEventListener('DOMNodeInserted', this.delayDOMNodeInserted);
+        document.removeEventListener('DOMSubtreeModified', this.delayDOMSubtreeModified);
         document.removeEventListener('DOMNodeInsertedIntoDocument', this.delayDOMNodeInserted);
-        document.removeEventListener('DOMSubtreeModified', this.delayDOMNodeInserted);
         if (this.toolbar) {
             this.toolbar.status(false);
         }
@@ -195,7 +189,7 @@ var TranslateGO = (function () {
      * @param handler
      */
     TranslateGO.prototype.nodeHandler = function (node) {
-        if (this.isNonIgnore(node) && node.isConnected) {
+        if (node && this.isNonIgnore(node) && node.isConnected) {
             if (this._translateTextNodes.need(node)) {
                 this.addNode.call(this, this._translateTextNodes, node);
                 return;
@@ -213,7 +207,9 @@ var TranslateGO = (function () {
      * @param handler
      */
     TranslateGO.prototype.loopNodes = function (nodes) {
+        // console.log('nodes', nodes);
         for (var i = 0, l = nodes.length; i < l; i++) {
+            // console.log(i, nodes[i]);
             this.nodeHandler(nodes[i]);
         }
     };
@@ -245,15 +241,16 @@ var TranslateGO = (function () {
      * @param node
      */
     TranslateGO.prototype.addNode = function (translateNodes, node) {
-        if (node.translateTextSource == undefined) {
-            if (this.addTranslateSource(translateNodes, node)) {
-                translateNodes.add(node);
+        if (node.translateTextSource) {
+            var text = translateNodes.getText(node);
+            if (node.translateTextSource.currentText != translateNodes.getText(node)) {
+                this.addTranslateSource(translateNodes, node);
                 this.doTranslateNodesSetText(translateNodes, node);
             }
         }
         else {
-            if (node.translateTextSource.currentText != translateNodes.getText(node)) {
-                this.addTranslateSource(translateNodes, node);
+            if (this.addTranslateSource(translateNodes, node)) {
+                translateNodes.add(node);
                 this.doTranslateNodesSetText(translateNodes, node);
             }
         }
@@ -267,16 +264,7 @@ var TranslateGO = (function () {
         if (text == undefined || String(text).length == 0) {
             return false;
         }
-        var source = this._db.getTranslateSource(text);
-        if (source) {
-            var temp = node;
-            // 記錄起來，因為想要耍廢
-            temp.translateTextSource = source;
-            return true;
-        }
-        else {
-            return false;
-        }
+        return (node.translateTextSource = this._db.getTranslateSource(text));
     };
     return TranslateGO;
 }());

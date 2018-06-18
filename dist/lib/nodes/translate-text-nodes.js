@@ -21,7 +21,9 @@ var TextTranslateNodes = (function (_super) {
         return node.data;
     };
     TextTranslateNodes.prototype.setText = function (node, text) {
-        node.data = text;
+        if (text) {
+            node.data = text;
+        }
     };
     return TextTranslateNodes;
 }(TranslateNodes));

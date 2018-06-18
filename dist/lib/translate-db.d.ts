@@ -3,6 +3,7 @@ import { ITranslateSource } from './translate.interface';
  * 翻譯資料庫
  */
 export declare class TranslateDB {
+    private _dev;
     private _specialChars;
     private _startRegexStr;
     private _endRegexStr;
@@ -16,6 +17,7 @@ export declare class TranslateDB {
     private _textLanguageData;
     private _langs;
     private _cacheNonTranslateText;
+    constructor(_dev: any);
     getLanguages(): Array<string>;
     /**
      * 是否有該語系翻譯資料

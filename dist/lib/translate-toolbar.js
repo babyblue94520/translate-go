@@ -46,7 +46,6 @@ var TranslateToolBar = (function () {
         };
         this.updateLanaguageOption = function (array) {
             if (_this._languageSelect) {
-                console.log(_this._languageSelect.value);
                 _this._languageSelect.innerHTML = '';
                 var option = void 0, lang = void 0;
                 for (var i in array) {

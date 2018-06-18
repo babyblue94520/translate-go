@@ -2,11 +2,12 @@
  * 翻譯資料庫
  */
 var TranslateDB = (function () {
-    function TranslateDB() {
+    function TranslateDB(_dev) {
+        this._dev = _dev;
         // 盡量搜尋純文字的內容
         this._specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
-        this._startRegexStr = '(' + this._specialChars + '|^)';
-        this._endRegexStr = '(' + this._specialChars + '|$)';
+        this._startRegexStr = '([{(＊*\\[\\s\\r\\n]?^)';
+        this._endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]?$)';
         // 換行等等
         this._cleanChars = '[\\r\\n]';
         // 不區分大小寫
@@ -64,7 +65,6 @@ var TranslateDB = (function () {
                 this._textLanguageData[word] = lang;
             }
         }
-        console.log(this._wordSource, this._wordRegexs, this._textLanguageData);
         console.log('_loadLanguageData end', (performance.now() - t));
     };
     /**
@@ -125,6 +125,9 @@ var TranslateDB = (function () {
     TranslateDB.prototype.translateBySource = function (text, source, language) {
         var regex = source.translateRegexs[source.currentLanguage];
         var translateText = source.wordSource[language];
+        if (translateText == undefined) {
+            return;
+        }
         // 更新
         source.currentLanguage = language;
         source.translateText = translateText;
@@ -191,7 +194,13 @@ var TranslateDB = (function () {
                 };
             }
         }
-        this._cacheNonTranslateText[cleanText] = false;
+        if (this._dev && cleanText) {
+            var t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
+            // if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
+            if (isNaN(Number(t)) && !/^[0-9]+$/.test(t)) {
+                this._cacheNonTranslateText[cleanText] = false;
+            }
+        }
     };
     /**
      * 取得文字翻譯資源

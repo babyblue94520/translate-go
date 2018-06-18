@@ -7,8 +7,8 @@ import { ITranslateSource, ITranslateRegexs, ITextLanguage } from './translate.i
 export class TranslateDB {
     // 盡量搜尋純文字的內容
     private _specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
-    private _startRegexStr = '([{(＊*\\[\\s\\r\\n]|^)';
-    private _endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]|$)';
+    private _startRegexStr = '([{(＊*\\[\\s\\r\\n]?^)';
+    private _endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]?$)';
     // 換行等等
     private _cleanChars = '[\\r\\n]';
     // 不區分大小寫
