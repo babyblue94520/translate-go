@@ -33,6 +33,7 @@ export class TranslateToolBar {
         document.head.appendChild(style);
         this._element = document.createElement('div');
         this._element.className = 'translate-toolbar';
+        this._element.setAttribute('notTranslate', '');
 
         this._languageSelect = document.createElement('select');
         this._languageSelect.addEventListener('change', this.languageChange);

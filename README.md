@@ -57,7 +57,7 @@
 
 ## 使用方式：
 
-#### 步驟一 蒐集需要翻譯的文字：  
+__步驟一 蒐集需要翻譯的文字__：  
 在自己的網站需要翻譯的頁面，增加以下程式碼：
 
 JavaScript：
@@ -84,7 +84,7 @@ Angular TypeScript：
 	translateGO.watch();
 
 
-#### 步驟二 左下角則會出現Toolbar：  
+__步驟二 左下角則會出現Toolbar__：  
  
 1. 下拉選單:  
 列出目前有的翻譯資料語系，切換可轉換語系。
@@ -106,7 +106,7 @@ Angular TypeScript：
 傳送無法翻譯的資料到TranslateTool翻譯資料欄位，以便開始製作翻譯資料。
 
 
-#### 步驟三 加載部分翻譯檔案：  
+__步驟三 加載部分翻譯檔案__：  
 
 加載已產生的翻譯資料，反覆搜尋是否有遺漏的。
 
@@ -132,7 +132,7 @@ TypeScript：
 	translateGO.loadLanguageData(TranslateSourceByLang);
 	translateGO.watch();
 	
-#### 步驟四 開始使用:
+__步驟四 開始使用__:
 
 JavaScript：  
 
@@ -165,7 +165,7 @@ TypeScript：
     let testText = TranslateSourceByLang.en.testKey;
 
 
-#### JavaScript偷懶步驟： 
+__JavaScript偷懶步驟__： 
 
 	var source = document.createElement('script');
     source.src = 'https://babyblue94520.github.io/translate-go/lib/translate-go.min.js';
@@ -178,4 +178,20 @@ TypeScript：
     document.head.appendChild(source);
     
 ## 其他：
-1. ###### 一般網站還是可以直接使用TranslateGO，效能還滿不錯的，第一次翻譯都會比較慢，可以開Console觀察就知道囉！
+1. 一般網站還是可以直接使用TranslateGO，效能還滿不錯的，第一次翻譯都會比較慢，可以開Console觀察就知道囉！
+2. 設定不需要翻譯的區塊
+
+	//不做翻譯區塊
+	```
+	<div notTranslate>
+		<div>
+			...
+		</div>
+	</div>
+	```
+	
+3. 綁定翻譯Key
+
+	```
+	<div translateKey="test"></div>
+	```

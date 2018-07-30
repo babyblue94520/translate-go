@@ -1,6 +1,6 @@
 {
   "name": "translate-go",
-  "version": "0.0.9",
+  "version": "0.0.12",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -16,13 +16,13 @@
     "url": "https://github.com/babyblue94520/translate-go.git"
   },
   "devDependencies": {
-    "@types/node": "~6.0.60",
-    "ts-node": "~3.2.0",
-    "tslint": "~5.7.0",
-    "typescript": "~2.4.2",
+    "@types/node": "^10.5.4",
     "rollup-plugin-buble": "^0.18.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-typescript": "^0.8.1",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
+    "typescript": "^2.9.2"
   }
 }
