@@ -1,4 +1,4 @@
-var TranslateNodes = (function () {
+var TranslateNodes = /** @class */ (function () {
     function TranslateNodes() {
         this._nodes = [];
     }

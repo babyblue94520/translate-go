@@ -3,24 +3,21 @@ import { TranslateNodes } from './nodes/translate-nodes';
  * 翻譯
  */
 export declare class TranslateGO {
-    private _db;
-    private _currentLanguage;
-    private _cacheInputElement;
-    private _translateTextNodes;
-    private _translatePlaceholderNodes;
-    private _ignoreTagArray;
-    private _temp;
+    private isWatch;
+    private db;
+    private currentLanguage;
+    private translateTextNodes;
+    private translatePlaceholderNodes;
+    private ignoreTagArray;
+    private ignoreAttributeName;
+    private translatekey;
+    private placeholderTranslatekey;
+    private placeholder;
     private windowAlert;
     private windowConfirm;
+    private elementSetAttributeOrigin;
     private toolbar;
     constructor(defaultLanguage: string, dev?: boolean);
-    /**
-     * 延遲執行方法
-     * @param name
-     * @param delay ms
-     * @param function
-     */
-    delayAction: (name: string, delay: number, fn: Function) => void;
     getTranslateNode(): TranslateNodes;
     /**
      * 取得無法翻譯的文字
@@ -58,57 +55,82 @@ export declare class TranslateGO {
      * 停止觀察和翻譯
      */
     stop(): void;
-    private addListener;
+    /**
+     * 攔截alert訊息並翻譯
+     */
     private proxyAlertHanlder;
+    /**
+     * 攔截confirm訊息並翻譯
+     */
     private proxyConfirmHanlder;
     /**
-     * 全部文字翻譯
-     * @param 事件
+     * 攔截setAttribute
+     * @param go
      */
-    private delayDOMNodeInserted;
+    private buildProxySetAttribute;
     /**
-     * 全部文字翻譯
+     * dom新增node時，找出可翻譯node
      * @param 事件
      */
-    private delayDOMSubtreeModified;
+    private domNodeInserted;
+    /**
+     * dom 有異動的時候檢查node文字是否更新
+     * @param 事件
+     */
+    private domSubtreeModified;
     /**
      * 是否非忽略的標籤
      * @param element
      */
-    private isNonIgnore(element);
+    private isNonIgnore;
     /**
      * Node 處理
      * @param node
      * @param handler
      */
-    private nodeHandler(node);
+    private nodeHandler;
     /**
      * NodeList 處理
      * @param nodes 不重複寫loop
      * @param handler
      */
-    private loopNodes(nodes);
+    private loopNodes;
     /**
      * 載入需要翻譯的Node
      */
-    private loadTextNodes();
+    private loadTextNodes;
     /**
      * 執行翻譯
      */
-    private doTranslate();
-    /**
-     *
-     * @param translateNodes
-     */
-    private doTranslateNodesSetText(translateNodes, node);
+    private doTranslate;
     /**
      * 紀錄需要翻譯的node
      * @param node
      */
-    private addNode(translateNodes, node);
+    private addNode;
     /**
-     *
+     * 紀錄需要翻譯的node
      * @param node
      */
-    private addTranslateSource(translateNodes, node);
+    private modifyAddNode;
+    /**
+     * 檢查是否需要翻譯
+     * @param node
+     */
+    private isCanAddNode;
+    /**
+     * 更新翻譯
+     * @param translateNodes
+     * @param node
+     */
+    private updateNode;
+    /**
+     * 為node新增翻譯檔
+     * @param node
+     */
+    private addTranslateSource;
+    /**
+     * 翻譯
+     */
+    private doTranslateNodesSetText;
 }

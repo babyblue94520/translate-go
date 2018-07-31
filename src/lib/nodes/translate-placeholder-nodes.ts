@@ -2,7 +2,7 @@ import { TranslateNodes } from './translate-nodes';
 
 export class PlaceholderTranslateNodes extends TranslateNodes {
     need(node: any): boolean {
-        return (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA') && node.placeholder;
+        return node.placeholder != undefined || node.placeholder != '';
     }
     getText(node): string {
         return node.placeholder;

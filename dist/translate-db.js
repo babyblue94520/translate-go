@@ -1,7 +1,8 @@
+import { TranslateType } from './translate.interface';
 /**
  * 翻譯資料庫
  */
-var TranslateDB = (function () {
+var TranslateDB = /** @class */ (function () {
     function TranslateDB(_dev) {
         this._dev = _dev;
         // 盡量搜尋純文字的內容
@@ -104,15 +105,18 @@ var TranslateDB = (function () {
         return result;
     };
     /**
-     * 取得文字
+     * 翻譯文字依Key
      * @param key
      * @param language
      */
     TranslateDB.prototype.translateByKey = function (key, language) {
-        var result = key;
+        var result;
         var source = this._keySource[key];
         if (source) {
             result = source[language] || result;
+            source.currentLanguage = language;
+            source.translateText = result;
+            source.currentText = result;
         }
         return result;
     };
@@ -123,16 +127,24 @@ var TranslateDB = (function () {
      * @param language
      */
     TranslateDB.prototype.translateBySource = function (text, source, language) {
-        var regex = source.translateRegexs[source.currentLanguage];
         var translateText = source.wordSource[language];
-        if (translateText == undefined) {
-            return;
+        if (source.type == TranslateType.key) {
+            source.currentLanguage = language;
+            source.translateText = translateText;
+            source.currentText = translateText;
+            return translateText;
         }
-        // 更新
-        source.currentLanguage = language;
-        source.translateText = translateText;
-        source.currentText = text.replace(regex, '$1' + translateText + '$2');
-        return source.currentText;
+        else {
+            var regex = source.translateRegexs[source.currentLanguage];
+            if (translateText == undefined) {
+                return;
+            }
+            // 更新
+            source.currentLanguage = language;
+            source.translateText = translateText;
+            source.currentText = text.replace(regex, '$1' + translateText + '$2');
+            return source.currentText;
+        }
     };
     /**
      * 檢查是否需要翻譯並回傳翻譯資料
@@ -148,6 +160,7 @@ var TranslateDB = (function () {
                     translateRegexs[lang] = this.getWordRegex(wordSource[lang]);
                 }
                 return {
+                    type: TranslateType.none,
                     translateText: textLanguage.text,
                     currentLanguage: textLanguage.language,
                     wordSource: wordSource,
@@ -156,6 +169,24 @@ var TranslateDB = (function () {
                 };
             }
         }
+    };
+    /**
+     * 檢查是否需要翻譯並回傳翻譯資料
+     * @param text
+     */
+    TranslateDB.prototype.getTranslateSourceByKey = function (key) {
+        var source = this._keySource[key];
+        if (source) {
+            return {
+                type: TranslateType.key,
+                translateText: null,
+                currentLanguage: null,
+                wordSource: source,
+                translateRegexs: null,
+                currentText: null
+            };
+        }
+        return undefined;
     };
     /**
      * 取得文字語系

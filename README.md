@@ -195,3 +195,9 @@ __JavaScript偷懶步驟__：
 	```
 	<div translateKey="test"></div>
 	```
+
+4. placeholder綁定翻譯Key
+
+	```
+	<input placeholderTranslateKey="test">
+	```

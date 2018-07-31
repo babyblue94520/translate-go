@@ -38,9 +38,9 @@ export declare class TranslateDB {
      * @param text
      * @param language
      */
-    translate(text: string, language: string): any;
+    translate(text: string, language: string): string;
     /**
-     * 取得文字
+     * 翻譯文字依Key
      * @param key
      * @param language
      */
@@ -58,10 +58,15 @@ export declare class TranslateDB {
      */
     getTranslateSource(text: string): ITranslateSource;
     /**
+     * 檢查是否需要翻譯並回傳翻譯資料
+     * @param text
+     */
+    getTranslateSourceByKey(key: string): ITranslateSource;
+    /**
      * 取得文字語系
      * @param text
      */
-    private getTextLanguage(text);
+    private getTextLanguage;
     /**
      * 取得文字翻譯資源
      * @param word
@@ -71,7 +76,7 @@ export declare class TranslateDB {
      * 取得文字表達式
      * @param word
      */
-    private getWordRegex(word);
+    private getWordRegex;
     /**
      * 移除空白換行
      * @param text
@@ -81,5 +86,5 @@ export declare class TranslateDB {
      * 文字內容特殊字元 增加跳脫符號
      * @param text
      */
-    private getRegexText(text);
+    private getRegexText;
 }

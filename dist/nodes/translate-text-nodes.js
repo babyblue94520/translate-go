@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { TranslateNodes } from './translate-nodes';
-var TextTranslateNodes = (function (_super) {
+var TextTranslateNodes = /** @class */ (function (_super) {
     __extends(TextTranslateNodes, _super);
     function TextTranslateNodes() {
         return _super !== null && _super.apply(this, arguments) || this;

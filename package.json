@@ -1,9 +1,9 @@
 {
   "name": "translate-go",
-  "version": "0.0.12",
+  "version": "0.0.16",
   "description": "",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/translate-go.js",
+  "typings": "./dist/translate-go.d.ts",
   "scripts": {
     "build": "tsc && npm run rollupbuild && npm run rollupbuild:min",
     "rollupbuild": "rollup -c rollup.config.js --no-conflict",

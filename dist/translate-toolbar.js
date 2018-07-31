@@ -1,4 +1,4 @@
-var TranslateToolBar = (function () {
+var TranslateToolBar = /** @class */ (function () {
     // private toolUrl = "http://127.0.0.1:4300/#/Index";
     // private toolOrigin = "http://127.0.0.1:4300";
     function TranslateToolBar(translateGO) {
@@ -76,6 +76,7 @@ var TranslateToolBar = (function () {
         document.head.appendChild(style);
         this._element = document.createElement('div');
         this._element.className = 'translate-toolbar';
+        this._element.setAttribute('notTranslate', '');
         this._languageSelect = document.createElement('select');
         this._languageSelect.addEventListener('change', this.languageChange);
         this._startWatchButton = document.createElement('button');

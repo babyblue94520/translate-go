@@ -9,13 +9,13 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { TranslateNodes } from './translate-nodes';
-var PlaceholderTranslateNodes = (function (_super) {
+var PlaceholderTranslateNodes = /** @class */ (function (_super) {
     __extends(PlaceholderTranslateNodes, _super);
     function PlaceholderTranslateNodes() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PlaceholderTranslateNodes.prototype.need = function (node) {
-        return (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA') && node.placeholder;
+        return node.placeholder != undefined || node.placeholder != '';
     };
     PlaceholderTranslateNodes.prototype.getText = function (node) {
         return node.placeholder;

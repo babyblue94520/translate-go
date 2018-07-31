@@ -187,14 +187,18 @@ export class TranslateDB {
      * @param text
      */
     public getTranslateSourceByKey(key: string): ITranslateSource {
-        return {
-            type: TranslateType.key,
-            translateText: null,
-            currentLanguage: null,
-            wordSource: this._keySource[key],
-            translateRegexs: null,
-            currentText: null
-        };
+        let source = this._keySource[key];
+        if (source) {
+            return {
+                type: TranslateType.key,
+                translateText: null,
+                currentLanguage: null,
+                wordSource: source,
+                translateRegexs: null,
+                currentText: null
+            };
+        }
+        return undefined;
 
     }
 
