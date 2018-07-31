@@ -28,8 +28,8 @@ export class TranslateGO {
     // placeholder attribute name
     private placeholder = 'placeholder';
 
-    private windowAlert = Window.prototype.alert;
-    private windowConfirm = Window.prototype.confirm;
+    private windowAlert = window.alert;
+    private windowConfirm = window.confirm;
     private elementSetAttributeOrigin = Element.prototype.setAttribute;
 
     private toolbar: TranslateToolBar;

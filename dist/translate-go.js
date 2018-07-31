@@ -22,8 +22,8 @@ var TranslateGO = /** @class */ (function () {
         this.placeholderTranslatekey = 'placeholdertranslatekey';
         // placeholder attribute name
         this.placeholder = 'placeholder';
-        this.windowAlert = Window.prototype.alert;
-        this.windowConfirm = Window.prototype.confirm;
+        this.windowAlert = window.alert;
+        this.windowConfirm = window.confirm;
         this.elementSetAttributeOrigin = Element.prototype.setAttribute;
         /**
          * 攔截alert訊息並翻譯
