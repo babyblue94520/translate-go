@@ -1,10 +1,10 @@
-import { ITranslateNode, TranslateType } from './translate.interface';
+import { ITranslateNode } from './translate.interface';
 import { PlaceholderTranslateNodes } from './nodes/translate-placeholder-nodes';
 import { TextTranslateNodes } from './nodes/translate-text-nodes';
 import { TranslateDB } from './translate-db';
 import { TranslateNodes } from './nodes/translate-nodes';
 import { TranslateToolBar } from './translate-toolbar';
-
+import { TranslateUtil } from './translate-util';
 
 /**
  * 翻譯
@@ -104,11 +104,8 @@ export class TranslateGO {
     public translate(language: string) {
         if (this.currentLanguage == language) { return; }
         if (this.db.hasLanguage(language)) {
-            let t = getNow();
-            console.log('doTranslate start');
             this.currentLanguage = language;
             this.doTranslate();
-            console.log('doTranslate end', (getNow() - t) + 'ms');
             if (this.toolbar) {
                 this.toolbar.changeLanaguage(this.currentLanguage);
             }
@@ -121,13 +118,8 @@ export class TranslateGO {
     public watch() {
         this.stop();
         this.isWatch = true;
-        console.log('find text node start');
-        let t = getNow();
         this.loadTextNodes();
-        console.log('find text node end', (getNow() - t) + 'ms');
-        t = getNow();
         this.doTranslate();
-        console.log('doTranslate end', (getNow() - t) + 'ms');
 
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
@@ -211,15 +203,17 @@ export class TranslateGO {
      * 是否非忽略的標籤
      * @param element
      */
-    private isNonIgnore(element: Element): boolean {
-        if (element.nodeType == 3) {
-            element = element.parentElement;
-        }
-        if (element.nodeType == 1) {
-            if (this.ignoreTagArray.indexOf(element.tagName) == -1) {
-                return element.getAttribute(this.ignoreAttributeName) == null;
-            } else {
-                return false;
+    private isNonIgnore(element: HTMLElement): boolean {
+        if (element) {
+            if (element.nodeType == 3) {
+                element = TranslateUtil.getParentElement(element);
+            }
+            if (element.nodeType == 1) {
+                if (this.ignoreTagArray.indexOf(element.tagName) == -1) {
+                    return element.getAttribute(this.ignoreAttributeName) == null;
+                } else {
+                    return false;
+                }
             }
         }
         return false;
@@ -318,7 +312,7 @@ export class TranslateGO {
      */
     private isCanAddNode(node: any) {
         let parent = node;
-        while ((parent = parent.parentElement) != document.documentElement) {
+        while ((parent = TranslateUtil.getParentElement(parent)) != document.documentElement) {
             if (parent.getAttribute(this.ignoreAttributeName) != null) {
                 return false;
             }
@@ -353,9 +347,9 @@ export class TranslateGO {
     private addTranslateSource(translateNodes: TranslateNodes, node: ITranslateNode) {
         let key;
         if (node.nodeType == 3) {
-            key = node.parentElement.getAttribute(this.translatekey);
+            key = TranslateUtil.getParentElement(node).getAttribute(this.translatekey);
         } else {
-            key = node.parentElement.getAttribute(this.placeholderTranslatekey);
+            key = TranslateUtil.getParentElement(node).getAttribute(this.placeholderTranslatekey);
         }
         if (key != null) {
             return (node.translateTextSource = this.db.getTranslateSourceByKey(key));
@@ -378,9 +372,4 @@ export class TranslateGO {
             )
         );
     }
-}
-
-
-function getNow(): number {
-    return new Date().getTime();
 }

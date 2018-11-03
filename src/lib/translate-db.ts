@@ -51,8 +51,6 @@ export class TranslateDB {
      * @param data
      */
     public insert(data: any): void {
-        console.log('_loadLanguageData start');
-        let t = performance.now();
         let word, source;
         let langData;
         for (let lang in data) {
@@ -72,7 +70,6 @@ export class TranslateDB {
                 this._textLanguageData[word] = lang;
             }
         }
-        console.log('_loadLanguageData end', (performance.now() - t));
     }
 
     /**

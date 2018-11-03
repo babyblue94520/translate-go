@@ -2,6 +2,7 @@ import { PlaceholderTranslateNodes } from './nodes/translate-placeholder-nodes';
 import { TextTranslateNodes } from './nodes/translate-text-nodes';
 import { TranslateDB } from './translate-db';
 import { TranslateToolBar } from './translate-toolbar';
+import { TranslateUtil } from './translate-util';
 /**
  * 翻譯
  */
@@ -119,11 +120,8 @@ var TranslateGO = /** @class */ (function () {
             return;
         }
         if (this.db.hasLanguage(language)) {
-            var t = getNow();
-            console.log('doTranslate start');
             this.currentLanguage = language;
             this.doTranslate();
-            console.log('doTranslate end', (getNow() - t) + 'ms');
             if (this.toolbar) {
                 this.toolbar.changeLanaguage(this.currentLanguage);
             }
@@ -135,13 +133,8 @@ var TranslateGO = /** @class */ (function () {
     TranslateGO.prototype.watch = function () {
         this.stop();
         this.isWatch = true;
-        console.log('find text node start');
-        var t = getNow();
         this.loadTextNodes();
-        console.log('find text node end', (getNow() - t) + 'ms');
-        t = getNow();
         this.doTranslate();
-        console.log('doTranslate end', (getNow() - t) + 'ms');
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
@@ -188,15 +181,17 @@ var TranslateGO = /** @class */ (function () {
      * @param element
      */
     TranslateGO.prototype.isNonIgnore = function (element) {
-        if (element.nodeType == 3) {
-            element = element.parentElement;
-        }
-        if (element.nodeType == 1) {
-            if (this.ignoreTagArray.indexOf(element.tagName) == -1) {
-                return element.getAttribute(this.ignoreAttributeName) == null;
+        if (element) {
+            if (element.nodeType == 3) {
+                element = TranslateUtil.getParentElement(element);
             }
-            else {
-                return false;
+            if (element.nodeType == 1) {
+                if (this.ignoreTagArray.indexOf(element.tagName) == -1) {
+                    return element.getAttribute(this.ignoreAttributeName) == null;
+                }
+                else {
+                    return false;
+                }
             }
         }
         return false;
@@ -288,7 +283,7 @@ var TranslateGO = /** @class */ (function () {
      */
     TranslateGO.prototype.isCanAddNode = function (node) {
         var parent = node;
-        while ((parent = parent.parentElement) != document.documentElement) {
+        while ((parent = TranslateUtil.getParentElement(parent)) != document.documentElement) {
             if (parent.getAttribute(this.ignoreAttributeName) != null) {
                 return false;
             }
@@ -321,10 +316,10 @@ var TranslateGO = /** @class */ (function () {
     TranslateGO.prototype.addTranslateSource = function (translateNodes, node) {
         var key;
         if (node.nodeType == 3) {
-            key = node.parentElement.getAttribute(this.translatekey);
+            key = TranslateUtil.getParentElement(node).getAttribute(this.translatekey);
         }
         else {
-            key = node.parentElement.getAttribute(this.placeholderTranslatekey);
+            key = TranslateUtil.getParentElement(node).getAttribute(this.placeholderTranslatekey);
         }
         if (key != null) {
             return (node.translateTextSource = this.db.getTranslateSourceByKey(key));
@@ -346,7 +341,4 @@ var TranslateGO = /** @class */ (function () {
     return TranslateGO;
 }());
 export { TranslateGO };
-function getNow() {
-    return new Date().getTime();
-}
 //# sourceMappingURL=translate-go.js.map

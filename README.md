@@ -177,6 +177,9 @@ __JavaScript偷懶步驟__：
     }
     document.head.appendChild(source);
     
+## 相容性：
+1. 目前支持到IE9
+
 ## 其他：
 1. 一般網站還是可以直接使用TranslateGO，效能還滿不錯的，第一次翻譯都會比較慢，可以開Console觀察就知道囉！
 2. 設定不需要翻譯的區塊

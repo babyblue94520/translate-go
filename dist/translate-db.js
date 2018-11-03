@@ -45,8 +45,6 @@ var TranslateDB = /** @class */ (function () {
      * @param data
      */
     TranslateDB.prototype.insert = function (data) {
-        console.log('_loadLanguageData start');
-        var t = performance.now();
         var word, source;
         var langData;
         for (var lang in data) {
@@ -66,7 +64,6 @@ var TranslateDB = /** @class */ (function () {
                 this._textLanguageData[word] = lang;
             }
         }
-        console.log('_loadLanguageData end', (performance.now() - t));
     };
     /**
      * 取得無法翻譯的文字

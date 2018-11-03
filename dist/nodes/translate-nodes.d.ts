@@ -24,5 +24,4 @@ export declare abstract class TranslateNodes {
      */
     remove(node: any): boolean;
     clean(): void;
-    private cleanFilterHandler;
 }

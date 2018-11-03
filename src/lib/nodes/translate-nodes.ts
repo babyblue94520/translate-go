@@ -1,4 +1,5 @@
 import { ITranslateNode } from '../translate.interface';
+import { TranslateUtil } from '../translate-util';
 
 export abstract class TranslateNodes {
     protected _nodes = [];
@@ -36,18 +37,12 @@ export abstract class TranslateNodes {
      */
     public remove(node): boolean {
         let index = this.indexOf(node);
-        // tslint:disable-next-line:curly
-        if (index == -1) return false;
+        if (index == -1) { return false; }
         this._nodes.splice(index, 1);
         return true;
     }
 
     public clean() {
-        this._nodes = this._nodes.filter(this.cleanFilterHandler);
-    }
-
-    private cleanFilterHandler(node) {
-        // tslint:disable-next-line:curly
-        return node && node.isConnected;
+        this._nodes = this._nodes.filter(TranslateUtil.isConnected);
     }
 }
