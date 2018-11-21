@@ -6,6 +6,9 @@ import { TranslateNodes } from './nodes/translate-nodes';
 import { TranslateToolBar } from './translate-toolbar';
 import { TranslateUtil } from './translate-util';
 
+
+
+
 /**
  * 翻譯
  */
@@ -25,8 +28,6 @@ export class TranslateGO {
     private translatekey = 'translatekey';
     // placeholder translate attribute name
     private placeholderTranslatekey = 'placeholdertranslatekey';
-    // placeholder attribute name
-    private placeholder = 'placeholder';
 
     private windowAlert = window.alert;
     private windowConfirm = window.confirm;
