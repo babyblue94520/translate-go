@@ -23,6 +23,7 @@ enum Message {
 export class AppComponent {
 
   private translateData: TranslateToolbarData;
+  public translateConfig = TranslateConfig;
   public newLanguage = 'zh_TW';
   public newLanguageMessage = '';
   public prefix = 'TranslateSource';
@@ -76,12 +77,26 @@ export class AppComponent {
     this.ignoreGroup.grid = this.buildIgnoreGrid();
     this.translateData = new TranslateToolbarData(this.keyName, this.languages, this.groups);
     this.loadWindowGroups();
-    if (!this.translateGO.isWatch()) {
+    if (TranslateConfig.dev && !this.translateGO.isWatch()) {
       this.translateGO.start();
     }
+
     let space = document.createElement('div');
     space.className = 'ttb-space';
     document.body.appendChild(space);
+  }
+
+  /**
+   * 切換開發模式
+   */
+  public start() {
+    TranslateConfig.dev = true;
+    this.translateGO.start();
+  }
+
+  public stop() {
+    TranslateConfig.dev = false;
+    this.translateGO.stop();
   }
 
   /**
@@ -650,7 +665,6 @@ export class AppComponent {
             });
           }
         }
-        , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', maxWidth: '200px', canSort: true }
         , {
           value: '', name: '', align: 'left', width: '100%', element: true
           , onRender: (value, record, index) => {
@@ -658,13 +672,13 @@ export class AppComponent {
             for (let i in this.groups) {
               buttons.push(DomUtil.buildButton({
                 text: this.groups[i].name,
-                className: 'small',
                 onclick: this.changeGroup.bind(this, this.nonTranslateGroup, this.groups[i], record, index)
               }));
             }
             return buttons;
           }
         }
+        , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', maxWidth: '1000px', canSort: true }
       ],
       contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }],
       onLoad: (pageable: Grid.IPageable, load: Grid.ILoad) => {
@@ -698,7 +712,6 @@ export class AppComponent {
             for (let i in this.groups) {
               buttons.push(DomUtil.buildButton({
                 text: this.groups[i].name,
-                className: 'small',
                 onclick: this.ignoreChangeGroup.bind(this, this.groups[i], record, index)
               }));
             }
@@ -706,7 +719,7 @@ export class AppComponent {
           }
         }
       ],
-      contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }],
+      contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '1000px' }],
       onLoad: (pageable: Grid.IPageable, load: Grid.ILoad) => {
         if (pageable.sort && pageable.sort.length > 0) {
           for (let i in pageable.sort) {

@@ -2,8 +2,8 @@
   <select [(ngModel)]="currentLanguage" (change)="changeLanguage()">
     <option *ngFor="let lang of languages" [value]="lang">{{lang}}</option>
   </select>
-  <button class="ttb-button" [disabled]="translateGO.isWatch()" (click)="translateGO.start()">Watch</button>
-  <button class="ttb-button bg-accent" [disabled]="!translateGO.isWatch()" (click)="translateGO.stop()">Stop</button>
+  <button class="ttb-button" [disabled]="translateGO.isWatch()" (click)="start()">Start</button>
+  <button class="ttb-button bg-accent" [disabled]="!translateGO.isWatch()" (click)="stop()">Stop</button>
   <button class="ttb-button bg-dark" (click)="refresh()">Refresh</button>
   <button class="ttb-button bg-dark" (click)="openToolDialog()">Tool</button>
 </div>
