@@ -1,0 +1,21 @@
+<ng-template #dialog>
+  <div class="ttb-dialog-window {{_windowClassName}}" [style.width]="width?width:''" [style.height]="height?height:''">
+    <div class="ttb-dialog-content">
+      <div class="ttb-dialog-close ttb-icon-close" (click)="close()"></div>
+      <div class="ttb-dialog-header">
+        <ng-container *ngIf="title">{{title}}</ng-container>
+        <ng-content select="[dialogHeader]"></ng-content>
+      </div>
+      <div class="ttb-dialog-panel">
+        <ng-content></ng-content>
+      </div>
+    </div>
+    <div [style.height]="marginBottom"></div>
+  </div>
+  <div class="ttb-dialog-toolbar">
+    <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+  </div>
+  <ng-template #toolbar>
+    <ng-content select="[dialog-toolbar]"></ng-content>
+  </ng-template>
+</ng-template>

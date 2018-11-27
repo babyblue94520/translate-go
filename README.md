@@ -168,14 +168,11 @@ TypeScript：
 __JavaScript偷懶步驟__： 
 
 	var source = document.createElement('script');
-    source.src = 'https://babyblue94520.github.io/translate-go/lib/translate-go.min.js';
-    source.onload = function(){
-    	// 用英文語系最明顯，true:產生右下角的toolbar
-		window.translateGO = new TranslateModule.TranslateGO('en',true);
-        // 開始監聽
-		window.translateGO.watch();
-    }
-    document.head.appendChild(source);
+	source.src = 'https://babyblue94520.github.io/translate-go/lib/translate.toolbar.js';
+	source.onload = function(){
+		document.body.appendChild(document.createElement('translate-toolbar'));
+	}
+	document.head.appendChild(source);
     
 ## 相容性：
 1. 目前支持到IE9

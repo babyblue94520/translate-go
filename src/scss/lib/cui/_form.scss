@@ -1,0 +1,244 @@
+@import 'base/function';
+
+:focus {
+  outline: none;
+}
+
+.ttb-button-row {
+  float: left;
+  width: 100%;
+  text-align: left;
+
+  &.center {
+    text-align: center;
+  }
+
+  &.right {
+    text-align: right;
+  }
+}
+
+.ttb-button {
+  padding: .5em 1em .5em 1em;
+  margin: 5px;
+  border: 0px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  background-color: $primary-color1;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 80%;
+  font-family: inherit;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
+
+  &[disabled] {
+    opacity: .6;
+    @include box-shadow(none);
+  }
+
+  &:before {
+    font-size: 80%;
+  }
+
+  &.small {
+    padding: .3em;
+    margin-right: 5px;
+    min-width: auto;
+  }
+
+  &.bold {
+    font-weight: bold;
+  }
+
+  &.inherit {
+    text-transform: inherit;
+  }
+}
+
+.ttb-link-button {
+  padding: .2em .8em .2em .8em;
+  cursor: pointer;
+  text-decoration-line: underline;
+}
+
+.ttb-field {
+  position: relative;
+  padding-top: 1em;
+  padding-left: .5em;
+  padding-right: .5em;
+  margin-bottom: 1em;
+  float: left;
+  width: 100%;
+  background-color: transparent;
+
+  &.float {
+
+    input,
+    textarea,
+    select {
+      &~label {
+        @include transform(translate(0, 15px));
+        font-size: 100%;
+        color: #aaa;
+      }
+    }
+  }
+
+  &.not-empty {
+    border-bottom-color: #2196F3;
+
+    input,
+    textarea,
+    select {
+      &~label {
+        color: $primary-color1;
+      }
+    }
+  }
+
+  input[type="checkbox"] {
+    width: 1em;
+    height: 1em;
+    margin-right: 3px;
+    vertical-align: middle;
+    font-size: 100%;
+  }
+
+  [placeholder] {
+    text-overflow: ellipsis;
+  }
+
+  input,
+  select {
+    height: 1.5em;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    border: 0;
+    font-size: 100%;
+    background-color: transparent;
+    border-bottom: 1px solid #aaa;
+
+    &:focus {
+      border-bottom-color: #2196F3;
+
+      &~label {
+        color: $primary-color1;
+      }
+    }
+
+    &:hover {
+      border-bottom-color: #2196F3;
+
+      &~label {
+        color: $primary-color1;
+      }
+    }
+
+    &~label {
+      position: absolute;
+      top: 0;
+      left: .5em;
+      width: 100%;
+      font-size: 80%;
+      color: $primary-color1;
+      cursor: default;
+      @include transition(all .2s ease-in-out);
+    }
+
+    &[required] {
+      &~label:before {
+        content: "*";
+        color: #f00;
+        margin-right: .5em;
+      }
+    }
+  }
+
+  input,
+  textarea {
+
+    &:read-only,
+    &:disabled {
+      border-bottom: 1px solid #aaa !important;
+      cursor: no-drop;
+      color: #aaa !important;
+
+      &~label {
+        color: #aaa !important;
+      }
+    }
+  }
+
+  select {
+    cursor: pointer;
+
+    &:disabled {
+      -webkit-appearance: none;
+      border-bottom: 1px solid #aaa !important;
+      cursor: no-drop;
+      color: #aaa !important;
+
+      &~label {
+        color: #aaa !important;
+      }
+    }
+  }
+
+  .message {
+    position: absolute;
+    bottom: 0;
+    left: .5em;
+    width: 100%;
+    font-size: 80%;
+    color: #aaa;
+    @include transform(translateY(80%));
+  }
+
+  .error-message {
+    position: absolute;
+    bottom: 0;
+    left: .5em;
+    width: 100%;
+    font-size: 80%;
+    color: #FF4081;
+    @include transform(translateY(80%));
+  }
+
+  input[type=checkbox],
+  input[type=radio] {
+    height: 1em;
+    width: 1em;
+    margin: 0;
+    cursor: pointer;
+
+    &:checked {
+      &~label {
+        color: #000;
+      }
+    }
+
+    &~label {
+      position: relative;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    &:read-only,
+    &:disabled {
+      border-bottom: 1px solid #aaa !important;
+      cursor: no-drop;
+      color: #aaa !important;
+
+      &~label {
+        color: #aaa !important;
+      }
+    }
+  }
+}

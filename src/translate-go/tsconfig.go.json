@@ -1,0 +1,43 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "../../dist",
+    "sourceMap": true,
+    "declaration": true,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "baseUrl": "../../src/translate-go/",
+    "paths": {
+      "@cui/core": [
+        "../ts/lib/cui/core"
+      ],
+      "@environment": [
+        "../environments/environment"
+      ],
+      "translate-go-test": [
+        "dist/translate-go-test"
+      ],
+      "translate-go-test/*": [
+        "dist/translate-go-test/*"
+      ]
+    },
+    "plugins": [{
+        "name": "@angular/language-service"
+      },
+      {
+        "name": "tslint-language-service"
+      }
+    ]
+  }
+}

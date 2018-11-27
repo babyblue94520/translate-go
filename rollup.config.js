@@ -3,7 +3,7 @@ import buble from 'rollup-plugin-buble';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 const config = {
-  entry: 'src/lib/translate-go.ts',
+  entry: 'src/translate-go/translate-go.ts',
   targets: [{
     dest: 'lib/translate-go.js',
     format: 'iife',

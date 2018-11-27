@@ -1,0 +1,60 @@
+.ttb-dialog-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  padding: .5em 1em .5em 1em;
+  background: #fff;
+  @include box-shadow(0px -2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.ttb-dialog-window {
+  position: absolute;
+  z-index: 2;
+  display: inline-block;
+  max-width: 100%;
+  padding: 0;
+  @include transform(translate(0px, 0px));
+
+  .ttb-dialog-content {
+    background-color: #FFF;
+    @include box-shadow(0 14px 45px rgba(5, 5, 5, 0.25), 0 10px 18px rgba(0, 0, 0, 0.22));
+
+    >.ttb-dialog-header {
+      position: relative;
+      width: 100%;
+      padding-right: 2em;
+      line-height: 2em;
+      text-indent: .5em;
+      font-size: 120%;
+      font-weight: bold;
+      background-color: #2196F3;
+      color: #fff;
+    }
+
+    >.ttb-dialog-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1;
+      padding: .5em;
+      cursor: pointer;
+      color: #fff;
+
+      &:before {
+        font-size: 120%;
+      }
+    }
+
+    .ttb-dialog-panel {
+      display: inline-block;
+      width: 100%;
+      padding: .8em;
+      overflow: hidden;
+      word-wrap: break-word;
+    }
+
+  }
+
+}

@@ -1,0 +1,116 @@
+@import 'base/function';
+
+.ttb-tab-header {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid #eee;
+
+  .ttb-tab-prev,
+  .ttb-tab-next {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    padding: .8em;
+    background-color: #fff;
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  .ttb-tab-prev {
+    left: 0;
+    @include box-shadow(2px 0px 3px #aaa);
+  }
+
+  .ttb-tab-next {
+    right: 0;
+    @include box-shadow(-2px 0px 3px #aaa);
+  }
+
+  .ttb-tab-header-hover {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    display: inline-block;
+    width: 0px;
+    height: 2px;
+    background-color: #00bcd4;
+    pointer-events: none;
+    @include transform(translateX(0px));
+    @include transition(transform .3s ease-in-out);
+  }
+
+  .ttb-tab-labels {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    @include transition(transform .3s ease-in-out);
+
+    .ttb-tab-label {
+      position: relative;
+      display: inline-block;
+      font-size: 100%;
+      letter-spacing: 3px;
+      white-space: nowrap;
+      color: #666;
+      cursor: pointer;
+      @include transition;
+
+      &.active {
+        color: #344149;
+        font-weight: bold;
+      }
+
+      &.disabled {
+        color: #ccc;
+      }
+
+      .ttb-tab-label-text {
+        display: inline-block;
+        margin: 10px 15px 10px 15px;
+        pointer-events: none;
+      }
+
+      .ttb-tab-label-close {
+        display: inline-block;
+        vertical-align: top;
+        font-size: 80%;
+      }
+    }
+  }
+}
+
+.ttb-tab-body {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+
+  .ttb-tab-contents {
+    position: relative;
+    display: flex;
+    width: 100%;
+    white-space: nowrap;
+    @include transform(translateX(0%));
+    @include transition(transform .3s ease-in-out);
+
+    .ttb-tab-content {
+      display: inline-block;
+      width: 100%;
+      height: 0;
+      padding: .8em;
+      opacity: 0;
+      flex-shrink: 0;
+      pointer-events: none;
+      white-space: normal;
+      @include transition(opacity .3s ease-in-out);
+
+      &.active {
+        height: auto;
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+  }
+}

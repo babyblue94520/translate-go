@@ -1,0 +1,143 @@
+@mixin keyframes( $name) {
+  @keyframes #{$name} {
+    @content;
+  }
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-o-keyframes #{$name} {
+    @content;
+  }
+}
+
+@mixin transform($value:translate(0, 0)) {
+  transform: $value;
+  -ms-transform: $value;
+  -moz-transform: $value;
+  -webkit-transform: $value;
+  -o-transform: $value;
+}
+
+@mixin transform-style($value:flat) {
+  transform-style: $value;
+  -ms-transform-style: $value;
+  -moz-transform-style: $value;
+  -webkit-transform-style: $value;
+  -o-transform-style: $value;
+}
+
+@mixin transition($value:all 0.3s ease-in-out) {
+  transition: $value;
+  -webkit-transition: $value;
+  -moz-transition: $value;
+  -o-transition: $value;
+  -ms-transition: $value;
+}
+
+@mixin transitions($value...) {
+  transition: $value;
+  -webkit-transition: $value;
+  -moz-transition: $value;
+  -o-transition: $value;
+  -ms-transition: $value;
+}
+
+@mixin box-sizing($value:border-box) {
+  box-sizing: $value;
+  -ms-box-sizing: $value;
+  -moz-box-sizing: $value;
+  -webkit-box-sizing: $value;
+  -o-box-sizing: $value;
+}
+
+@mixin box-flex($value:1) {
+  box-flex: $value;
+  -ms-box-flex: $value;
+  -moz-box-flex: $value;
+  -webkit-box-flex: $value;
+  -o-box-flex: $value;
+}
+
+@mixin background-clip($value) {
+  background-clip: $value;
+  -ms-background-clip: $value;
+  -moz-background-clip: $value;
+  -webkit-background-clip: $value;
+  -o-background-clip: $value;
+}
+
+@mixin user-select($value) {
+  user-select: $value;
+  -ms-user-select: $value;
+  -moz-user-select: $value;
+  -webkit-user-select: $value;
+  -o-user-select: $value;
+}
+
+@mixin pointer-events($value) {
+  pointer-events: $value;
+  -ms-pointer-events: $value;
+  -moz-pointer-events: $value;
+  -webkit-pointer-events: $value;
+  -o-pointer-events: $value;
+}
+
+@mixin box-shadow($value...) {
+  box-shadow: $value;
+  -ms-box-shadow: $value;
+  -moz-box-shadow: $value;
+  -webkit-box-shadow: $value;
+  -o-box-shadow: $value;
+}
+
+@mixin border-radius($value...) {
+  border-radius: $value;
+  -ms-border-radius: $value;
+  -moz-border-radius: $value;
+  -webkit-border-radius: $value;
+  -o-border-radius: $value;
+}
+
+@mixin appearance($value:none) {
+  appearance: $value;
+  -moz-appearance: $value;
+  -webkit-appearance: $value;
+  -o-appearance: $value;
+  -ms-appearance: $value;
+}
+
+@mixin linear-gradient($direction, $color-stops...) {
+  background: nth(nth($color-stops, 1), 1);
+  background: linear-gradient($direction, $color-stops);
+  background: -ms-linear-gradient($direction, $color-stops);
+  background: -moz-linear-gradient($direction, $color-stops);
+  background: -webkit-linear-gradient($direction, $color-stops);
+  background: -o-linear-gradient($direction, $color-stops);
+}
+
+@mixin writing-mode($value) {
+  -webkit-writing-mode: $value;
+  writing-mode: $value;
+}
+
+@mixin animation($value) {
+  animation: $value;
+  -moz-animation: $value;
+  -webkit-animation: $value;
+  -o-animation: $value;
+  -ms-animation: $value;
+}
+
+@mixin animation-play-state($value) {
+  animation-play-state: $value;
+  -moz-animation-play-state: $value;
+  -webkit-animation-play-state: $value;
+  -o-animation-play-state: $value;
+  -ms-animation-play-state: $value;
+}

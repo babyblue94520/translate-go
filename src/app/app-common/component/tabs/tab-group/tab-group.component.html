@@ -1,0 +1,28 @@
+<div class="ttb-tab-header">
+  <div class="ttb-tab-header-hover"></div>
+  <div class="ttb-tab-prev">〈</div>
+  <div class="ttb-tab-next">〉</div>
+  <div class="ttb-tab-labels">
+    <div *ngFor="let tab of tabsRef;let i = index;" class="ttb-tab-label {{currentIndex==i?'active':''}} {{tab.disabled?'disabled':''}}"
+      (click)="active(i)" (touchstart)="active(i)" #label>
+      <div class="ttb-tab-label-text">
+        <ng-container *ngIf="tab.label; else tab.labelRef;">
+          {{tab.label}}
+        </ng-container>
+      </div>
+      <span *ngIf="tab.onClose" class="ttb-icon-close" (click)="tab.onClose(i)"></span>
+    </div>
+  </div>
+</div>
+<div class="ttb-tab-body">
+  <div class="ttb-tab-contents">
+    <div *ngFor="let tab of tabsRef;let i = index" class="ttb-tab-content {{currentIndex==i?'active':''}}">
+      <ng-container *ngIf="currentIndex==i">
+        <ng-container *ngTemplateOutlet="tab.templateRef">
+        </ng-container>
+        <ng-container *ngTemplateOutlet="tab.contentRef">
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>

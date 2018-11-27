@@ -1,0 +1,46 @@
+html,
+body {
+  &.ttb-overlay-open {
+    overflow: hidden !important;
+  }
+}
+
+.ttb-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  display: block;
+  overflow: auto;
+  pointer-events: none;
+  user-select: none;
+  @include transition(opacity .3s ease-in-out);
+
+  &.open {
+    opacity: 1;
+    user-select: auto;
+    pointer-events: auto;
+  }
+}
+
+.ttb-overlay-screen {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  user-select: none;
+  @include transition(opacity .3s ease-in-out);
+
+  &.open {
+    opacity: 1;
+    user-select: auto;
+    pointer-events: auto;
+  }
+}

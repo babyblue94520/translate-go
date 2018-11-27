@@ -1,0 +1,166 @@
+@import 'base/function';
+
+.ttb-grid {
+  width: 100%;
+  background-color: #fff;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  tr {
+    &.has-content {
+      cursor: pointer;
+
+      &.show {
+        border-bottom: none;
+        background-color: #e0f7fa;
+      }
+
+      &:hover {
+        background-color: #E0F7FA;
+      }
+    }
+  }
+}
+
+.ttb-grid-footer {
+  display: inline-block;
+  width: 100%;
+  padding-right: 5px; // border-top: 1px solid #7a7575;
+  user-select: none;
+  text-align: center;
+  line-height: 2em;
+
+  .left-info {
+    display: inline-block;
+  }
+
+  .right-info {
+    float: right;
+  }
+
+  .first-page,
+  .prev-page,
+  .next-page,
+  .last-page {
+    display: inline-block;
+    padding: 0 .8em 0 .8em;
+    line-height: 1.5em;
+    font-size: 100%;
+    cursor: pointer;
+
+    &.disable {
+      color: #c0bfbf;
+      cursor: no-drop;
+    }
+  }
+
+  .page-info {
+    display: inline-block;
+
+    input {
+      width: 3em;
+      height: 1.5em;
+      font-size: 100%;
+      text-align: center;
+    }
+  }
+}
+
+.ttb-grid-container {
+  width: 100%;
+  min-height: 300px;
+  margin-bottom: 5px;
+  overflow: auto;
+
+  .checkbox {
+    width: 1em;
+    height: 1em;
+    margin-right: 3px;
+    vertical-align: middle;
+    font-size: 100%;
+  }
+
+  thead {
+    background-color: #80DEEA;
+
+    th {
+      padding: .2em .8em .2em .8em;
+      border: none;
+
+      &.sort {
+        cursor: pointer;
+      }
+
+      &:before {
+        font-size: 50%;
+      }
+    }
+  }
+
+  tbody {
+    font-size: 80%;
+
+    tr {
+      border-bottom: 1px solid #bbb;
+
+      &.empty {
+        border-bottom: none;
+      }
+
+      &.selected {
+        background-color: #E0F7FA;
+      }
+
+      &.ttb-grid-content {
+        display: none;
+
+        &.show {
+          display: table-row;
+        }
+
+        .ttb-grid {
+          display: inline-block;
+          width: auto;
+        }
+
+        table {
+          width: auto;
+        }
+
+        tr {
+          border-bottom: 1px solid #eee;
+        }
+
+        td {
+          word-break: break-all;
+          border: none;
+        }
+      }
+    }
+
+    td {
+      padding: 2px 5px 2px 5px;
+
+      .ttb-grid-td-div {
+        padding: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        .ttb-button {
+          margin-top: 0px;
+          margin-bottom: 0px;
+        }
+      }
+    }
+  }
+}
+
+.ttb-grid-load-more {
+  color: #4696f3;
+  font-weight: bold;
+  cursor: pointer;
+}
