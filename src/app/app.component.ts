@@ -92,6 +92,7 @@ export class AppComponent {
   public start() {
     TranslateConfig.dev = true;
     this.translateGO.start();
+    this.refresh();
   }
 
   public stop() {
@@ -273,7 +274,6 @@ export class AppComponent {
    * 關閉 dialog
   */
   public closeSourceDialog = () => {
-    this.currentSource = undefined;
     this.currentGridReLoad();
   }
 
@@ -653,22 +653,17 @@ export class AppComponent {
       size: 500,
       rowColumns: [
         {
-          value: '', name: '', align: 'left', width: '1%', element: true
+          value: '', name: '切換群組', align: 'left', width: '1%', element: true
           , onRender: (value, record, index, tr) => {
             if (record[TranslateConst.Repeat] == '1') {
               tr.classList.add('repeat');
             }
-            return DomUtil.buildButton({
-              text: '忽略',
-              className: 'bg-accent',
-              onclick: this.ignoreSource.bind(this, record, index)
-            });
-          }
-        }
-        , {
-          value: '', name: '', align: 'left', width: '100%', element: true
-          , onRender: (value, record, index) => {
-            let buttons: any = [];
+            let buttons: any = [
+              DomUtil.buildButton({
+                text: '忽略',
+                className: 'bg-accent',
+                onclick: this.ignoreSource.bind(this, record, index)
+              })];
             for (let i in this.groups) {
               buttons.push(DomUtil.buildButton({
                 text: this.groups[i].name,
@@ -678,7 +673,7 @@ export class AppComponent {
             return buttons;
           }
         }
-        , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', maxWidth: '1000px', canSort: true }
+        , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '100%', maxWidth: '1000px', canSort: true }
       ],
       contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }],
       onLoad: (pageable: Grid.IPageable, load: Grid.ILoad) => {
@@ -704,9 +699,8 @@ export class AppComponent {
     return Grid.GridBuilder.build({
       size: 500,
       rowColumns: [
-        { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', maxWidth: '200px', canSort: true }
-        , {
-          value: '', name: '', align: 'left', width: '100%', element: true
+        {
+          value: '', name: '切換群組', align: 'left', width: '1%', element: true
           , onRender: (value, record, index) => {
             let buttons: any = [];
             for (let i in this.groups) {
@@ -718,6 +712,7 @@ export class AppComponent {
             return buttons;
           }
         }
+        , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '100%', maxWidth: '1000px', canSort: true }
       ],
       contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '1000px' }],
       onLoad: (pageable: Grid.IPageable, load: Grid.ILoad) => {
