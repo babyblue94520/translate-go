@@ -1,13 +1,13 @@
 import { TranslateType } from './translate.interface';
+import { TranslateConfig, TranslateConst } from './config/translate-config';
 /**
  * 翻譯資料庫
  */
 var TranslateDB = /** @class */ (function () {
-    function TranslateDB(_dev) {
-        this._dev = _dev;
+    function TranslateDB() {
         // 盡量搜尋純文字的內容
         this._specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
-        this._startRegexStr = '([{(＊*\\[\\s\\r\\n]?^)';
+        this._startRegexStr = '(^[{(＊*\\[\\s\\r\\n]?)';
         this._endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]?$)';
         // 換行等等
         this._cleanChars = '[\\r\\n]';
@@ -45,23 +45,29 @@ var TranslateDB = /** @class */ (function () {
      * @param data
      */
     TranslateDB.prototype.insert = function (data) {
-        var word, source;
-        var langData;
-        for (var lang in data) {
-            if (this._langs.indexOf(lang) == -1) {
-                this._langs.push(lang);
-            }
-            langData = data[lang];
-            for (var key in langData) {
-                word = langData[key];
-                source = this._keySource[key];
-                if (!source) {
-                    source = this._keySource[key] = {};
+        var source;
+        for (var key in data) {
+            source = data[key];
+            for (var lang in source) {
+                var word = String(source[lang]);
+                if (lang == TranslateConst.Key) {
+                    this._keySource[key] = source;
                 }
-                source[lang] = word;
-                this._wordSource[word] = source;
-                this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
-                this._textLanguageData[word] = lang;
+                else {
+                    this._wordSource[word] = source;
+                    this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
+                    this._textLanguageData[word] = lang;
+                    if (TranslateConfig.dev) {
+                        delete this._cacheNonTranslateText[word];
+                    }
+                }
+            }
+        }
+        if (source) {
+            for (var lang in source) {
+                if (lang != TranslateConst.Key && this._langs.indexOf(lang) == -1) {
+                    this._langs.push(lang);
+                }
             }
         }
     };
@@ -69,17 +75,7 @@ var TranslateDB = /** @class */ (function () {
      * 取得無法翻譯的文字
      */
     TranslateDB.prototype.getNonTranslate = function () {
-        var result = {};
-        var langs = this._langs.length > 0 ? this._langs : ['zh_TW'];
-        var count = 0;
-        for (var i in langs) {
-            result[langs[i]] = {};
-            count = 0;
-            for (var text in this._cacheNonTranslateText) {
-                result[langs[i]][count++] = text;
-            }
-        }
-        return result;
+        return this._cacheNonTranslateText;
     };
     /**
      * 翻譯文字
@@ -132,10 +128,10 @@ var TranslateDB = /** @class */ (function () {
             return translateText;
         }
         else {
-            var regex = source.translateRegexs[source.currentLanguage];
             if (translateText == undefined) {
                 return;
             }
+            var regex = source.translateRegexs[source.currentLanguage];
             // 更新
             source.currentLanguage = language;
             source.translateText = translateText;
@@ -222,7 +218,7 @@ var TranslateDB = /** @class */ (function () {
                 };
             }
         }
-        if (this._dev && cleanText) {
+        if (TranslateConfig.dev && cleanText) {
             var t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             // if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
             if (isNaN(Number(t)) && !/^[0-9]+$/.test(t)) {

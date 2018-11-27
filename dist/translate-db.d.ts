@@ -1,9 +1,8 @@
-import { ITranslateSource } from './translate.interface';
+import { TranslateSource } from './translate.interface';
 /**
  * 翻譯資料庫
  */
 export declare class TranslateDB {
-    private _dev;
     private _specialChars;
     private _startRegexStr;
     private _endRegexStr;
@@ -17,7 +16,7 @@ export declare class TranslateDB {
     private _textLanguageData;
     private _langs;
     private _cacheNonTranslateText;
-    constructor(_dev: any);
+    constructor();
     getLanguages(): Array<string>;
     /**
      * 是否有該語系翻譯資料
@@ -32,7 +31,7 @@ export declare class TranslateDB {
     /**
      * 取得無法翻譯的文字
      */
-    getNonTranslate(): object;
+    getNonTranslate(): any;
     /**
      * 翻譯文字
      * @param text
@@ -51,22 +50,22 @@ export declare class TranslateDB {
      * @param source
      * @param language
      */
-    translateBySource(text: string, source: ITranslateSource, language: string): string;
+    translateBySource(text: string, source: TranslateSource, language: string): string;
     /**
      * 檢查是否需要翻譯並回傳翻譯資料
      * @param text
      */
-    getTranslateSource(text: string): ITranslateSource;
+    getTranslateSource(text: string): TranslateSource;
     /**
      * 檢查是否需要翻譯並回傳翻譯資料
      * @param text
      */
-    getTranslateSourceByKey(key: string): ITranslateSource;
+    getTranslateSourceByKey(key: string): TranslateSource;
     /**
      * 取得文字語系
      * @param text
      */
-    private getTextLanguage;
+    private getTextLanguage(text);
     /**
      * 取得文字翻譯資源
      * @param word
@@ -76,7 +75,7 @@ export declare class TranslateDB {
      * 取得文字表達式
      * @param word
      */
-    private getWordRegex;
+    private getWordRegex(word);
     /**
      * 移除空白換行
      * @param text
@@ -86,5 +85,5 @@ export declare class TranslateDB {
      * 文字內容特殊字元 增加跳脫符號
      * @param text
      */
-    private getRegexText;
+    private getRegexText(text);
 }

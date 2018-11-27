@@ -1,28 +1,32 @@
 import { PlaceholderTranslateNodes } from './nodes/translate-placeholder-nodes';
 import { TextTranslateNodes } from './nodes/translate-text-nodes';
+import { TranslateConfig, TranslateConst } from './config/translate-config';
 import { TranslateDB } from './translate-db';
-import { TranslateToolBar } from './translate-toolbar';
 import { TranslateUtil } from './translate-util';
+/**
+ * 取得TranslateGO
+ */
+export function getTranslateGO() {
+    if (window[TranslateConst.Prefix]) {
+        return window[TranslateConst.Prefix];
+    }
+    else {
+        return window[TranslateConst.Prefix] = new TranslateGO();
+    }
+}
 /**
  * 翻譯
  */
 var TranslateGO = /** @class */ (function () {
-    function TranslateGO(defaultLanguage, dev) {
+    function TranslateGO() {
         var _this = this;
-        this.isWatch = false;
+        this.watch = false;
+        this.db = new TranslateDB();
+        // 當前語系
+        this.currentLanguage = TranslateConfig.defaultLanguage || navigator.language;
         // 需要被翻譯的Node
         this.translateTextNodes = new TextTranslateNodes();
         this.translatePlaceholderNodes = new PlaceholderTranslateNodes();
-        // 忽略標籤
-        this.ignoreTagArray = ['SCRIPT', 'LINK', 'META', 'STYLE'];
-        // 忽略Attribute
-        this.ignoreAttributeName = 'nottranslate';
-        // translate attribute name
-        this.translatekey = 'translatekey';
-        // placeholder translate attribute name
-        this.placeholderTranslatekey = 'placeholdertranslatekey';
-        // placeholder attribute name
-        this.placeholder = 'placeholder';
         this.windowAlert = window.alert;
         this.windowConfirm = window.confirm;
         this.elementSetAttributeOrigin = Element.prototype.setAttribute;
@@ -55,14 +59,13 @@ var TranslateGO = /** @class */ (function () {
                 _this.modifyAddNode(_this.translateTextNodes, node);
             }
         };
-        this.currentLanguage = defaultLanguage || navigator.language;
-        this.db = new TranslateDB(dev);
-        if (dev) {
-            this.toolbar = new TranslateToolBar(this);
-            this.toolbar.updateLanaguageOption(this.db.getLanguages());
-            this.toolbar.changeLanaguage(this.currentLanguage);
-        }
     }
+    /**
+     * 是否監控中
+     */
+    TranslateGO.prototype.isWatch = function () {
+        return this.watch;
+    };
     TranslateGO.prototype.getTranslateNode = function () {
         return this.translateTextNodes;
     };
@@ -73,16 +76,20 @@ var TranslateGO = /** @class */ (function () {
         return this.db.getNonTranslate();
     };
     /**
-     * 載入文字多語資料
-     * @param data
+     * 重新載入文字多語資料
      */
-    TranslateGO.prototype.loadLanguageData = function (data) {
-        this.db.insert(data);
-        if (this.toolbar) {
-            this.toolbar.updateLanaguageOption(this.db.getLanguages());
-            this.toolbar.changeLanaguage(this.currentLanguage);
+    TranslateGO.prototype.reload = function (data) {
+        if (data) {
+            this.db.insert(data);
         }
-        if (this.isWatch) {
+        else {
+            for (var name_1 in window) {
+                if (name_1.indexOf(TranslateConst.GroupPrefix) != -1) {
+                    this.db.insert(window[name_1]);
+                }
+            }
+        }
+        if (this.watch) {
             this.loadTextNodes();
         }
     };
@@ -97,7 +104,7 @@ var TranslateGO = /** @class */ (function () {
      * @param text
      */
     TranslateGO.prototype.getText = function (text) {
-        if (typeof text === 'string') {
+        if (typeof text == 'string') {
             return this.db.translate(text, this.currentLanguage);
         }
         else {
@@ -122,18 +129,15 @@ var TranslateGO = /** @class */ (function () {
         if (this.db.hasLanguage(language)) {
             this.currentLanguage = language;
             this.doTranslate();
-            if (this.toolbar) {
-                this.toolbar.changeLanaguage(this.currentLanguage);
-            }
         }
     };
     /**
      * 觀察並翻譯
      */
-    TranslateGO.prototype.watch = function () {
+    TranslateGO.prototype.start = function () {
         this.stop();
-        this.isWatch = true;
-        this.loadTextNodes();
+        this.watch = true;
+        this.reload();
         this.doTranslate();
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
@@ -141,24 +145,18 @@ var TranslateGO = /** @class */ (function () {
         document.addEventListener('DOMNodeInserted', this.domNodeInserted);
         document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
         document.addEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
-        if (this.toolbar) {
-            this.toolbar.status(true);
-        }
     };
     /**
      * 停止觀察和翻譯
      */
     TranslateGO.prototype.stop = function () {
-        this.isWatch = false;
+        this.watch = false;
         window.alert = this.windowAlert;
         window.confirm = this.windowConfirm;
         Element.prototype.setAttribute = this.elementSetAttributeOrigin;
         document.removeEventListener('DOMNodeInserted', this.domNodeInserted);
         document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
         document.removeEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
-        if (this.toolbar) {
-            this.toolbar.status(false);
-        }
     };
     /**
      * 攔截setAttribute
@@ -168,10 +166,10 @@ var TranslateGO = /** @class */ (function () {
         return function (key, value) {
             go.elementSetAttributeOrigin.apply(this, arguments);
             key = key.toLowerCase();
-            if (key == go.translatekey) {
+            if (key == TranslateConst.Translatekey) {
                 this.innerText = value;
             }
-            else if (key == go.placeholderTranslatekey) {
+            else if (key == TranslateConst.PlaceholderTranslatekey) {
                 go.addNode(go.translatePlaceholderNodes, this);
             }
         };
@@ -182,12 +180,20 @@ var TranslateGO = /** @class */ (function () {
      */
     TranslateGO.prototype.isNonIgnore = function (element) {
         if (element) {
+            if (element == document.documentElement) {
+                return true;
+            }
             if (element.nodeType == 3) {
                 element = TranslateUtil.getParentElement(element);
             }
             if (element.nodeType == 1) {
-                if (this.ignoreTagArray.indexOf(element.tagName) == -1) {
-                    return element.getAttribute(this.ignoreAttributeName) == null;
+                if (TranslateConst.IgnoreTagArray.indexOf(element.tagName) == -1) {
+                    if (element.getAttribute(TranslateConst.IgnoreAttributeName) == null) {
+                        return this.isNonIgnore(TranslateUtil.getParentElement(element));
+                    }
+                    else {
+                        return false;
+                    }
                 }
                 else {
                     return false;
@@ -284,7 +290,7 @@ var TranslateGO = /** @class */ (function () {
     TranslateGO.prototype.isCanAddNode = function (node) {
         var parent = node;
         while ((parent = TranslateUtil.getParentElement(parent)) != document.documentElement) {
-            if (parent.getAttribute(this.ignoreAttributeName) != null) {
+            if (parent.getAttribute(TranslateConst.IgnoreAttributeName) != null) {
                 return false;
             }
         }
@@ -316,10 +322,17 @@ var TranslateGO = /** @class */ (function () {
     TranslateGO.prototype.addTranslateSource = function (translateNodes, node) {
         var key;
         if (node.nodeType == 3) {
-            key = TranslateUtil.getParentElement(node).getAttribute(this.translatekey);
+            key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.Translatekey);
         }
         else {
-            key = TranslateUtil.getParentElement(node).getAttribute(this.placeholderTranslatekey);
+            key = node.getAttribute(TranslateConst.Translatekey);
+            if (key) {
+                node.innerText = key;
+                key = null;
+            }
+            else {
+                key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.PlaceholderTranslatekey);
+            }
         }
         if (key != null) {
             return (node.translateTextSource = this.db.getTranslateSourceByKey(key));
@@ -336,7 +349,8 @@ var TranslateGO = /** @class */ (function () {
      * 翻譯
      */
     TranslateGO.prototype.doTranslateNodesSetText = function (translateNodes, node) {
-        translateNodes.setText(node, this.db.translateBySource(translateNodes.getText(node), node.translateTextSource, this.currentLanguage));
+        var newText = this.db.translateBySource(translateNodes.getText(node), node.translateTextSource, this.currentLanguage);
+        translateNodes.setText(node, newText);
     };
     return TranslateGO;
 }());

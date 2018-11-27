@@ -1,27 +1,43 @@
+
 export enum TranslateType {
     none,
     key
 }
 
-export interface ITranslateNode extends Text {
-    translateTextSource: ITranslateSource;
+export interface TranslateNode extends Text {
+    translateTextSource: TranslateSource;
     translated: boolean;
 }
 
-export interface ITranslateSource {
+export interface TranslateSource {
     type: TranslateType;
     wordSource: object;
     currentLanguage: string;
-    translateRegexs: ITranslateRegexs;
+    translateRegexs: TranslateRegexs;
     translateText: string;
     currentText: string;
 }
 
-export interface ITranslateRegexs {
+export interface TranslateRegexs {
     [lang: string]: RegExp;
 }
 
-export interface ITextLanguage {
+export interface TextLanguage {
     language: string;
     text: string;
 }
+
+
+export interface TranslateGroupSource {
+    [lang: string]: string;
+}
+
+export interface TranslateGroup {
+    name: string;
+    sources: TranslateGroupSource[];
+}
+
+export interface TranslateKeySource {
+    [key: string]: TranslateGroupSource;
+}
+

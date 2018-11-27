@@ -1,4 +1,10 @@
-import { ITranslateSource, ITranslateRegexs, ITextLanguage, TranslateType } from './translate.interface';
+import {
+    TextLanguage,
+    TranslateRegexs,
+    TranslateSource,
+    TranslateType
+} from './translate.interface';
+import { TranslateConfig, TranslateConst } from './config/translate-config';
 
 
 /**
@@ -7,7 +13,7 @@ import { ITranslateSource, ITranslateRegexs, ITextLanguage, TranslateType } from
 export class TranslateDB {
     // 盡量搜尋純文字的內容
     private _specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
-    private _startRegexStr = '([{(＊*\\[\\s\\r\\n]?^)';
+    private _startRegexStr = '(^[{(＊*\\[\\s\\r\\n]?)';
     private _endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]?$)';
     // 換行等等
     private _cleanChars = '[\\r\\n]';
@@ -30,7 +36,7 @@ export class TranslateDB {
     // 無法翻譯資料
     private _cacheNonTranslateText = {};
 
-    constructor(private _dev) {
+    constructor() {
 
     }
 
@@ -51,23 +57,28 @@ export class TranslateDB {
      * @param data
      */
     public insert(data: any): void {
-        let word, source;
-        let langData;
-        for (let lang in data) {
-            if (this._langs.indexOf(lang) == -1) {
-                this._langs.push(lang);
-            }
-            langData = data[lang];
-            for (let key in langData) {
-                word = langData[key];
-                source = this._keySource[key];
-                if (!source) {
-                    source = this._keySource[key] = {};
+        let source;
+        for (let key in data) {
+            source = data[key];
+            for (let lang in source) {
+                let word = String(source[lang]);
+                if (lang == TranslateConst.Key) {
+                    this._keySource[key] = source;
+                } else {
+                    this._wordSource[word] = source;
+                    this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
+                    this._textLanguageData[word] = lang;
+                    if (TranslateConfig.dev) {
+                        delete this._cacheNonTranslateText[word];
+                    }
                 }
-                source[lang] = word;
-                this._wordSource[word] = source;
-                this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
-                this._textLanguageData[word] = lang;
+            }
+        }
+        if (source) {
+            for (let lang in source) {
+                if (lang != TranslateConst.Key && this._langs.indexOf(lang) == -1) {
+                    this._langs.push(lang);
+                }
             }
         }
     }
@@ -75,18 +86,8 @@ export class TranslateDB {
     /**
      * 取得無法翻譯的文字
      */
-    public getNonTranslate(): object {
-        let result = {};
-        let langs = this._langs.length > 0 ? this._langs : ['zh_TW'];
-        let count = 0;
-        for (let i in langs) {
-            result[langs[i]] = {};
-            count = 0;
-            for (let text in this._cacheNonTranslateText) {
-                result[langs[i]][count++] = text;
-            }
-        }
-        return result;
+    public getNonTranslate(): any {
+        return this._cacheNonTranslateText;
     }
 
     /**
@@ -133,7 +134,7 @@ export class TranslateDB {
      * @param source
      * @param language
      */
-    public translateBySource(text: string, source: ITranslateSource, language: string): string {
+    public translateBySource(text: string, source: TranslateSource, language: string): string {
         let translateText = source.wordSource[language];
         if (source.type == TranslateType.key) {
             source.currentLanguage = language;
@@ -141,27 +142,26 @@ export class TranslateDB {
             source.currentText = translateText;
             return translateText;
         } else {
-            let regex = source.translateRegexs[source.currentLanguage];
             if (translateText == undefined) {
                 return;
             }
+            let regex = source.translateRegexs[source.currentLanguage];
             // 更新
             source.currentLanguage = language;
             source.translateText = translateText;
             source.currentText = text.replace(regex, '$1' + translateText + '$2');
             return source.currentText;
         }
-
     }
 
     /**
      * 檢查是否需要翻譯並回傳翻譯資料
      * @param text
      */
-    public getTranslateSource(text: string): ITranslateSource {
+    public getTranslateSource(text: string): TranslateSource {
         let textLanguage = this.getTextLanguage(text);
         if (textLanguage) {
-            let translateRegexs: ITranslateRegexs = {};
+            let translateRegexs: TranslateRegexs = {};
             let wordSource = this.getWordSource(textLanguage.text);
             if (wordSource) {
                 for (let lang in wordSource) {
@@ -183,7 +183,7 @@ export class TranslateDB {
      * 檢查是否需要翻譯並回傳翻譯資料
      * @param text
      */
-    public getTranslateSourceByKey(key: string): ITranslateSource {
+    public getTranslateSourceByKey(key: string): TranslateSource {
         let source = this._keySource[key];
         if (source) {
             return {
@@ -203,7 +203,7 @@ export class TranslateDB {
      * 取得文字語系
      * @param text
      */
-    private getTextLanguage(text: string): ITextLanguage {
+    private getTextLanguage(text: string): TextLanguage {
         // 第一次嘗試取得語系
         let language = this._textLanguageData[text];
         if (language) {
@@ -234,7 +234,7 @@ export class TranslateDB {
                 };
             }
         }
-        if (this._dev && cleanText) {
+        if (TranslateConfig.dev && cleanText) {
             let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             // if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
             if (isNaN(Number(t)) && !/^[0-9]+$/.test(t)) {

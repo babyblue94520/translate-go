@@ -1,4 +1,4 @@
-import { ITranslateNode } from '../translate.interface';
+import { TranslateNode } from '../translate.interface';
 import { TranslateUtil } from '../translate-util';
 
 export abstract class TranslateNodes {
@@ -19,7 +19,7 @@ export abstract class TranslateNodes {
     /**
      *
      */
-    public getNodes(): Array<ITranslateNode> {
+    public getNodes(): Array<TranslateNode> {
         return this._nodes;
     }
 

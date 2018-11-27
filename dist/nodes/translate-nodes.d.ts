@@ -1,4 +1,4 @@
-import { ITranslateNode } from '../translate.interface';
+import { TranslateNode } from '../translate.interface';
 export declare abstract class TranslateNodes {
     protected _nodes: any[];
     abstract need(node: any): boolean;
@@ -12,7 +12,7 @@ export declare abstract class TranslateNodes {
     /**
      *
      */
-    getNodes(): Array<ITranslateNode>;
+    getNodes(): Array<TranslateNode>;
     /**
      * 紀錄需要翻譯的node
      * @param node

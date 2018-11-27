@@ -4,14 +4,19 @@
         "baseUrl": "src/",
         "sourceMap": true,
         "declaration": true,
+        "importHelpers": true,
         "module": "es2015",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "target": "es5",
         "lib": [
-            "es5",
+            "es2017",
             "dom"
         ]
-    }
+    },
+    "exclude": [
+        "lib",
+        "dist"
+    ]
 }
