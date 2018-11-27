@@ -168,7 +168,7 @@ TypeScript：
 __JavaScript偷懶步驟__： 
 
 	var source = document.createElement('script');
-	source.src = 'https://babyblue94520.github.io/translate-go/lib/translate.toolbar.js';
+	source.src = 'https://babyblue94520.github.io/translate-go/lib/translate-toolbar.js';
 	source.onload = function(){
 		document.body.appendChild(document.createElement('translate-toolbar'));
 	}

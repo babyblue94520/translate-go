@@ -17,7 +17,7 @@
     "rollupbuild:min": "rollup -c rollup.config.min.js",
     "start": "ng serve --port 4300",
     "go": "tsc -p src/translate-go/tsconfig.go.json",
-    "toolbar": "ng build --prod && gulp",
+    "toolbar": "ng build --prod --base-href /translate-go/dist/ && gulp",
     "http": "ng build --prod --output-hashing=none && gulp && http-server --gzip",
     "test": "ng test",
     "lint": "ng lint",
