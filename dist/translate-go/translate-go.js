@@ -331,7 +331,10 @@ var TranslateGO = /** @class */ (function () {
                 key = null;
             }
             else {
-                key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.PlaceholderTranslatekey);
+                key = node.getAttribute(TranslateConst.PlaceholderTranslatekey);
+                if (key != null) {
+                    node.setAttribute(TranslateConst.Placeholder, key);
+                }
             }
         }
         if (key != null) {

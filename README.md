@@ -3,14 +3,22 @@
 ### npm網址：https://www.npmjs.com/package/translate-go
 ### git網址：https://github.com/babyblue94520/translate-go
 ### 快速建立翻譯資源檔：https://babyblue94520.github.io/translate-go/dist/
-#### 前言
+
+## 前言
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本身是Java後端開發工程師，碰過一些多語系的架構設計，老實說真的很麻煩，很多前後端程式都必須依賴原開發專案多語架構下去開發，就連原本沒有多語系的專案要導入多語系，也需要大改，於是開發這個純前端的多語套件，只要 TranslateGO.js加上自行翻譯的語言包，就可以讓專案有多語的功能，如果要做多語SEO的專案就不太適合喔！
 
 
-#### 目的
+## 目的
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用TranslateGO快速搜尋需要被翻譯的文字，再利用[TranslateGO ToolBar](https://babyblue94520.github.io/translate-go/dist/)快速製作多語系JS檔、TS檔。  
+
+## 翻譯範圍
+
+1. HTMLElement的innerText
+2. Input placeholder
+3. window.alert
+4. window.confirm
 
 ## 一. 安裝
 在自己的網站需要翻譯的頁面，增加以下程式碼：
@@ -211,6 +219,8 @@ __TypeScript__
 
 __JavaScript偷懶步驟__： 
 
+直接打開Chrome DevTools 貼上下面程式碼
+
 	var source = document.createElement('script');
 	source.src = 'https://babyblue94520.github.io/translate-go/lib/translate-toolbar.js';
 	source.onload = function(){
@@ -221,51 +231,128 @@ __JavaScript偷懶步驟__：
 	
 ## TranslateGO功能以下：
 
-1. translate：  
-  	直接翻譯語言包裡有的文字。
+1. __translate__
+
+	直接翻譯語言包裡有的文字。
     
 		translateGO.translate('zh_TW');
 
-2. start  
-  	監聽所有DOM增加、減少和改變的事件，動態翻譯文字。  
+2. __start__
+
+	監聽所有DOM增加、減少和改變的事件，動態翻譯文字。  
     
  		translateGO.start();
 
-3. stop：  
-  	停止監聽DOM insert、modify和remove事件。  
+3. __stop__
+
+	停止監聽DOM insert、modify和remove事件。  
 	
  		translateGO.stop();
 		
-4. reload  
- 	
+4. __reload__
+
+	重新載入翻譯資料，如果沒有傳入翻譯資料，則自動載入當前 window.__translateGO_開頭的翻譯資料
+
 		translateGO.reload({key:{""zh-TW"":"text"}});
 
-5. getText：  
+5. __getText__
+
 	取得當前語系的文字。  
 
 		translateGO.getText('Test');//return '測試';
     
-6. getTextByKey：  
-  	依Key取得當前語系的文字。  
+6. __getTextByKey__
+
+	依Key取得當前語系的文字。  
  	
  		translateGO.getTextByKey('key');//return '測試';
 
-7. getLanguage：  
-  	取得當前語系。  
+7. __getLanguage__
+
+	取得當前語系。  
  	
  		translateGO.getLanguage();//return 'zh-TW';
 
-8. getNonTranslateText：  
-  	取得無法翻譯的資料，搭配[快速建立翻譯資源檔](https://babyblue94520.github.io/tratranslate-go/dist/)，快速建立翻譯檔。  
+8. __getNonTranslateText__
+
+	取得無法翻譯的資料，搭配[快速建立翻譯資源檔](https://babyblue94520.github.io/tratranslate-go/dist/)，快速建立翻譯檔。  
  	
  		translateGO.getNonTranslateText();//return {"zh-TW":{"key":"text"}};
     
 
+## Translate Toolbar功能介紹
+
+1. __檔名&變數名稱前綴__
+
+	__合併下載__ 的檔案名稱和變數名稱
+
+2. __載入翻譯資源__
+
+	點擊跳出視窗，貼上你下載的翻譯JS檔的內容並載入
+
+3. __載入當前翻譯資源__
+
+	自動載入當前 window.__translateGO_開頭的翻譯資料
+
+4. __合併下載JS__
+
+	將所有翻譯群組合併成一個 __*.js__ 檔案並下載
+
+5. __合併下載TS__
+
+	將所有翻譯群組合併成一個 __*.ts__ 檔案並下載
+
+6. __檢查__
+
+	檢查當前所有群組內是否有重複的Key
+
+7. __新增語系__
+
+	為目前所有群組的翻譯資料新增語系
+
+8. __新增群組__
+
+	將翻譯資料依類型設定群組，增加可維護性與檔案大小的切割
+
+9. __切換群組__
+
+	將該組翻譯資料設定到指定群組裡
+
+10. __下載JS__
+
+	將當前群組的翻譯資料，獨立下載成 __檔名&變數名稱前綴__ + __群組名稱.js__ 檔案
+
+11. __下載TS__
+
+	將當前群組的翻譯資料，獨立下載成 __檔名&變數名稱前綴__ + __群組名稱.ts__ 檔案
+
+12. __刪除__
+
+	刪除整個群組
+
+13. __新增翻譯__
+
+	在當前群組下，新增一組翻譯資料
+
+14. __清除翻譯__
+
+	清除當前群組所有翻譯資料
+
+15. 表格欄位上的 __列出__
+
+	將該欄的所以文字以 __換行__ 隔開，輸出在上面的 __textarea__
+
+16. 表格欄位上的 __載入__
+
+	將該欄的 __textarea__ 的內容，依順序更新到每個翻譯資料
+
 ## 相容性：
-1. 目前支持到IE9
+1. 目前translate-go支持到IE9
+2. translate-toolbar只支持chrome
 
 ## 其他：
-1. 設定不需要翻譯的區塊
+1. 就算是TS環境，也務必下載JS檔留存
+2. 設定不需要翻譯的區塊
 
 	//不做翻譯區塊
 	```
@@ -276,13 +363,13 @@ __JavaScript偷懶步驟__：
 	</div>
 	```
 	
-2. 綁定翻譯Key
+3. 指定翻譯Key
 
 	```
 	<div translateKey="test"></div>
 	```
 
-3. placeholder綁定翻譯Key
+4. placeholder指定翻譯Key
 
 	```
 	<input placeholderTranslateKey="test">

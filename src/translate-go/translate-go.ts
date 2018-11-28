@@ -353,7 +353,10 @@ export class TranslateGO {
                 (<any>node).innerText = key;
                 key = null;
             } else {
-                key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.PlaceholderTranslatekey);
+                key = (<any>node).getAttribute(TranslateConst.PlaceholderTranslatekey);
+                if (key != null) {
+                    (<any>node).setAttribute(TranslateConst.Placeholder, key);
+                }
             }
         }
         if (key != null) {

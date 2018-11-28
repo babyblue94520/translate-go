@@ -11,6 +11,7 @@ export declare const TranslateConst: {
     IgnoreAttributeName: string;
     Translatekey: string;
     PlaceholderTranslatekey: string;
+    Placeholder: string;
     Prefix: string;
     GroupPrefix: string;
     ConfigPrefix: string;

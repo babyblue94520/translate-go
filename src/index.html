@@ -8,9 +8,41 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script type="text/javascript" src="assets/js/translate/TranslateSourceAll.js"></script>
+  <style>
+    .container {
+      padding: 1em;
+
+    }
+
+  </style>
 </head>
 
 <body>
+  <div class="container">
+    <fieldset>
+      <legend>直接翻譯</legend>
+      <div>測試1</div>
+    </fieldset>
+    <fieldset>
+      <legend>指定翻譯Key</legend>
+      <div translateKey="Test2"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Input Placeholder</legend>
+      <input placeholder="測試3">
+    </fieldset>
+    <fieldset>
+      <legend>Input Placeholder指定翻譯Key</legend>
+      <input placeholderTranslateKey="Test4">
+    </fieldset>
+    <fieldset notTranslate>
+      <legend>不翻譯區塊</legend>
+      <div>測試5</div>
+      <input placeholder="Test5">
+      <input placeholderTranslateKey="Test5">
+    </fieldset>
+  </div>
   <translate-toolbar></translate-toolbar>
 </body>
 

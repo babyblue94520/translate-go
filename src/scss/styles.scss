@@ -33,17 +33,19 @@
   position: fixed;
   left: 0;
   bottom: 0;
-  padding: 10px;
+  padding: 3px;
   z-index: 99999;
+  background-color: #fff;
+  @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
+}
 
-  select {
-    padding: 4px;
-    border: none;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
-  }
+.ttb-bar-select {
+  padding: 4px;
+  min-width: 5em;
+  border: none;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  cursor: pointer;
 }
 
 .ttb-space {

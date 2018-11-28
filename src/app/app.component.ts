@@ -79,6 +79,7 @@ export class AppComponent {
     this.loadWindowGroups();
     if (TranslateConfig.dev && !this.translateGO.isWatch()) {
       this.translateGO.start();
+      this.refresh();
     }
 
     let space = document.createElement('div');

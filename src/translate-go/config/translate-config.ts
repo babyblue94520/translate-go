@@ -20,6 +20,8 @@ export const TranslateConst = {
     Translatekey: 'translatekey',
     // placeholder translate attribute name
     PlaceholderTranslatekey: 'placeholdertranslatekey',
+    // placeholder translate attribute name
+    Placeholder: 'placeholder',
     // TranslateGO 在window 中的名稱
     Prefix: '__translateGO',
     // TranslateGO Translate Data在window的前綴
