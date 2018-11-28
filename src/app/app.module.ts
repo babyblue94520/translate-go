@@ -8,7 +8,6 @@ import { InitElementDirective } from './app-common/directive/init-element/init-e
 import { Injector, NgModule } from '@angular/core';
 import { TabComponent } from './app-common/component/tabs/tab/tab.component';
 import { TabGroupComponent } from './app-common/component/tabs/tab-group/tab-group.component';
-import { TranslateConfig } from 'translate-go/lib';
 
 
 @NgModule({
@@ -37,9 +36,5 @@ export class AppModule {
   }
 
   ngDoBootstrap() {
-    if (TranslateConfig.dev) {
-      let element = document.createElement('translate-toolbar');
-      document.body.appendChild(element);
-    }
   }
 }

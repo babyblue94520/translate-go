@@ -2,9 +2,9 @@ import { Cache, CUI, Grid } from '@cui/core';
 import { Component, ViewChild } from '@angular/core';
 import { DialogComponent } from 'app/app-common/component/dialog/dialog.component';
 import { DomUtil } from 'ts/util/dom-util';
-import { TranslateConfig, getTranslateGO } from 'translate-go/lib';
+import { getTranslateGO, TranslateConfig } from 'translate-go/lib';
 import { TranslateConst } from 'translate-go/config/translate-config';
-import { TranslateGroup, TranslateKeySource, TranslateGroupSource } from 'translate-go/translate.interface';
+import { TranslateGroup, TranslateGroupSource, TranslateKeySource } from 'translate-go/translate.interface';
 import { TranslateToolbarData } from 'ts/translate-toolbar-data';
 
 interface TranslateGroupGrid extends TranslateGroup {
