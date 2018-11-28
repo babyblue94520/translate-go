@@ -12,45 +12,96 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用TranslateGO快速搜尋需要被翻譯的文字，再利用[TranslateGO ToolBar](https://babyblue94520.github.io/translate-go/dist/)快速製作多語系JS檔、TS檔。  
 
-
-## 使用方式：
-
-一. __蒐集需要翻譯的文字__  
+## 一. 安裝
 在自己的網站需要翻譯的頁面，增加以下程式碼：
 
-JavaScript：
+### JavaScript
 
-	<script type="text/javascript" src="https://babyblue94520.github.io/translate-go/lib/translate-go.min.js">	</script>
+直接下載，放進專案目錄。
+
+__一般使用__
+
+	<script type="text/javascript" src="js/translate-go.min.js"></script>
 	<script type="text/javascript">
 		// 開發模式
 		TranslateModule.TranslateConfig.dev = true;
 
-    	// 用英文語系最明顯，true:產生右下角的toolbar
-		TranslateModule.TranslateConfig.defaultLanguage = 'en';
+		// 預設使用語系
+		TranslateModule.TranslateConfig.defaultLanguage = 'zh_TW';
 		var translateGO = TranslateModule.getTranslateGO();
-        // 開始監聽
+		// 開始監聽
 		translateGO.start();
 	</script>
-    
-Angular TypeScript：  
 
-安裝lib
+__開發模式__
+
+	<script type="text/javascript" src="js/translate-toolbar.js"></script>
+	<script type="text/javascript" src="js/translate-go.min.js"></script>
+	<script type="text/javascript">
+		// 開發模式
+		TranslateModule.TranslateConfig.dev = true;
+		// 預設使用語系
+		TranslateModule.TranslateConfig.defaultLanguage = 'zh_TW';
+		// 取得TranslateGO 
+		var translateGO = TranslateModule.getTranslateGO();
+		// 開始監聽
+		translateGO.start();
+		// 產生translate-toolbar element
+		if(TranslateModule.TranslateConfig.dev){
+			document.body.appendChild(docuemnt.createElement('translate-toolbar'));
+		}
+	</script>
+    
+### Angular TypeScript
+
+安裝
 
 	npm install translate-go@latest
 
-專案內使用
+__一般使用__
 
-	import { getTranslateGO } from 'translate-go';
+__任意開始 *.ts__ ex: app.module.ts
+
+	import { getTranslateGO,TranslateConfig } from 'translate-go';
+
+	// 預設使用語系
+	TranslateConfig.defaultLanguage = 'zh_TW';
+	let translateGO = getTranslateGO();
+	// 開始監聽
+	translateGO.start();
+
+__開發模式__
+
+__angular.json__
+
+	"architect": {
+        "build": {
+            "scripts": [{
+              "input": "node_modules/translate-go/lib/translate-toolbar.js"
+            }]
+          },
+
+__任意開始 *.ts__ ex: app.module.ts
+
+	import { getTranslateGO,TranslateConfig } from 'translate-go';
 
 	// 開發模式
 	TranslateConfig.dev = true;
-
-	TranslateConfig.defaultLanguage = 'en';
+	// 預設使用語系
+	TranslateConfig.defaultLanguage = 'zh_TW';
+	// 取得TranslateGO 
 	let translateGO = getTranslateGO();
+	// 開始監聽
 	translateGO.start();
+	// 產生translate-toolbar element
+	if(TranslateModule.TranslateConfig.dev){
+		document.body.appendChild(docuemnt.createElement('translate-toolbar'));
+	}
 
-二. __左下角則會出現Toolbar__  
- 
+## 二. 蒐集需要翻譯字串  
+
+在開發模式下，左下角會出現工具列，利用該工具編輯翻譯檔
+
 1. __語系下拉選單__:  
 	* 列出目前有的翻譯資料語系，切換可轉換語系。
 
@@ -75,62 +126,87 @@ Angular TypeScript：
 	* 開啟編輯翻譯資料頁面。
 
 
-三. __加載部分翻譯檔案__  
+## 三. 加載部分翻譯檔案
+
 加載已產生的翻譯資料，反覆搜尋是否有遺漏的。
 
-JavaScript:
+__JavaScript__
 
-	<script type="text/javascript" src="https://babyblue94520.github.io/translate-go/lib/translate-go.min.js">	</script>
-    <script type="text/javascript" src="http://selfhost/TranslateSource.js">	</script>
+	<script type="text/javascript" src="js/translate-go.min.js"></script>
+    <script type="text/javascript" src="js/TranslateSourceAll.js"></script>
 	<script type="text/javascript">
-    	// 用英文語系最明顯，true:產生右下角的toolbar
+		// 預設使用語系
+		TranslateConfig.defaultLanguage = 'zh_TW';
+		// 取得TranslateGO 
 		var translateGO = TranslateModule.getTranslateGO();
-        // 加載翻譯資料
+		// 載入翻譯資料
+    	translateGO.reload(TranslateSourceAll);
+		// or
+		// 將自動載入所有在window.__translateGO_開頭的翻譯資料
     	translateGO.reload();
         // 開始監聽
-		translateGO.watch();
+		translateGO.start();
 	</script>
     
-TypeScript：  
+__TypeScript__
 
-	import { getTranslateGO } from 'translate-go';
+	import { getTranslateGO,TranslateConfig } from 'translate-go';
 	import { TranslateSourceAll } from 'ts/translate/TranslateSourceAll';
 
-	let translateGO = getTranslateGO('en', true);
+	// 預設使用語系
+	TranslateConfig.defaultLanguage = 'zh_TW';
+	// 取得TranslateGO 
+	let translateGO = getTranslateGO();
+	// 載入翻譯資料
+	translateGO.reload(TranslateSourceAll);
+	// or
+	// 將自動載入所有在window.__translateGO_開頭的翻譯資料
 	translateGO.reload();
-	translateGO.watch();
+	// 開始監聽
+	translateGO.start();
 	
-四. __開始使用__:
+## 四. 開始使用:
 
-JavaScript：  
+__JavaScript__ 
 
-	<script type="text/javascript" src="https://babyblue94520.github.io/translate-go/lib/translate-go.min.js">	</script>
-    <script type="text/javascript" src="http://selfhost/TranslateSourceAll.js">	</script>
+	<script type="text/javascript" src="js/translate-go.min.js"></script>
+    <script type="text/javascript" src="js/TranslateSourceAll.js"></script>
 	<script type="text/javascript">
     	// 用英文語系最明顯，true:產生右下角的toolbar
 		var translateGO = TranslateModule.getTranslateGO();
         // 加載翻譯資料
     	translateGO.reload();
+		// 開始監聽
+		translateGO.start();
         
+		// 其他使用方式
         var testText = translateGO.getText('測試');// return 'test';
         // or
         var testText = translateGO.getTextByKey('testKey');// return 'test';
         // or
-        var testText = TranslateSourceAll['testKey']['en'];
+        var testText = TranslateSourceAll['testKey']['zh_TW'];
 	</script>
 
-TypeScript：  
+__TypeScript__ 
 
-	import { TranslateGO } from 'translate-go';
-	import { TranslateGoSourceWebByLang } from 'ts/translate/TranslateGoSourceWeb';
+	import {  getTranslateGO,TranslateConfig } from 'translate-go';
+	import { TranslateSourceAll } from 'ts/translate/TranslateSourceAll';
 
-	let translateGO = new TranslateGO('en', true);
-	translateGO.loadLanguageData(TranslateGoSourceWebByLang);
+	// 預設使用語系
+	TranslateConfig.defaultLanguage = 'zh_TW';
+	// 取得TranslateGO 
+	let translateGO = getTranslateGO();
+	// 加載翻譯資料
+	translateGO.reload();
+	// 開始監聽
+	translateGO.start();
+
+	// 其他使用方式
 	let testText = translateGO.getText('測試');// return 'test';
     // or
     let testText = translateGO.getTextByKey('testKey');// return 'test';
     // or
-    let testText = TranslateSourceByLang.en.testKey;
+    let testText = TranslateSourceByLang.testKey.zh_TW;
 
 
 __JavaScript偷懶步驟__： 
@@ -148,7 +224,7 @@ __JavaScript偷懶步驟__：
 1. translate：  
   	直接翻譯語言包裡有的文字。
     
-		translateGO.translate('en');
+		translateGO.translate('zh_TW');
 
 2. start  
   	監聽所有DOM增加、減少和改變的事件，動態翻譯文字。  
