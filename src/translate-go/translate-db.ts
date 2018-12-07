@@ -196,7 +196,19 @@ export class TranslateDB {
             };
         }
         return undefined;
+    }
 
+    /**
+     * 檢查是否需要翻譯並回傳翻譯資料
+     * 額外記錄沒有key
+     * @param text
+     */
+    public getTranslateSourceAndLogByKey(key: string): TranslateSource {
+        let result = this.getTranslateSourceByKey(key);
+        if (TranslateConfig.dev && result == undefined) {
+            this._cacheNonTranslateText[key] = false;
+        }
+        return result;
     }
 
     /**

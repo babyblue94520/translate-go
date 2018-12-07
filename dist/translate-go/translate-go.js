@@ -338,12 +338,18 @@ var TranslateGO = /** @class */ (function () {
             }
         }
         if (key != null) {
-            return (node.translateTextSource = this.db.getTranslateSourceByKey(key));
+            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key));
         }
         else {
             var text = translateNodes.getText(node);
             if (text == undefined || String(text).length == 0) {
                 return false;
+            }
+            if (/^[a-zA-Z0-9]+$/.test(text)) {
+                node.translateTextSource = this.db.getTranslateSourceByKey(text);
+                if (node.translateTextSource) {
+                    return node.translateTextSource;
+                }
             }
             return (node.translateTextSource = this.db.getTranslateSource(text));
         }

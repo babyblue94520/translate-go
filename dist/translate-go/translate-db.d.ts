@@ -62,6 +62,12 @@ export declare class TranslateDB {
      */
     getTranslateSourceByKey(key: string): TranslateSource;
     /**
+     * 檢查是否需要翻譯並回傳翻譯資料
+     * 額外記錄沒有key
+     * @param text
+     */
+    getTranslateSourceAndLogByKey(key: string): TranslateSource;
+    /**
      * 取得文字語系
      * @param text
      */

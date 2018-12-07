@@ -182,6 +182,18 @@ var TranslateDB = /** @class */ (function () {
         return undefined;
     };
     /**
+     * 檢查是否需要翻譯並回傳翻譯資料
+     * 額外記錄沒有key
+     * @param text
+     */
+    TranslateDB.prototype.getTranslateSourceAndLogByKey = function (key) {
+        var result = this.getTranslateSourceByKey(key);
+        if (TranslateConfig.dev && result == undefined) {
+            this._cacheNonTranslateText[key] = false;
+        }
+        return result;
+    };
+    /**
      * 取得文字語系
      * @param text
      */

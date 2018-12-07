@@ -378,11 +378,17 @@ __JavaScript偷懶步驟__：
 3. 指定翻譯Key
 
 	```
-	<div translateKey="test"></div>
+	<div>TestKey</div>
+	// or
+	<div translateKey="TestKey"></div>
+
 	```
 
 4. placeholder指定翻譯Key
 
 	```
-	<input placeholderTranslateKey="test">
+	<input placeholder="TestKey">
+	// or
+	<input placeholderTranslateKey="TestKey">
+
 	```
