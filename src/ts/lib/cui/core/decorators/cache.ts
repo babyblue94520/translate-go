@@ -6,7 +6,7 @@ import { CUI } from '../cui';
  * 緩存
  */
 export namespace Cache {
-    const id = '_Cache';
+    const id = '__TranslateGOCache';
     /** 需要回寫的方法 */
     let cacheUnloadHandlers = {};
     let localCache = LocalStorageManager.get(id, false) || {};
@@ -83,7 +83,7 @@ export namespace Cache {
         let _val = CUI.deepClone(defaultValue, cache[_cacheKey]);
         cache[_cacheKey] = _val;
         cacheUnloadHandlers[_cacheKey] = function () {
-            cache[_cacheKey] = _val;
+            cache[_cacheKey] = CUI.deepClone(_val);
         };
         // Delete property.
         if (delete target[key]) {
