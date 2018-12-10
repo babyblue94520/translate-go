@@ -344,27 +344,35 @@ export class TranslateGO {
      * @param node
      */
     private addTranslateSource(translateNodes: TranslateNodes, node: TranslateNode) {
-        let key;
+        let key, text;
         if (node.nodeType == 3) {
             key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.Translatekey);
+            text = node.data;
         } else {
             key = (<any>node).getAttribute(TranslateConst.Translatekey);
-            if (key) {
-                (<any>node).innerText = key;
+            if (key != undefined || key != '') {
+                text = (<any>node).innerText;
+                if (text == undefined || text == '') {
+                    text = (<any>node).innerText = key;
+                }
                 key = null;
             } else {
                 key = (<any>node).getAttribute(TranslateConst.PlaceholderTranslatekey);
                 if (key != null) {
-                    (<any>node).setAttribute(TranslateConst.Placeholder, key);
+                    text = (<any>node).getAttribute(TranslateConst.Placeholder);
+                    if (text == undefined || text == '') {
+                        text = key;
+                        (<any>node).setAttribute(TranslateConst.Placeholder, key);
+                    }
                 }
             }
         }
         if (key != null) {
-            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key));
+            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text));
         } else {
-            let text = translateNodes.getText(node);
+            text = translateNodes.getText(node);
             if (text == undefined || String(text).length == 0) { return false; }
-            if (/^[a-zA-Z0-9]+$/.test(text)) {
+            if (/^[a-zA-Z0-9_]+$/.test(text)) {
                 node.translateTextSource = this.db.getTranslateSourceByKey(text);
                 if (node.translateTextSource) {
                     return node.translateTextSource;

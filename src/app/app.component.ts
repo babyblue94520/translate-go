@@ -180,12 +180,14 @@ export class AppComponent {
     let texts = this.translateGO.getNonTranslateText();
     if (CUI.isEmptyObject(this.ignoreKeys)) {
       for (let text in texts) {
-        sources.push(this.buildAddSource(text));
+        texts[text][TranslateConst.Type] = '0';
+        sources.push(texts[text]);
       }
     } else {
       for (let text in texts) {
         if (!this.ignoreKeys[text]) {
-          sources.push(this.buildAddSource(text));
+          texts[text][TranslateConst.Type] = '0';
+          sources.push(texts[text]);
         }
       }
     }
@@ -674,6 +676,7 @@ export class AppComponent {
             return buttons;
           }
         }
+        , { value: TranslateConst.Key, name: TranslateConst.Key, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }
         , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '100%', maxWidth: '1000px', canSort: true }
       ],
       contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }],
@@ -713,6 +716,7 @@ export class AppComponent {
             return buttons;
           }
         }
+        , { value: TranslateConst.Key, name: TranslateConst.Key, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }
         , { value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '100%', maxWidth: '1000px', canSort: true }
       ],
       contentColumns: [{ value: this.defaultLanguage, name: this.defaultLanguage, align: 'left', width: '1%', canSort: true, maxWidth: '1000px' }],

@@ -320,32 +320,40 @@ var TranslateGO = /** @class */ (function () {
      * @param node
      */
     TranslateGO.prototype.addTranslateSource = function (translateNodes, node) {
-        var key;
+        var key, text;
         if (node.nodeType == 3) {
             key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.Translatekey);
+            text = node.data;
         }
         else {
             key = node.getAttribute(TranslateConst.Translatekey);
             if (key) {
-                node.innerText = key;
+                text = node.innerText;
+                if (text == undefined || text == '') {
+                    text = node.innerText = key;
+                }
                 key = null;
             }
             else {
                 key = node.getAttribute(TranslateConst.PlaceholderTranslatekey);
                 if (key != null) {
-                    node.setAttribute(TranslateConst.Placeholder, key);
+                    text = node.getAttribute(TranslateConst.Placeholder);
+                    if (text == undefined || text == '') {
+                        text = key;
+                        node.setAttribute(TranslateConst.Placeholder, key);
+                    }
                 }
             }
         }
         if (key != null) {
-            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key));
+            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text));
         }
         else {
-            var text = translateNodes.getText(node);
+            text = translateNodes.getText(node);
             if (text == undefined || String(text).length == 0) {
                 return false;
             }
-            if (/^[a-zA-Z0-9]+$/.test(text)) {
+            if (/^[a-zA-Z0-9_]+$/.test(text)) {
                 node.translateTextSource = this.db.getTranslateSourceByKey(text);
                 if (node.translateTextSource) {
                     return node.translateTextSource;

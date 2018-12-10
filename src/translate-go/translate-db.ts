@@ -68,9 +68,10 @@ export class TranslateDB {
                     this._wordSource[word] = source;
                     this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
                     this._textLanguageData[word] = lang;
-                    if (TranslateConfig.dev) {
-                        delete this._cacheNonTranslateText[word];
-                    }
+                }
+                if (TranslateConfig.dev) {
+                    delete this._cacheNonTranslateText[word];
+                    delete this._cacheNonTranslateText[key];
                 }
             }
         }
@@ -203,10 +204,10 @@ export class TranslateDB {
      * 額外記錄沒有key
      * @param text
      */
-    public getTranslateSourceAndLogByKey(key: string): TranslateSource {
+    public getTranslateSourceAndLogByKey(key: string, text: string): TranslateSource {
         let result = this.getTranslateSourceByKey(key);
         if (TranslateConfig.dev && result == undefined) {
-            this._cacheNonTranslateText[key] = false;
+            this.setCacheNonTranslate(key, text);
         }
         return result;
     }
@@ -250,9 +251,21 @@ export class TranslateDB {
             let t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             // if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
             if (isNaN(Number(t)) && !/^[0-9]+$/.test(t)) {
-                this._cacheNonTranslateText[cleanText] = false;
+                this.setCacheNonTranslate('', cleanText);
             }
         }
+    }
+
+    /**
+     * 紀錄無法翻譯資料
+     * @param key
+     * @param text
+     */
+    public setCacheNonTranslate(key: string, text: string) {
+        let source = {};
+        source[TranslateConst.Key] = key;
+        source[TranslateConfig.defaultLanguage] = text;
+        this._cacheNonTranslateText[key || text] = source;
     }
 
     /**

@@ -66,12 +66,18 @@ export declare class TranslateDB {
      * 額外記錄沒有key
      * @param text
      */
-    getTranslateSourceAndLogByKey(key: string): TranslateSource;
+    getTranslateSourceAndLogByKey(key: string, text: string): TranslateSource;
     /**
      * 取得文字語系
      * @param text
      */
     private getTextLanguage;
+    /**
+     * 紀錄無法翻譯資料
+     * @param key
+     * @param text
+     */
+    setCacheNonTranslate(key: string, text: string): void;
     /**
      * 取得文字翻譯資源
      * @param word

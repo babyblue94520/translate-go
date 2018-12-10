@@ -57,9 +57,10 @@ var TranslateDB = /** @class */ (function () {
                     this._wordSource[word] = source;
                     this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
                     this._textLanguageData[word] = lang;
-                    if (TranslateConfig.dev) {
-                        delete this._cacheNonTranslateText[word];
-                    }
+                }
+                if (TranslateConfig.dev) {
+                    delete this._cacheNonTranslateText[word];
+                    delete this._cacheNonTranslateText[key];
                 }
             }
         }
@@ -186,10 +187,10 @@ var TranslateDB = /** @class */ (function () {
      * 額外記錄沒有key
      * @param text
      */
-    TranslateDB.prototype.getTranslateSourceAndLogByKey = function (key) {
+    TranslateDB.prototype.getTranslateSourceAndLogByKey = function (key, text) {
         var result = this.getTranslateSourceByKey(key);
         if (TranslateConfig.dev && result == undefined) {
-            this._cacheNonTranslateText[key] = false;
+            this.setCacheNonTranslate(key, text);
         }
         return result;
     };
@@ -234,9 +235,20 @@ var TranslateDB = /** @class */ (function () {
             var t = cleanText.replace(/[&@#$%^\[\]'"～`~<>,，+-_.。:：;；!！?？{}()=＊*\/\[\]\s\r\n]/g, '');
             // if (isNaN(Number(t)) && !/^[a-zA-Z0-9]+$/.test(t)) {
             if (isNaN(Number(t)) && !/^[0-9]+$/.test(t)) {
-                this._cacheNonTranslateText[cleanText] = false;
+                this.setCacheNonTranslate('', cleanText);
             }
         }
+    };
+    /**
+     * 紀錄無法翻譯資料
+     * @param key
+     * @param text
+     */
+    TranslateDB.prototype.setCacheNonTranslate = function (key, text) {
+        var source = {};
+        source[TranslateConst.Key] = key;
+        source[TranslateConfig.defaultLanguage] = text;
+        this._cacheNonTranslateText[key || text] = source;
     };
     /**
      * 取得文字翻譯資源
