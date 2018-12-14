@@ -350,15 +350,15 @@ export class TranslateGO {
             text = node.data;
         } else {
             key = (<any>node).getAttribute(TranslateConst.Translatekey);
-            if (key != undefined || key != '') {
+            if (key != undefined && key != '') {
                 text = (<any>node).innerText;
                 if (text == undefined || text == '') {
                     text = (<any>node).innerText = key;
                 }
-                key = null;
+                key = undefined;
             } else {
                 key = (<any>node).getAttribute(TranslateConst.PlaceholderTranslatekey);
-                if (key != null) {
+                if (key != undefined) {
                     text = (<any>node).getAttribute(TranslateConst.Placeholder);
                     if (text == undefined || text == '') {
                         text = key;
@@ -367,7 +367,7 @@ export class TranslateGO {
                 }
             }
         }
-        if (key != null) {
+        if (key != undefined) {
             return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text));
         } else {
             text = translateNodes.getText(node);

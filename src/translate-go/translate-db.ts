@@ -1,8 +1,8 @@
 import {
     TextLanguage,
-    TranslateRegexs,
     TranslateSource,
-    TranslateType
+    TranslateType,
+    DbSource,
 } from './translate.interface';
 import { TranslateConfig, TranslateConst } from './config/translate-config';
 
@@ -29,8 +29,10 @@ export class TranslateDB {
     private _keySource = {};
     // 翻譯文字的表示式
     private _wordRegexs = [];
+    // 翻譯文字的特殊取代方法
+    private _wordKeepReplaces = [];
     // 文字對照語系
-    private _textLanguageData = {};
+    private _textLangs = {};
     // 語系資料
     private _langs = [];
     // 無法翻譯資料
@@ -58,16 +60,36 @@ export class TranslateDB {
      */
     public insert(data: any): void {
         let source;
+        let dbSource: DbSource;
         for (let key in data) {
             source = data[key];
+            dbSource = {
+                source: source,
+                regexps: {},
+                replaces: {}
+            };
             for (let lang in source) {
                 let word = String(source[lang]);
                 if (lang == TranslateConst.Key) {
-                    this._keySource[key] = source;
+                    this._keySource[key] = dbSource;
                 } else {
-                    this._wordSource[word] = source;
-                    this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
-                    this._textLanguageData[word] = lang;
+                    // 處理中間要保留的文字
+                    let strs = word.split('(.+)');
+                    if (strs.length > 1) {
+                        let replace = '$1';
+                        for (let i in strs) {
+                            replace += strs[i] + '$' + (Number(i) + 2);
+                            strs[i] = this.getRegexText(strs[i]);
+                        }
+                        dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, this._modifier);
+                        dbSource.replaces[lang] = replace;
+                        console.log(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, replace);
+                    } else {
+                        dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
+                        dbSource.replaces[lang] = '$1' + word + '$2';
+                    }
+                    this._wordSource[word] = dbSource;
+                    this._textLangs[word] = lang;
                 }
                 if (TranslateConfig.dev) {
                     delete this._cacheNonTranslateText[word];
@@ -100,12 +122,12 @@ export class TranslateDB {
         let result = text;
         text = String(text);
         if (text.length > 0) {
-            let source = this.getWordSource(text);
-            if (source) {
-                return source[language] || result;
+            let dbSource = this._wordSource[text];
+            if (dbSource) {
+                return dbSource.source[language] || result;
             }
             let translateSource = this.getTranslateSource(text);
-            if (source) {
+            if (translateSource) {
                 return this.translateBySource(text, translateSource, language) || result;
             }
         }
@@ -119,12 +141,12 @@ export class TranslateDB {
      */
     public translateByKey(key: string, language): string {
         let result;
-        let source = this._keySource[key];
-        if (source) {
-            result = source[language] || result;
-            source.currentLanguage = language;
-            source.translateText = result;
-            source.currentText = result;
+        let dbSource = this._keySource[key];
+        if (dbSource) {
+            result = dbSource.source[language] || result;
+            dbSource.currentLanguage = language;
+            dbSource.translateText = result;
+            dbSource.currentText = result;
         }
         return result;
     }
@@ -136,7 +158,7 @@ export class TranslateDB {
      * @param language
      */
     public translateBySource(text: string, source: TranslateSource, language: string): string {
-        let translateText = source.wordSource[language];
+        let translateText = source.dbSource.source[language];
         if (source.type == TranslateType.key) {
             source.currentLanguage = language;
             source.translateText = translateText;
@@ -146,11 +168,10 @@ export class TranslateDB {
             if (translateText == undefined) {
                 return;
             }
-            let regex = source.translateRegexs[source.currentLanguage];
             // 更新
-            source.currentLanguage = language;
             source.translateText = translateText;
-            source.currentText = text.replace(regex, '$1' + translateText + '$2');
+            source.currentText = text.replace(source.dbSource.regexps[source.currentLanguage], source.dbSource.replaces[language]);
+            source.currentLanguage = language;
             return source.currentText;
         }
     }
@@ -162,18 +183,13 @@ export class TranslateDB {
     public getTranslateSource(text: string): TranslateSource {
         let textLanguage = this.getTextLanguage(text);
         if (textLanguage) {
-            let translateRegexs: TranslateRegexs = {};
-            let wordSource = this.getWordSource(textLanguage.text);
-            if (wordSource) {
-                for (let lang in wordSource) {
-                    translateRegexs[lang] = this.getWordRegex(wordSource[lang]);
-                }
+            let dbSource = this._wordSource[textLanguage.text];
+            if (dbSource) {
                 return {
                     type: TranslateType.none,
                     translateText: textLanguage.text,
                     currentLanguage: textLanguage.language,
-                    wordSource: wordSource,
-                    translateRegexs: translateRegexs,
+                    dbSource: dbSource,
                     currentText: text
                 };
             }
@@ -185,14 +201,13 @@ export class TranslateDB {
      * @param text
      */
     public getTranslateSourceByKey(key: string): TranslateSource {
-        let source = this._keySource[key];
-        if (source) {
+        let dbSource = this._keySource[key];
+        if (dbSource) {
             return {
                 type: TranslateType.key,
                 translateText: null,
                 currentLanguage: null,
-                wordSource: source,
-                translateRegexs: null,
+                dbSource: dbSource,
                 currentText: null
             };
         }
@@ -218,7 +233,7 @@ export class TranslateDB {
      */
     private getTextLanguage(text: string): TextLanguage {
         // 第一次嘗試取得語系
-        let language = this._textLanguageData[text];
+        let language = this._textLangs[text];
         if (language) {
             return {
                 language: language,
@@ -229,20 +244,20 @@ export class TranslateDB {
         let cleanText = this.getCleanText(text);
         if (cleanText.length == 0) { return; }
         // 第二次嘗試取得語系
-        language = this._textLanguageData[cleanText];
+        language = this._textLangs[cleanText];
         if (language) {
             return {
                 language: language,
-                text: cleanText
+                text: text
             };
         }
         // 透過表達式找出語系
         let regex: RegExp;
-        for (let word in this._textLanguageData) {
-            regex = this.getWordRegex(word);
+        for (let word in this._textLangs) {
+            regex = this._wordRegexs[word];
             if (regex.test(cleanText)) {
                 return {
-                    language: this._textLanguageData[word],
+                    language: this._textLangs[word],
                     text: word
                 };
             }
@@ -269,31 +284,12 @@ export class TranslateDB {
     }
 
     /**
-     * 取得文字翻譯資源
-     * @param word
-     */
-    public getWordSource(word: string): object {
-        return this._wordSource[word];
-    }
-
-    /**
-     * 取得文字表達式
-     * @param word
-     */
-    private getWordRegex(word: string): RegExp {
-        return this._wordRegexs[word];
-    }
-
-    /**
      * 移除空白換行
      * @param text
      */
     public getCleanText(text: string): string {
-        if (text) {
-            // 清除空白
-            return text.replace(this._cleanRegex, '').replace(/(^[\s]+|[\s]+$)/g, '');
-        }
-        return text;
+        // 清除空白
+        return text.replace(this._cleanRegex, '').replace(/(^[\s]+|[\s]+$)/g, '');
     }
 
     /**

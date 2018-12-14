@@ -1,4 +1,4 @@
-import { TranslateType } from './translate.interface';
+import { TranslateType, } from './translate.interface';
 import { TranslateConfig, TranslateConst } from './config/translate-config';
 /**
  * 翻譯資料庫
@@ -23,8 +23,10 @@ var TranslateDB = /** @class */ (function () {
         this._keySource = {};
         // 翻譯文字的表示式
         this._wordRegexs = [];
+        // 翻譯文字的特殊取代方法
+        this._wordKeepReplaces = [];
         // 文字對照語系
-        this._textLanguageData = {};
+        this._textLangs = {};
         // 語系資料
         this._langs = [];
         // 無法翻譯資料
@@ -46,17 +48,38 @@ var TranslateDB = /** @class */ (function () {
      */
     TranslateDB.prototype.insert = function (data) {
         var source;
+        var dbSource;
         for (var key in data) {
             source = data[key];
+            dbSource = {
+                source: source,
+                regexps: {},
+                replaces: {}
+            };
             for (var lang in source) {
                 var word = String(source[lang]);
                 if (lang == TranslateConst.Key) {
-                    this._keySource[key] = source;
+                    this._keySource[key] = dbSource;
                 }
                 else {
-                    this._wordSource[word] = source;
-                    this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
-                    this._textLanguageData[word] = lang;
+                    // 處理中間要保留的文字
+                    var strs = word.split('(.+)');
+                    if (strs.length > 1) {
+                        var replace = '$1';
+                        for (var i in strs) {
+                            replace += strs[i] + '$' + (Number(i) + 2);
+                            strs[i] = this.getRegexText(strs[i]);
+                        }
+                        dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, this._modifier);
+                        dbSource.replaces[lang] = replace;
+                        console.log(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, replace);
+                    }
+                    else {
+                        dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);
+                        dbSource.replaces[lang] = '$1' + word + '$2';
+                    }
+                    this._wordSource[word] = dbSource;
+                    this._textLangs[word] = lang;
                 }
                 if (TranslateConfig.dev) {
                     delete this._cacheNonTranslateText[word];
@@ -87,12 +110,12 @@ var TranslateDB = /** @class */ (function () {
         var result = text;
         text = String(text);
         if (text.length > 0) {
-            var source = this.getWordSource(text);
-            if (source) {
-                return source[language] || result;
+            var dbSource = this._wordSource[text];
+            if (dbSource) {
+                return dbSource.source[language] || result;
             }
             var translateSource = this.getTranslateSource(text);
-            if (source) {
+            if (translateSource) {
                 return this.translateBySource(text, translateSource, language) || result;
             }
         }
@@ -105,12 +128,12 @@ var TranslateDB = /** @class */ (function () {
      */
     TranslateDB.prototype.translateByKey = function (key, language) {
         var result;
-        var source = this._keySource[key];
-        if (source) {
-            result = source[language] || result;
-            source.currentLanguage = language;
-            source.translateText = result;
-            source.currentText = result;
+        var dbSource = this._keySource[key];
+        if (dbSource) {
+            result = dbSource.source[language] || result;
+            dbSource.currentLanguage = language;
+            dbSource.translateText = result;
+            dbSource.currentText = result;
         }
         return result;
     };
@@ -121,7 +144,7 @@ var TranslateDB = /** @class */ (function () {
      * @param language
      */
     TranslateDB.prototype.translateBySource = function (text, source, language) {
-        var translateText = source.wordSource[language];
+        var translateText = source.dbSource.source[language];
         if (source.type == TranslateType.key) {
             source.currentLanguage = language;
             source.translateText = translateText;
@@ -132,11 +155,10 @@ var TranslateDB = /** @class */ (function () {
             if (translateText == undefined) {
                 return;
             }
-            var regex = source.translateRegexs[source.currentLanguage];
             // 更新
-            source.currentLanguage = language;
             source.translateText = translateText;
-            source.currentText = text.replace(regex, '$1' + translateText + '$2');
+            source.currentText = text.replace(source.dbSource.regexps[source.currentLanguage], source.dbSource.replaces[language]);
+            source.currentLanguage = language;
             return source.currentText;
         }
     };
@@ -147,18 +169,13 @@ var TranslateDB = /** @class */ (function () {
     TranslateDB.prototype.getTranslateSource = function (text) {
         var textLanguage = this.getTextLanguage(text);
         if (textLanguage) {
-            var translateRegexs = {};
-            var wordSource = this.getWordSource(textLanguage.text);
-            if (wordSource) {
-                for (var lang in wordSource) {
-                    translateRegexs[lang] = this.getWordRegex(wordSource[lang]);
-                }
+            var dbSource = this._wordSource[textLanguage.text];
+            if (dbSource) {
                 return {
                     type: TranslateType.none,
                     translateText: textLanguage.text,
                     currentLanguage: textLanguage.language,
-                    wordSource: wordSource,
-                    translateRegexs: translateRegexs,
+                    dbSource: dbSource,
                     currentText: text
                 };
             }
@@ -169,14 +186,13 @@ var TranslateDB = /** @class */ (function () {
      * @param text
      */
     TranslateDB.prototype.getTranslateSourceByKey = function (key) {
-        var source = this._keySource[key];
-        if (source) {
+        var dbSource = this._keySource[key];
+        if (dbSource) {
             return {
                 type: TranslateType.key,
                 translateText: null,
                 currentLanguage: null,
-                wordSource: source,
-                translateRegexs: null,
+                dbSource: dbSource,
                 currentText: null
             };
         }
@@ -200,7 +216,7 @@ var TranslateDB = /** @class */ (function () {
      */
     TranslateDB.prototype.getTextLanguage = function (text) {
         // 第一次嘗試取得語系
-        var language = this._textLanguageData[text];
+        var language = this._textLangs[text];
         if (language) {
             return {
                 language: language,
@@ -213,20 +229,20 @@ var TranslateDB = /** @class */ (function () {
             return;
         }
         // 第二次嘗試取得語系
-        language = this._textLanguageData[cleanText];
+        language = this._textLangs[cleanText];
         if (language) {
             return {
                 language: language,
-                text: cleanText
+                text: text
             };
         }
         // 透過表達式找出語系
         var regex;
-        for (var word in this._textLanguageData) {
-            regex = this.getWordRegex(word);
+        for (var word in this._textLangs) {
+            regex = this._wordRegexs[word];
             if (regex.test(cleanText)) {
                 return {
-                    language: this._textLanguageData[word],
+                    language: this._textLangs[word],
                     text: word
                 };
             }
@@ -251,29 +267,12 @@ var TranslateDB = /** @class */ (function () {
         this._cacheNonTranslateText[key || text] = source;
     };
     /**
-     * 取得文字翻譯資源
-     * @param word
-     */
-    TranslateDB.prototype.getWordSource = function (word) {
-        return this._wordSource[word];
-    };
-    /**
-     * 取得文字表達式
-     * @param word
-     */
-    TranslateDB.prototype.getWordRegex = function (word) {
-        return this._wordRegexs[word];
-    };
-    /**
      * 移除空白換行
      * @param text
      */
     TranslateDB.prototype.getCleanText = function (text) {
-        if (text) {
-            // 清除空白
-            return text.replace(this._cleanRegex, '').replace(/(^[\s]+|[\s]+$)/g, '');
-        }
-        return text;
+        // 清除空白
+        return text.replace(this._cleanRegex, '').replace(/(^[\s]+|[\s]+$)/g, '');
     };
     /**
      * 文字內容特殊字元 增加跳脫符號

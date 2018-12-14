@@ -13,7 +13,8 @@ export declare class TranslateDB {
     private _wordSource;
     private _keySource;
     private _wordRegexs;
-    private _textLanguageData;
+    private _wordKeepReplaces;
+    private _textLangs;
     private _langs;
     private _cacheNonTranslateText;
     constructor();
@@ -78,16 +79,6 @@ export declare class TranslateDB {
      * @param text
      */
     setCacheNonTranslate(key: string, text: string): void;
-    /**
-     * 取得文字翻譯資源
-     * @param word
-     */
-    getWordSource(word: string): object;
-    /**
-     * 取得文字表達式
-     * @param word
-     */
-    private getWordRegex;
     /**
      * 移除空白換行
      * @param text

@@ -327,16 +327,16 @@ var TranslateGO = /** @class */ (function () {
         }
         else {
             key = node.getAttribute(TranslateConst.Translatekey);
-            if (key) {
+            if (key != undefined && key != '') {
                 text = node.innerText;
                 if (text == undefined || text == '') {
                     text = node.innerText = key;
                 }
-                key = null;
+                key = undefined;
             }
             else {
                 key = node.getAttribute(TranslateConst.PlaceholderTranslatekey);
-                if (key != null) {
+                if (key != undefined) {
                     text = node.getAttribute(TranslateConst.Placeholder);
                     if (text == undefined || text == '') {
                         text = key;
@@ -345,7 +345,7 @@ var TranslateGO = /** @class */ (function () {
                 }
             }
         }
-        if (key != null) {
+        if (key != undefined) {
             return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text));
         }
         else {

@@ -9,11 +9,22 @@ export interface TranslateNode extends Text {
     translated: boolean;
 }
 
+export interface LangRegExps {
+    [lang: string]: RegExp;
+}
+export interface LangReplaces {
+    [lang: string]: string;
+}
+export interface DbSource {
+    source: TranslateGroupSource;
+    regexps: LangRegExps;
+    replaces: LangReplaces;
+}
+
 export interface TranslateSource {
     type: TranslateType;
-    wordSource: object;
+    dbSource: DbSource;
     currentLanguage: string;
-    translateRegexs: TranslateRegexs;
     translateText: string;
     currentText: string;
 }

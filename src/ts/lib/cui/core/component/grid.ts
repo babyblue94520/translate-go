@@ -354,6 +354,7 @@ export namespace Grid {
                 if (!column) {
                     continue;
                 }
+                colConfig = GridBuilder.buildColumnConfig(column);
                 if (column.checkbox) {
                     this._columns.push({
                         config: column,
@@ -368,7 +369,6 @@ export namespace Grid {
                     hElement.appendChild(this._checkedAllText);
                     hElement.addEventListener('click', this.onCheckedAll.bind(this));
                 } else {
-                    colConfig = GridBuilder.buildColumnConfig(column);
                     this.setSorts(colConfig);
                     this._columns.push({
                         config: colConfig,

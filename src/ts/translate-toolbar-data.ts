@@ -188,7 +188,7 @@ export class TranslateToolbarData {
             }
             if (lang == this.keyName) {
                 group.sources[i][lang] = array[i]
-                    .replace(/[\r\n\-\^\[\]\/\\`~!@#$^&*()=|{}':;',.<>?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？]+/g, ' ')
+                    .replace(/[\r\n\-\^\[\]\/\\`\+~!@#$^&*()=|{}':;',.<>?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？]+/g, ' ')
                     .replace(/[\s]+./g, this.spaceToUp)
                     .replace(/^./, this.firstWordToUp)
                     .trim();

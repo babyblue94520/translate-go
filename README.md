@@ -87,7 +87,15 @@ __angular.json__
             "scripts": [{
               "input": "node_modules/translate-go/lib/translate-toolbar.js"
             }]
-          },
+        },
+
+__切記正式環境設定要移除 scripts__
+
+	"configurations": {
+		"production": {
+        	"scripts": []
+		}
+	}
 
 __任意開始 *.ts__ ex: app.module.ts
 
@@ -392,3 +400,21 @@ __JavaScript偷懶步驟__：
 	<input placeholderTranslateKey="TestKey">
 
 	```
+
+5. 保留部分文字不翻譯
+
+	原文
+
+		Clare 您確定要這麼刪除 Steven 好友嗎?
+		刪除 Steven 好友失敗!
+	
+	翻譯資源
+		
+		// 利用 (.+) 保留中間的文字
+
+		// en
+		Deleting(.+)friends failed!
+		(.+)Are you sure you want to delete(.+)friends like this?
+		// zh_TW
+		刪除(.+)好友失敗!
+		(.+)您確定要這麼刪除(.+)好友嗎?
