@@ -78,6 +78,7 @@ export class TabGroupComponent implements AfterContentInit, AfterViewInit {
     this.next.addEventListener('click', this.nextClick.bind(this));
 
     window.addEventListener('resize', this.resize.bind(this));
+    this.showPrevNext();
     this.delayAfterViewInit();
   }
 
