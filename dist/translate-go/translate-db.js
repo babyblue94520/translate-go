@@ -72,7 +72,6 @@ var TranslateDB = /** @class */ (function () {
                         }
                         dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, this._modifier);
                         dbSource.replaces[lang] = replace;
-                        console.log(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, replace);
                     }
                     else {
                         dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + this.getRegexText(word) + this._endRegexStr, this._modifier);

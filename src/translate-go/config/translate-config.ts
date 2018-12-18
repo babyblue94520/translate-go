@@ -29,7 +29,6 @@ export const TranslateConst = {
     // TranslateGO 在window 中的名稱
     ConfigPrefix: '__translateGOConfig',
 };
-console.log('TranslateConst.ConfigPrefix', window[TranslateConst.ConfigPrefix]);
 if (window[TranslateConst.ConfigPrefix] == undefined) {
     window[TranslateConst.ConfigPrefix] = {
         dev: !environment.production,
