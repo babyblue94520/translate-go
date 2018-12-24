@@ -5,26 +5,20 @@ import { TranslateConfig, TranslateConst } from './config/translate-config';
  */
 var TranslateDB = /** @class */ (function () {
     function TranslateDB() {
-        // 盡量搜尋純文字的內容
-        this._specialChars = '[.。:：;；!！?？{}()=＊*\\[\\]\\s\\r\\n]';
-        this._startRegexStr = '(^[{(＊*\\[\\s\\r\\n]?)';
-        this._endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]?$)';
-        // 換行等等
-        this._cleanChars = '[\\r\\n]';
+        this._startRegexStr = '^([{(＊*\\[\\s\\r\\n]*)';
+        this._endRegexStr = '([.。:：;；!！?？=＊*\\]\\s\\r\\n]*)$';
         // 不區分大小寫
         this._modifier = 'i';
-        // 清除空白換行
-        this._cleanRegex = new RegExp(this._cleanChars + '+', 'g');
-        // 文字內的特殊字元 Regexp
-        this._textReplaceSpecialCharsRegex = new RegExp('(' + this._specialChars + ')', 'g');
+        // 清除換行、前後空白
+        this._cleanRegex = new RegExp(this._startRegexStr + '|' + this._endRegexStr, 'g');
+        // 將文字內的特殊字元跳脫
+        this._jumpRegex = new RegExp('([\/\\^$*+?.(){}|\[\]])', 'g');
         // 翻譯資源
         this._wordSource = {};
         // 翻譯資源
         this._keySource = {};
         // 翻譯文字的表示式
         this._wordRegexs = [];
-        // 翻譯文字的特殊取代方法
-        this._wordKeepReplaces = [];
         // 文字對照語系
         this._textLangs = {};
         // 語系資料
@@ -67,8 +61,8 @@ var TranslateDB = /** @class */ (function () {
                     if (strs.length > 1) {
                         var replace = '$1';
                         for (var i in strs) {
-                            replace += strs[i] + '$' + (Number(i) + 2);
                             strs[i] = this.getRegexText(strs[i]);
+                            replace += strs[i] + '$' + (Number(i) + 2);
                         }
                         dbSource.regexps[lang] = this._wordRegexs[word] = new RegExp(this._startRegexStr + strs.join('(.+)') + this._endRegexStr, this._modifier);
                         dbSource.replaces[lang] = replace;
@@ -232,7 +226,7 @@ var TranslateDB = /** @class */ (function () {
         if (language) {
             return {
                 language: language,
-                text: text
+                text: cleanText
             };
         }
         // 透過表達式找出語系
@@ -271,14 +265,14 @@ var TranslateDB = /** @class */ (function () {
      */
     TranslateDB.prototype.getCleanText = function (text) {
         // 清除空白
-        return text.replace(this._cleanRegex, '').replace(/(^[\s]+|[\s]+$)/g, '');
+        return text.replace(this._cleanRegex, '');
     };
     /**
      * 文字內容特殊字元 增加跳脫符號
      * @param text
      */
     TranslateDB.prototype.getRegexText = function (text) {
-        return text.replace(this._textReplaceSpecialCharsRegex, '\\$1');
+        return this.getCleanText(text).replace(this._jumpRegex, '\\$1');
     };
     return TranslateDB;
 }());

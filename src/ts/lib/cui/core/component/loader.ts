@@ -5,13 +5,14 @@
 export class Loader {
     private static readonly defText = '處理中';
     private static readonly loadHtml: string = [
-        ' <div class="ttb-loader-block">',
-        '   <div class="ttb-loading"></div>',
+        ' <div class="cui-loader-block">',
+        '   <div class="cui-loading"></div>',
         '   <div class="text"></div>',
         ' </div>'].join('');
     private element: HTMLElement;
     private textElement: Element;
     private openCount = 0;
+    private defauleZIndex = '999';
     private openTimer;
 
     constructor() {
@@ -60,7 +61,7 @@ export class Loader {
             if (zIndex) {
                 this.element.style.zIndex = zIndex;
             } else {
-                this.element.style.zIndex = '100';
+                this.element.style.zIndex = this.defauleZIndex;
             }
             if (msg) {
                 this.textElement.innerHTML = msg;
@@ -99,19 +100,19 @@ export class Loader {
      */
     private create = () => {
         let element = document.createElement('div');
-        element.className = 'ttb-loader';
+        element.className = 'cui-loader';
         element.innerHTML = Loader.loadHtml;
         return element;
     }
 
     private addParentClass() {
         if (this.element && this.element.parentElement) {
-            this.element.parentElement.classList.add('ttb-loader-hidden');
+            this.element.parentElement.classList.add('cui-loader-hidden');
         }
     }
     private removeParentClass() {
         if (this.element && this.element.parentElement) {
-            this.element.parentElement.classList.remove('ttb-loader-hidden');
+            this.element.parentElement.classList.remove('cui-loader-hidden');
         }
     }
 }

@@ -3,17 +3,14 @@ import { TranslateSource } from './translate.interface';
  * 翻譯資料庫
  */
 export declare class TranslateDB {
-    private _specialChars;
     private _startRegexStr;
     private _endRegexStr;
-    private _cleanChars;
     private _modifier;
     private _cleanRegex;
-    private _textReplaceSpecialCharsRegex;
+    private _jumpRegex;
     private _wordSource;
     private _keySource;
     private _wordRegexs;
-    private _wordKeepReplaces;
     private _textLangs;
     private _langs;
     private _cacheNonTranslateText;
