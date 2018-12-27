@@ -301,6 +301,8 @@ export class TranslateGO {
             if (this.isCanAddNode(node) && this.addTranslateSource(translateNodes, node)) {
                 this.doTranslateNodesSetText(translateNodes, node);
                 translateNodes.add(node);
+            } else {
+                translateNodes.remove(node);
             }
         }
     }

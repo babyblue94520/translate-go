@@ -281,6 +281,9 @@ var TranslateGO = /** @class */ (function () {
                 this.doTranslateNodesSetText(translateNodes, node);
                 translateNodes.add(node);
             }
+            else {
+                translateNodes.remove(node);
+            }
         }
     };
     /**
