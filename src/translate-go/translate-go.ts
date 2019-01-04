@@ -1,4 +1,3 @@
-import { Async } from '@cui/core';
 import { TranslateConfig, TranslateConst } from './config/translate-config';
 import { TranslateDB } from './translate-db';
 import { TranslateKeySource } from './translate.interface';
@@ -275,7 +274,6 @@ export class TranslateGO {
                     if (text == undefined || text == '') {
                         text = node.innerText = key;
                     }
-
                 }
             }
         }

@@ -104,6 +104,9 @@ export declare class TranslateGO {
      * 載入需要翻譯的Node
      */
     private loadTextNodes;
+    /**
+     * 清除已經不在畫面上翻譯物件
+     */
     private cleanTextNodes;
     /**
      * 執行翻譯

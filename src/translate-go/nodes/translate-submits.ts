@@ -3,7 +3,7 @@ import { TranslateConst } from '../config/translate-config';
 
 export class TranslateSubmits extends TranslateNodes {
     need(node: HTMLInputElement): boolean {
-        return node.type && node.type.toLowerCase() == 'submit' && (node.value != undefined || node.getAttribute(TranslateConst.Translatekey) != undefined);
+        return node.tagName == 'INPUT' && node.type && node.type.toLowerCase() == 'submit' && (node.value != undefined || node.getAttribute(TranslateConst.Translatekey) != undefined);
     }
     getText(node): string {
         return node.value;

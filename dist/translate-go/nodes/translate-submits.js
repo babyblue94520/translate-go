@@ -7,7 +7,7 @@ var TranslateSubmits = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TranslateSubmits.prototype.need = function (node) {
-        return node.type && node.type.toLowerCase() == 'submit' && (node.value != undefined || node.getAttribute(TranslateConst.Translatekey) != undefined);
+        return node.tagName == 'INPUT' && node.type && node.type.toLowerCase() == 'submit' && (node.value != undefined || node.getAttribute(TranslateConst.Translatekey) != undefined);
     };
     TranslateSubmits.prototype.getText = function (node) {
         return node.value;

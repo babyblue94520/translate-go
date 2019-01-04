@@ -1,5 +1,3 @@
-import * as tslib_1 from "tslib";
-import { Async } from '@cui/core';
 import { TranslateConfig, TranslateConst } from './config/translate-config';
 import { TranslateDB } from './translate-db';
 import { TranslatePlaceholders } from './nodes/translate-placeholders';
@@ -76,8 +74,30 @@ var TranslateGO = /** @class */ (function () {
             }
             else if (_this.notCleanTextNodes) {
                 _this.notCleanTextNodes = false;
-                _this.cleanTextNodes();
+                setTimeout(_this.cleanTextNodes, 30);
             }
+        };
+        /**
+         * 載入需要翻譯的Node
+         */
+        this.loadTextNodes = function () {
+            _this.notLoadTextNodes = true;
+            if (document.head) {
+                _this.nodeHandler(document.head);
+            }
+            if (document.body) {
+                _this.nodeHandler(document.body);
+            }
+            _this.doTranslate();
+        };
+        /**
+         * 清除已經不在畫面上翻譯物件
+         */
+        this.cleanTextNodes = function () {
+            _this.notCleanTextNodes = true;
+            _this.translateTexts.clean();
+            _this.translatePlaceholders.clean();
+            _this.translateSubmits.clean();
         };
     }
     /**
@@ -111,7 +131,7 @@ var TranslateGO = /** @class */ (function () {
         }
         if (this.watch && this.notLoadTextNodes) {
             this.notLoadTextNodes = false;
-            this.loadTextNodes();
+            setTimeout(this.loadTextNodes, 30);
         }
     };
     /**
@@ -287,25 +307,6 @@ var TranslateGO = /** @class */ (function () {
         }
     };
     /**
-     * 載入需要翻譯的Node
-     */
-    TranslateGO.prototype.loadTextNodes = function () {
-        this.notLoadTextNodes = true;
-        if (document.head) {
-            this.nodeHandler(document.head);
-        }
-        if (document.body) {
-            this.nodeHandler(document.body);
-        }
-        this.doTranslate();
-    };
-    TranslateGO.prototype.cleanTextNodes = function () {
-        this.notCleanTextNodes = true;
-        this.translateTexts.clean();
-        this.translatePlaceholders.clean();
-        this.translateSubmits.clean();
-    };
-    /**
      * 執行翻譯
      */
     TranslateGO.prototype.doTranslate = function () {
@@ -316,18 +317,6 @@ var TranslateGO = /** @class */ (function () {
         this.translateSubmits.doTranslate(this.currentLanguage);
         document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
     };
-    tslib_1.__decorate([
-        Async(30),
-        tslib_1.__metadata("design:type", Function),
-        tslib_1.__metadata("design:paramtypes", []),
-        tslib_1.__metadata("design:returntype", void 0)
-    ], TranslateGO.prototype, "loadTextNodes", null);
-    tslib_1.__decorate([
-        Async(30),
-        tslib_1.__metadata("design:type", Function),
-        tslib_1.__metadata("design:paramtypes", []),
-        tslib_1.__metadata("design:returntype", void 0)
-    ], TranslateGO.prototype, "cleanTextNodes", null);
     return TranslateGO;
 }());
 export { TranslateGO };
