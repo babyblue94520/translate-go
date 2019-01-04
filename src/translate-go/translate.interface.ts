@@ -6,7 +6,6 @@ export enum TranslateType {
 
 export interface TranslateNode extends Text {
     translateTextSource: TranslateSource;
-    translated: boolean;
 }
 
 export interface LangRegExps {
@@ -52,3 +51,7 @@ export interface TranslateKeySource {
     [key: string]: TranslateGroupSource;
 }
 
+export interface KeyText {
+    key: string;
+    text: string;
+}

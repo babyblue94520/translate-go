@@ -11,17 +11,20 @@ export declare class TranslateGO {
     private watch;
     private db;
     private currentLanguage;
-    private translateTextNodes;
-    private translatePlaceholderNodes;
+    private translateTexts;
+    private translatePlaceholders;
+    private translateSubmits;
+    private translateNodes;
     private windowAlert;
     private windowConfirm;
     private elementSetAttributeOrigin;
-    constructor();
+    private notLoadTextNodes;
+    private notCleanTextNodes;
     /**
      * 是否監控中
      */
     isWatch(): boolean;
-    getTranslateNode(): TranslateNodes;
+    getTranslateNode(): TranslateNodes[];
     /**
      * 取得無法翻譯的文字
      */
@@ -101,38 +104,9 @@ export declare class TranslateGO {
      * 載入需要翻譯的Node
      */
     private loadTextNodes;
+    private cleanTextNodes;
     /**
      * 執行翻譯
      */
     private doTranslate;
-    /**
-     * 紀錄需要翻譯的node
-     * @param node
-     */
-    private addNode;
-    /**
-     * 紀錄需要翻譯的node
-     * @param node
-     */
-    private modifyAddNode;
-    /**
-     * 檢查是否需要翻譯
-     * @param node
-     */
-    private isCanAddNode;
-    /**
-     * 更新翻譯
-     * @param translateNodes
-     * @param node
-     */
-    private updateNode;
-    /**
-     * 為node新增翻譯檔
-     * @param node
-     */
-    private addTranslateSource;
-    /**
-     * 翻譯
-     */
-    private doTranslateNodesSetText;
 }

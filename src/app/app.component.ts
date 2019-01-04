@@ -126,7 +126,7 @@ export class AppComponent {
       if (name.indexOf(TranslateConst.GroupPrefix) != -1) {
         let keySource: TranslateKeySource = window[name];
         let groupName = name.replace(TranslateConst.GroupPrefix, '');
-        this.translateData.load(groupName, keySource);
+        this.translateData.load(groupName, CUI.deepClone(keySource));
       }
     }
     this.initGroupGrids();

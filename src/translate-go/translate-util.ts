@@ -1,3 +1,4 @@
+
 export class TranslateUtil {
 
     /**
@@ -22,18 +23,23 @@ export class TranslateUtil {
         if (!node) {
             return false;
         }
+        let connected;
         if (node.isConnected == undefined) {
             let parent = TranslateUtil.getParentElement(node);
             if (!parent) {
-                return false;
+                connected = false;
             }
             if (node == document.body || parent == document.body) {
-                return true;
+                connected = true;
             } else {
-                return TranslateUtil.isConnected(parent);
+                connected = TranslateUtil.isConnected(parent);
             }
         } else {
-            return node.isConnected;
+            connected = node.isConnected;
         }
+        if (!connected) {
+            node.translateTextSource = undefined;
+        }
+        return connected;
     }
 }

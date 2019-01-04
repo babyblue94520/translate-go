@@ -1,9 +1,11 @@
-import { PlaceholderTranslateNodes } from './nodes/translate-placeholder-nodes';
-import { TextTranslateNodes } from './nodes/translate-text-nodes';
+import { Async } from '@cui/core';
 import { TranslateConfig, TranslateConst } from './config/translate-config';
 import { TranslateDB } from './translate-db';
-import { TranslateKeySource, TranslateNode } from './translate.interface';
+import { TranslateKeySource } from './translate.interface';
 import { TranslateNodes } from './nodes/translate-nodes';
+import { TranslatePlaceholders } from './nodes/translate-placeholders';
+import { TranslateSubmits } from './nodes/translate-submits';
+import { TranslateTexts } from './nodes/translate-texts';
 import { TranslateUtil } from './translate-util';
 
 /**
@@ -25,16 +27,26 @@ export class TranslateGO {
     private db: TranslateDB = new TranslateDB();
     // 當前語系
     private currentLanguage = TranslateConfig.defaultLanguage || navigator.language;
-    // 需要被翻譯的Node
-    private translateTextNodes = new TextTranslateNodes();
-    private translatePlaceholderNodes = new PlaceholderTranslateNodes();
+    // 需要被翻譯的 Text
+    private translateTexts = new TranslateTexts(this.db);
+    // 需要被翻譯的 Input placeholder
+    private translatePlaceholders = new TranslatePlaceholders(this.db);
+    // 需要被翻譯的 Input type ="submit"
+    private translateSubmits = new TranslateSubmits(this.db);
 
+    private translateNodes: TranslateNodes[] = [this.translateTexts, this.translatePlaceholders, this.translateSubmits];
+
+
+    // 保留 window.alert 原本方法
     private windowAlert = window.alert;
+    // 保留 window.confirm 原本方法
     private windowConfirm = window.confirm;
+    // 保留 setAttribute 原本方法
     private elementSetAttributeOrigin = Element.prototype.setAttribute;
-
-    constructor() {
-    }
+    // 控制 loadTextNodes 只執行一次
+    private notLoadTextNodes = true;
+    // 控制 cleanTextNodes 只執行一次
+    private notCleanTextNodes = true;
 
     /**
      * 是否監控中
@@ -43,8 +55,8 @@ export class TranslateGO {
         return this.watch;
     }
 
-    public getTranslateNode(): TranslateNodes {
-        return this.translateTextNodes;
+    public getTranslateNode(): TranslateNodes[] {
+        return this.translateNodes;
     }
 
     /**
@@ -67,8 +79,9 @@ export class TranslateGO {
                 }
             }
         }
-        if (this.watch) {
-            this.loadTextNodes();
+        if (this.watch && this.notLoadTextNodes) {
+            this.notLoadTextNodes = false;
+            setTimeout(this.loadTextNodes, 30);
         }
     }
 
@@ -107,8 +120,8 @@ export class TranslateGO {
         if (this.currentLanguage == language) { return; }
         if (this.db.hasLanguage(language)) {
             this.currentLanguage = language;
-            this.doTranslate();
         }
+        this.doTranslate();
     }
 
     /**
@@ -118,8 +131,6 @@ export class TranslateGO {
         this.stop();
         this.watch = true;
         this.reload();
-        this.doTranslate();
-
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
@@ -164,10 +175,29 @@ export class TranslateGO {
         return function (key: string, value: string) {
             go.elementSetAttributeOrigin.apply(this, arguments);
             key = key.toLowerCase();
-            if (key == TranslateConst.Translatekey) {
-                this.innerText = value;
-            } else if (key == TranslateConst.PlaceholderTranslatekey) {
-                go.addNode(go.translatePlaceholderNodes, this);
+            switch (key) {
+                case TranslateConst.Translatekey:
+                    if (this instanceof HTMLInputElement) {
+                        if (go.translateSubmits.need(this)) {
+                            go.translateSubmits.add(this);
+                        }
+                    } else {
+                        this.innerText = value;
+                    }
+                    break;
+                case TranslateConst.PlaceholderTranslatekey:
+                    go.translatePlaceholders.add(this);
+                    break;
+                case TranslateConst.Value:
+                    if (go.translateSubmits.need(this)) {
+                        go.translateSubmits.add(this);
+                    }
+                    break;
+                case TranslateConst.Type:
+                    if (go.translateSubmits.need(this)) {
+                        go.translateSubmits.add(this);
+                    }
+                    break;
             }
         };
     }
@@ -186,8 +216,13 @@ export class TranslateGO {
      */
     private domSubtreeModified = (e) => {
         let node = e.target;
-        if (this.translateTextNodes.need(node) && this.isNonIgnore(node)) {
-            this.modifyAddNode(this.translateTextNodes, node);
+        if (this.translateTexts.need(node)) {
+            if (this.isNonIgnore(node)) {
+                this.translateTexts.add(node);
+            }
+        } else if (this.notCleanTextNodes) {
+            this.notCleanTextNodes = false;
+            setTimeout(this.cleanTextNodes, 30);
         }
     }
 
@@ -224,14 +259,27 @@ export class TranslateGO {
      * @param handler
      */
     private nodeHandler(node): void {
-        if (this.isNonIgnore(node)) {
-            if (this.translateTextNodes.need(node)) {
-                this.addNode(this.translateTextNodes, node);
-            } else if (this.translatePlaceholderNodes.need(node)) {
-                this.addNode(this.translatePlaceholderNodes, node);
+        if (!this.isNonIgnore(node)) { return; }
+        if (this.translateTexts.need(node)) {
+            this.translateTexts.add(node);
+        } else {
+            if (this.translatePlaceholders.need(node)) {
+                this.translatePlaceholders.add(node);
+            } else if (this.translateSubmits.need(node)) {
+                this.translateSubmits.add(node);
+            } else {
+                let key = node.getAttribute(TranslateConst.Translatekey);
+                let text;
+                if (key != undefined) {
+                    text = node.innerText;
+                    if (text == undefined || text == '') {
+                        text = node.innerText = key;
+                    }
+
+                }
             }
-            this.loopNodes(node.childNodes);
         }
+        this.loopNodes(node.childNodes);
     }
 
     /**
@@ -251,148 +299,36 @@ export class TranslateGO {
     /**
      * 載入需要翻譯的Node
      */
-    private loadTextNodes(): void {
+    private loadTextNodes = (): void => {
+        this.notLoadTextNodes = true;
         if (document.head) {
             this.nodeHandler(document.head);
         }
         if (document.body) {
             this.nodeHandler(document.body);
         }
+        this.doTranslate();
+    }
+
+    /**
+     * 清除已經不在畫面上翻譯物件
+     */
+    private cleanTextNodes = (): void => {
+        this.notCleanTextNodes = true;
+        this.translateTexts.clean();
+        this.translatePlaceholders.clean();
+        this.translateSubmits.clean();
     }
 
     /**
      * 執行翻譯
      */
     private doTranslate(): void {
-        // 翻譯 text
-        this.translateTextNodes.clean();
-        let nodes = this.translateTextNodes.getNodes();
-        for (let i = 0, l = nodes.length; i < l; i++) {
-            this.doTranslateNodesSetText(this.translateTextNodes, nodes[i]);
-        }
-        // 翻譯placeholder
-        this.translatePlaceholderNodes.clean();
-        nodes = this.translatePlaceholderNodes.getNodes();
-        for (let i = 0, l = nodes.length; i < l; i++) {
-            this.doTranslateNodesSetText(this.translatePlaceholderNodes, nodes[i]);
-        }
-    }
-
-    /**
-     * 紀錄需要翻譯的node
-     * @param node
-     */
-    private addNode(translateNodes: TranslateNodes, node: TranslateNode): void {
-        if (!this.updateNode(translateNodes, node)) {
-            if (this.addTranslateSource(translateNodes, node)) {
-                this.doTranslateNodesSetText(translateNodes, node);
-                translateNodes.add(node);
-            }
-        }
-    }
-
-
-    /**
-     * 紀錄需要翻譯的node
-     * @param node
-     */
-    private modifyAddNode(translateNodes: TranslateNodes, node: TranslateNode): void {
-        if (!this.updateNode(translateNodes, node)) {
-            if (this.isCanAddNode(node) && this.addTranslateSource(translateNodes, node)) {
-                this.doTranslateNodesSetText(translateNodes, node);
-                translateNodes.add(node);
-            } else {
-                translateNodes.remove(node);
-            }
-        }
-    }
-
-    /**
-     * 檢查是否需要翻譯
-     * @param node
-     */
-    private isCanAddNode(node: any) {
-        let parent = node;
-        while ((parent = TranslateUtil.getParentElement(parent)) != document.documentElement) {
-            if (parent.getAttribute(TranslateConst.IgnoreAttributeName) != null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 更新翻譯
-     * @param translateNodes
-     * @param node
-     */
-    private updateNode(translateNodes: TranslateNodes, node: TranslateNode): boolean {
-        // 檢查當前文字跟當前應該翻譯文字是否相同
-        if (node.translateTextSource) {
-            if (node.translateTextSource.currentText == translateNodes.getText(node)) {
-                return true;
-            }
-            // 更新翻譯檔
-            if (this.addTranslateSource(translateNodes, node)) {
-                this.doTranslateNodesSetText(translateNodes, node);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 為node新增翻譯檔
-     * @param node
-     */
-    private addTranslateSource(translateNodes: TranslateNodes, node: TranslateNode) {
-        let key, text;
-        if (node.nodeType == 3) {
-            key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.Translatekey);
-            text = node.data;
-        } else {
-            key = (<any>node).getAttribute(TranslateConst.Translatekey);
-            if (key != undefined && key != '') {
-                text = (<any>node).innerText;
-                if (text == undefined || text == '') {
-                    text = (<any>node).innerText = key;
-                }
-                key = undefined;
-            } else {
-                key = (<any>node).getAttribute(TranslateConst.PlaceholderTranslatekey);
-                if (key != undefined) {
-                    text = (<any>node).getAttribute(TranslateConst.Placeholder);
-                    if (text == undefined || text == '') {
-                        text = key;
-                        (<any>node).setAttribute(TranslateConst.Placeholder, key);
-                    }
-                }
-            }
-        }
-        if (key != undefined) {
-            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text));
-        } else {
-            text = translateNodes.getText(node);
-            if (text == undefined || String(text).length == 0) { return false; }
-            if (/^[a-zA-Z0-9_]+$/.test(text)) {
-                node.translateTextSource = this.db.getTranslateSourceByKey(text);
-                if (node.translateTextSource) {
-                    return node.translateTextSource;
-                }
-            }
-            return (node.translateTextSource = this.db.getTranslateSource(text));
-        }
-    }
-
-    /**
-     * 翻譯
-     */
-    private doTranslateNodesSetText(translateNodes: TranslateNodes, node: TranslateNode): void {
-        let newText = this.db.translateBySource(
-            translateNodes.getText(node),
-            node.translateTextSource,
-            this.currentLanguage
-        );
-        translateNodes.setText(node, newText);
+        document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
+        // 翻譯
+        this.translateTexts.doTranslate(this.currentLanguage);
+        this.translatePlaceholders.doTranslate(this.currentLanguage);
+        this.translateSubmits.doTranslate(this.currentLanguage);
+        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
     }
 }

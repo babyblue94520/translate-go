@@ -3,10 +3,13 @@ import { TranslateSource } from './translate.interface';
  * 翻譯資料庫
  */
 export declare class TranslateDB {
+    private _special;
     private _startRegexStr;
     private _endRegexStr;
     private _modifier;
     private _cleanRegex;
+    private _cleanStartRegex;
+    private _cleanEndRegex;
     private _jumpRegex;
     private _wordSource;
     private _keySource;
@@ -80,10 +83,10 @@ export declare class TranslateDB {
      * 移除空白換行
      * @param text
      */
-    getCleanText(text: string): string;
+    cleanWord(text: string): string;
     /**
      * 文字內容特殊字元 增加跳脫符號
      * @param text
      */
-    private getRegexText;
+    private getRegexWord;
 }

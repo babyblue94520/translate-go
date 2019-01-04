@@ -5,6 +5,7 @@ export interface ITranslateConfig {
 export declare const TranslateConst: {
     Repeat: string;
     Type: string;
+    Value: string;
     Key: string;
     IgnoreKeyArray: string[];
     IgnoreTagArray: string[];

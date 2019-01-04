@@ -22,21 +22,26 @@ var TranslateUtil = /** @class */ (function () {
         if (!node) {
             return false;
         }
+        var connected;
         if (node.isConnected == undefined) {
             var parent_1 = TranslateUtil.getParentElement(node);
             if (!parent_1) {
-                return false;
+                connected = false;
             }
             if (node == document.body || parent_1 == document.body) {
-                return true;
+                connected = true;
             }
             else {
-                return TranslateUtil.isConnected(parent_1);
+                connected = TranslateUtil.isConnected(parent_1);
             }
         }
         else {
-            return node.isConnected;
+            connected = node.isConnected;
         }
+        if (!connected) {
+            node.translateTextSource = undefined;
+        }
+        return connected;
     };
     return TranslateUtil;
 }());

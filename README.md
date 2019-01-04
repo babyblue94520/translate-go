@@ -6,11 +6,12 @@
 
 ## 前言
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本身是Java後端開發工程師，碰過一些多語系的架構設計，老實說真的很麻煩，很多前後端程式都必須依賴原開發專案多語架構下去開發，就連原本沒有多語系的專案要導入多語系，也需要大改，於是開發這個純前端的多語套件，只要 translate-go.js加上自行翻譯的語言包，就可以讓專案有多語的功能！
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本身是Java後端開發工程師，碰過一些多語系的架構設計，老實說真的很麻煩，很多前後端程式都必須依賴原開發專案多語架構下去開發，就連原本沒有多語系的專案要導入多語系，也需要大改，於是開發這個純前端的多語套件，只要 __translate-go.js__ 加上自行翻譯的語言包，就可以讓專案有多語的功能！
 
 ## 目的
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用TranslateGO快速搜尋需要被翻譯的文字，再利用[TranslateGO ToolBar](https://babyblue94520.github.io/translate-go/dist/)快速製作多語系JS檔、TS檔。  
+1. 
+利用TranslateGO快速搜尋需要被翻譯的文字，再利用[TranslateGO ToolBar](https://babyblue94520.github.io/translate-go/dist/)快速製作多語系JS檔、TS檔。  
 
 ## 翻譯範圍
 
@@ -238,13 +239,31 @@ __JavaScript偷懶步驟__：
 ## 使用密技
 
 1. 開啟要製作翻譯資料的網站，直接打開Chrome DevTools(F12)，貼上 __JavaScript偷懶步驟__ 執行。
+
+	![](https://github.com/istar588/translate-go/blob/master/images/1.png)
+
 2. 左下角工具列，點擊 __Start__ 開始蒐集需要翻譯文字
 3. 點擊 __Tool__ ，將 __未處理__ 中要翻譯的文字，切換群組到 __All__
+
+	![](https://github.com/istar588/translate-go/blob/master/images/2.png)
+
 4. 新增所有需要的語系
+
+	![](https://github.com/istar588/translate-go/blob/master/images/3.png)
+
 5. 點擊有資料欄位上的 __列出__ ，將 __列出__ 上 __textarea__ 內的文字複製到 [Google翻譯](https://translate.google.com.tw/?hl=zh-TW) (__注__:每組文字都是換行隔開)
+
+	![](https://github.com/istar588/translate-go/blob/master/images/4.png)
+
 6. 翻譯成對象語系後，將翻譯後的資料直接複製到 __列出__ 上的 __textarea__ 並 __載入__
 7. Key的部分必須為英文
+
+	![](https://github.com/istar588/translate-go/blob/master/images/5.png)
+
 8. 完成所有語系的文字翻譯後，點擊左下角工具列 __Refresh__ ,再點擊 __Tool__ 關閉視窗
+
+	![](https://github.com/istar588/translate-go/blob/master/images/6.png)
+
 9. 透過工具列上的 __語系下拉選單__ 切換當前語系
 10. 翻譯資料製作完成後，透過 __Tool__ 內的下載功能，保存翻譯資料
 

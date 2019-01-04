@@ -8,6 +8,8 @@ export interface ITranslateConfig {
 export const TranslateConst = {
     Repeat: 'repeat',
     Type: 'type',
+    // TranslateSource value name
+    Value: 'value',
     // TranslateSource key name
     Key: 'key',
     // 忽略Key

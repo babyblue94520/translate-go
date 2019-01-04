@@ -1,5 +1,5 @@
 export { CUI } from './core/cui';
-export { Combobox, ComboboxData, ValueNameRender, ValueName, ComboboxCallback } from './core/common';
+// export { Combobox, ComboboxData, ValueNameRender, ValueName, ComboboxCallback } from './core/common';
 
 export { AbstractStroage } from './core/storage/abstract-storage';
 export { LocalStorageManager } from './core/storage/local-storage-manager';

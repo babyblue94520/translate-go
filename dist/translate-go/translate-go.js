@@ -1,7 +1,10 @@
-import { PlaceholderTranslateNodes } from './nodes/translate-placeholder-nodes';
-import { TextTranslateNodes } from './nodes/translate-text-nodes';
+import * as tslib_1 from "tslib";
+import { Async } from '@cui/core';
 import { TranslateConfig, TranslateConst } from './config/translate-config';
 import { TranslateDB } from './translate-db';
+import { TranslatePlaceholders } from './nodes/translate-placeholders';
+import { TranslateSubmits } from './nodes/translate-submits';
+import { TranslateTexts } from './nodes/translate-texts';
 import { TranslateUtil } from './translate-util';
 /**
  * 取得TranslateGO
@@ -24,12 +27,23 @@ var TranslateGO = /** @class */ (function () {
         this.db = new TranslateDB();
         // 當前語系
         this.currentLanguage = TranslateConfig.defaultLanguage || navigator.language;
-        // 需要被翻譯的Node
-        this.translateTextNodes = new TextTranslateNodes();
-        this.translatePlaceholderNodes = new PlaceholderTranslateNodes();
+        // 需要被翻譯的 Text
+        this.translateTexts = new TranslateTexts(this.db);
+        // 需要被翻譯的 Input placeholder
+        this.translatePlaceholders = new TranslatePlaceholders(this.db);
+        // 需要被翻譯的 Input type ="submit"
+        this.translateSubmits = new TranslateSubmits(this.db);
+        this.translateNodes = [this.translateTexts, this.translatePlaceholders, this.translateSubmits];
+        // 保留 window.alert 原本方法
         this.windowAlert = window.alert;
+        // 保留 window.confirm 原本方法
         this.windowConfirm = window.confirm;
+        // 保留 setAttribute 原本方法
         this.elementSetAttributeOrigin = Element.prototype.setAttribute;
+        // 控制 loadTextNodes 只執行一次
+        this.notLoadTextNodes = true;
+        // 控制 cleanTextNodes 只執行一次
+        this.notCleanTextNodes = true;
         /**
          * 攔截alert訊息並翻譯
          */
@@ -55,8 +69,14 @@ var TranslateGO = /** @class */ (function () {
          */
         this.domSubtreeModified = function (e) {
             var node = e.target;
-            if (_this.translateTextNodes.need(node) && _this.isNonIgnore(node)) {
-                _this.modifyAddNode(_this.translateTextNodes, node);
+            if (_this.translateTexts.need(node)) {
+                if (_this.isNonIgnore(node)) {
+                    _this.translateTexts.add(node);
+                }
+            }
+            else if (_this.notCleanTextNodes) {
+                _this.notCleanTextNodes = false;
+                _this.cleanTextNodes();
             }
         };
     }
@@ -67,7 +87,7 @@ var TranslateGO = /** @class */ (function () {
         return this.watch;
     };
     TranslateGO.prototype.getTranslateNode = function () {
-        return this.translateTextNodes;
+        return this.translateNodes;
     };
     /**
      * 取得無法翻譯的文字
@@ -89,7 +109,8 @@ var TranslateGO = /** @class */ (function () {
                 }
             }
         }
-        if (this.watch) {
+        if (this.watch && this.notLoadTextNodes) {
+            this.notLoadTextNodes = false;
             this.loadTextNodes();
         }
     };
@@ -128,8 +149,8 @@ var TranslateGO = /** @class */ (function () {
         }
         if (this.db.hasLanguage(language)) {
             this.currentLanguage = language;
-            this.doTranslate();
         }
+        this.doTranslate();
     };
     /**
      * 觀察並翻譯
@@ -138,7 +159,6 @@ var TranslateGO = /** @class */ (function () {
         this.stop();
         this.watch = true;
         this.reload();
-        this.doTranslate();
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
@@ -166,11 +186,30 @@ var TranslateGO = /** @class */ (function () {
         return function (key, value) {
             go.elementSetAttributeOrigin.apply(this, arguments);
             key = key.toLowerCase();
-            if (key == TranslateConst.Translatekey) {
-                this.innerText = value;
-            }
-            else if (key == TranslateConst.PlaceholderTranslatekey) {
-                go.addNode(go.translatePlaceholderNodes, this);
+            switch (key) {
+                case TranslateConst.Translatekey:
+                    if (this instanceof HTMLInputElement) {
+                        if (go.translateSubmits.need(this)) {
+                            go.translateSubmits.add(this);
+                        }
+                    }
+                    else {
+                        this.innerText = value;
+                    }
+                    break;
+                case TranslateConst.PlaceholderTranslatekey:
+                    go.translatePlaceholders.add(this);
+                    break;
+                case TranslateConst.Value:
+                    if (go.translateSubmits.need(this)) {
+                        go.translateSubmits.add(this);
+                    }
+                    break;
+                case TranslateConst.Type:
+                    if (go.translateSubmits.need(this)) {
+                        go.translateSubmits.add(this);
+                    }
+                    break;
             }
         };
     };
@@ -208,15 +247,31 @@ var TranslateGO = /** @class */ (function () {
      * @param handler
      */
     TranslateGO.prototype.nodeHandler = function (node) {
-        if (this.isNonIgnore(node)) {
-            if (this.translateTextNodes.need(node)) {
-                this.addNode(this.translateTextNodes, node);
-            }
-            else if (this.translatePlaceholderNodes.need(node)) {
-                this.addNode(this.translatePlaceholderNodes, node);
-            }
-            this.loopNodes(node.childNodes);
+        if (!this.isNonIgnore(node)) {
+            return;
         }
+        if (this.translateTexts.need(node)) {
+            this.translateTexts.add(node);
+        }
+        else {
+            if (this.translatePlaceholders.need(node)) {
+                this.translatePlaceholders.add(node);
+            }
+            else if (this.translateSubmits.need(node)) {
+                this.translateSubmits.add(node);
+            }
+            else {
+                var key = node.getAttribute(TranslateConst.Translatekey);
+                var text = void 0;
+                if (key != undefined) {
+                    text = node.innerText;
+                    if (text == undefined || text == '') {
+                        text = node.innerText = key;
+                    }
+                }
+            }
+        }
+        this.loopNodes(node.childNodes);
     };
     /**
      * NodeList 處理
@@ -235,143 +290,44 @@ var TranslateGO = /** @class */ (function () {
      * 載入需要翻譯的Node
      */
     TranslateGO.prototype.loadTextNodes = function () {
+        this.notLoadTextNodes = true;
         if (document.head) {
             this.nodeHandler(document.head);
         }
         if (document.body) {
             this.nodeHandler(document.body);
         }
+        this.doTranslate();
+    };
+    TranslateGO.prototype.cleanTextNodes = function () {
+        this.notCleanTextNodes = true;
+        this.translateTexts.clean();
+        this.translatePlaceholders.clean();
+        this.translateSubmits.clean();
     };
     /**
      * 執行翻譯
      */
     TranslateGO.prototype.doTranslate = function () {
-        // 翻譯 text
-        this.translateTextNodes.clean();
-        var nodes = this.translateTextNodes.getNodes();
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            this.doTranslateNodesSetText(this.translateTextNodes, nodes[i]);
-        }
-        // 翻譯placeholder
-        this.translatePlaceholderNodes.clean();
-        nodes = this.translatePlaceholderNodes.getNodes();
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            this.doTranslateNodesSetText(this.translatePlaceholderNodes, nodes[i]);
-        }
+        document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
+        // 翻譯
+        this.translateTexts.doTranslate(this.currentLanguage);
+        this.translatePlaceholders.doTranslate(this.currentLanguage);
+        this.translateSubmits.doTranslate(this.currentLanguage);
+        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
     };
-    /**
-     * 紀錄需要翻譯的node
-     * @param node
-     */
-    TranslateGO.prototype.addNode = function (translateNodes, node) {
-        if (!this.updateNode(translateNodes, node)) {
-            if (this.addTranslateSource(translateNodes, node)) {
-                this.doTranslateNodesSetText(translateNodes, node);
-                translateNodes.add(node);
-            }
-        }
-    };
-    /**
-     * 紀錄需要翻譯的node
-     * @param node
-     */
-    TranslateGO.prototype.modifyAddNode = function (translateNodes, node) {
-        if (!this.updateNode(translateNodes, node)) {
-            if (this.isCanAddNode(node) && this.addTranslateSource(translateNodes, node)) {
-                this.doTranslateNodesSetText(translateNodes, node);
-                translateNodes.add(node);
-            }
-            else {
-                translateNodes.remove(node);
-            }
-        }
-    };
-    /**
-     * 檢查是否需要翻譯
-     * @param node
-     */
-    TranslateGO.prototype.isCanAddNode = function (node) {
-        var parent = node;
-        while ((parent = TranslateUtil.getParentElement(parent)) != document.documentElement) {
-            if (parent.getAttribute(TranslateConst.IgnoreAttributeName) != null) {
-                return false;
-            }
-        }
-        return true;
-    };
-    /**
-     * 更新翻譯
-     * @param translateNodes
-     * @param node
-     */
-    TranslateGO.prototype.updateNode = function (translateNodes, node) {
-        // 檢查當前文字跟當前應該翻譯文字是否相同
-        if (node.translateTextSource) {
-            if (node.translateTextSource.currentText == translateNodes.getText(node)) {
-                return true;
-            }
-            // 更新翻譯檔
-            if (this.addTranslateSource(translateNodes, node)) {
-                this.doTranslateNodesSetText(translateNodes, node);
-                return true;
-            }
-        }
-        return false;
-    };
-    /**
-     * 為node新增翻譯檔
-     * @param node
-     */
-    TranslateGO.prototype.addTranslateSource = function (translateNodes, node) {
-        var key, text;
-        if (node.nodeType == 3) {
-            key = TranslateUtil.getParentElement(node).getAttribute(TranslateConst.Translatekey);
-            text = node.data;
-        }
-        else {
-            key = node.getAttribute(TranslateConst.Translatekey);
-            if (key != undefined && key != '') {
-                text = node.innerText;
-                if (text == undefined || text == '') {
-                    text = node.innerText = key;
-                }
-                key = undefined;
-            }
-            else {
-                key = node.getAttribute(TranslateConst.PlaceholderTranslatekey);
-                if (key != undefined) {
-                    text = node.getAttribute(TranslateConst.Placeholder);
-                    if (text == undefined || text == '') {
-                        text = key;
-                        node.setAttribute(TranslateConst.Placeholder, key);
-                    }
-                }
-            }
-        }
-        if (key != undefined) {
-            return (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text));
-        }
-        else {
-            text = translateNodes.getText(node);
-            if (text == undefined || String(text).length == 0) {
-                return false;
-            }
-            if (/^[a-zA-Z0-9_]+$/.test(text)) {
-                node.translateTextSource = this.db.getTranslateSourceByKey(text);
-                if (node.translateTextSource) {
-                    return node.translateTextSource;
-                }
-            }
-            return (node.translateTextSource = this.db.getTranslateSource(text));
-        }
-    };
-    /**
-     * 翻譯
-     */
-    TranslateGO.prototype.doTranslateNodesSetText = function (translateNodes, node) {
-        var newText = this.db.translateBySource(translateNodes.getText(node), node.translateTextSource, this.currentLanguage);
-        translateNodes.setText(node, newText);
-    };
+    tslib_1.__decorate([
+        Async(30),
+        tslib_1.__metadata("design:type", Function),
+        tslib_1.__metadata("design:paramtypes", []),
+        tslib_1.__metadata("design:returntype", void 0)
+    ], TranslateGO.prototype, "loadTextNodes", null);
+    tslib_1.__decorate([
+        Async(30),
+        tslib_1.__metadata("design:type", Function),
+        tslib_1.__metadata("design:paramtypes", []),
+        tslib_1.__metadata("design:returntype", void 0)
+    ], TranslateGO.prototype, "cleanTextNodes", null);
     return TranslateGO;
 }());
 export { TranslateGO };
