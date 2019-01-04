@@ -240,29 +240,29 @@ __JavaScript偷懶步驟__：
 
 1. 開啟要製作翻譯資料的網站，直接打開Chrome DevTools(F12)，貼上 __JavaScript偷懶步驟__ 執行。
 
-	![](https://github.com/istar588/translate-go/blob/master/images/1.png)
+	![](https://github.com/babyblue94520/translate-go/blob/master/images/1.png)
 
 2. 左下角工具列，點擊 __Start__ 開始蒐集需要翻譯文字
 3. 點擊 __Tool__ ，將 __未處理__ 中要翻譯的文字，切換群組到 __All__
 
-	![](https://github.com/istar588/translate-go/blob/master/images/2.png)
+	![](https://github.com/babyblue94520/translate-go/blob/master/images/2.png)
 
 4. 新增所有需要的語系
 
-	![](https://github.com/istar588/translate-go/blob/master/images/3.png)
+	![](https://github.com/babyblue94520/translate-go/blob/master/images/3.png)
 
 5. 點擊有資料欄位上的 __列出__ ，將 __列出__ 上 __textarea__ 內的文字複製到 [Google翻譯](https://translate.google.com.tw/?hl=zh-TW) (__注__:每組文字都是換行隔開)
 
-	![](https://github.com/istar588/translate-go/blob/master/images/4.png)
+	![](https://github.com/babyblue94520/translate-go/blob/master/images/4.png)
 
 6. 翻譯成對象語系後，將翻譯後的資料直接複製到 __列出__ 上的 __textarea__ 並 __載入__
 7. Key的部分必須為英文
 
-	![](https://github.com/istar588/translate-go/blob/master/images/5.png)
+	![](https://github.com/babyblue94520/translate-go/blob/master/images/5.png)
 
 8. 完成所有語系的文字翻譯後，點擊左下角工具列 __Refresh__ ,再點擊 __Tool__ 關閉視窗
 
-	![](https://github.com/istar588/translate-go/blob/master/images/6.png)
+	![](https://github.com/babyblue94520/translate-go/blob/master/images/6.png)
 
 9. 透過工具列上的 __語系下拉選單__ 切換當前語系
 10. 翻譯資料製作完成後，透過 __Tool__ 內的下載功能，保存翻譯資料
