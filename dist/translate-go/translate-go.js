@@ -22,6 +22,7 @@ var TranslateGO = /** @class */ (function () {
     function TranslateGO() {
         var _this = this;
         this.watch = false;
+        this.delay = 10;
         this.db = new TranslateDB();
         // 當前語系
         this.currentLanguage = TranslateConfig.defaultLanguage || navigator.language;
@@ -42,6 +43,9 @@ var TranslateGO = /** @class */ (function () {
         this.notLoadTextNodes = true;
         // 控制 cleanTextNodes 只執行一次
         this.notCleanTextNodes = true;
+        // 控制 setInnerTexts 只執行一次
+        this.notSetInnerTexts = true;
+        this.innerTexts = [];
         /**
          * 攔截alert訊息並翻譯
          */
@@ -74,7 +78,7 @@ var TranslateGO = /** @class */ (function () {
             }
             else if (_this.notCleanTextNodes) {
                 _this.notCleanTextNodes = false;
-                setTimeout(_this.cleanTextNodes, 30);
+                setTimeout(_this.cleanTextNodes, _this.delay);
             }
         };
         /**
@@ -98,6 +102,23 @@ var TranslateGO = /** @class */ (function () {
             _this.translateTexts.clean();
             _this.translatePlaceholders.clean();
             _this.translateSubmits.clean();
+        };
+        /**
+         * 對有TranslateKey的element 新增 text
+         */
+        this.setInnerTexts = function () {
+            _this.removeEvents();
+            _this.notSetInnerTexts = true;
+            var element, key;
+            for (var i = 0, l = _this.innerTexts.length; i < l; i++) {
+                element = _this.innerTexts[i].element;
+                key = _this.innerTexts[i].key;
+                if (element.innerText == '') {
+                    element.appendChild(_this.translateTexts.buildText(key, ''));
+                }
+            }
+            _this.innerTexts.length = 0;
+            _this.addEvents();
         };
     }
     /**
@@ -131,7 +152,7 @@ var TranslateGO = /** @class */ (function () {
         }
         if (this.watch && this.notLoadTextNodes) {
             this.notLoadTextNodes = false;
-            setTimeout(this.loadTextNodes, 30);
+            setTimeout(this.loadTextNodes, this.delay);
         }
     };
     /**
@@ -182,9 +203,7 @@ var TranslateGO = /** @class */ (function () {
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
-        document.addEventListener('DOMNodeInserted', this.domNodeInserted);
-        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
-        document.addEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
+        this.addEvents();
     };
     /**
      * 停止觀察和翻譯
@@ -194,6 +213,20 @@ var TranslateGO = /** @class */ (function () {
         window.alert = this.windowAlert;
         window.confirm = this.windowConfirm;
         Element.prototype.setAttribute = this.elementSetAttributeOrigin;
+        this.removeEvents();
+    };
+    /**
+     * 監聽 Element 新增跟異動事件
+     */
+    TranslateGO.prototype.addEvents = function () {
+        document.addEventListener('DOMNodeInserted', this.domNodeInserted);
+        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
+        document.addEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
+    };
+    /**
+     * 移除 Element 新增跟異動事件
+     */
+    TranslateGO.prototype.removeEvents = function () {
         document.removeEventListener('DOMNodeInserted', this.domNodeInserted);
         document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
         document.removeEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
@@ -214,17 +247,20 @@ var TranslateGO = /** @class */ (function () {
                         }
                     }
                     else {
-                        this.innerText = value;
+                        go.innerTexts.push({
+                            element: this,
+                            key: value
+                        });
+                        if (go.notSetInnerTexts) {
+                            go.notSetInnerTexts = false;
+                            setTimeout(go.setInnerTexts, go.delay);
+                        }
                     }
                     break;
                 case TranslateConst.PlaceholderTranslatekey:
                     go.translatePlaceholders.add(this);
                     break;
                 case TranslateConst.Value:
-                    if (go.translateSubmits.need(this)) {
-                        go.translateSubmits.add(this);
-                    }
-                    break;
                 case TranslateConst.Type:
                     if (go.translateSubmits.need(this)) {
                         go.translateSubmits.add(this);
@@ -282,11 +318,16 @@ var TranslateGO = /** @class */ (function () {
             }
             else {
                 var key = node.getAttribute(TranslateConst.Translatekey);
-                var text = void 0;
                 if (key != undefined) {
-                    text = node.innerText;
-                    if (text == undefined || text == '') {
-                        text = node.innerText = key;
+                    if (node.innerText == '') {
+                        this.innerTexts.push({
+                            element: node,
+                            key: key
+                        });
+                        if (this.notSetInnerTexts) {
+                            this.notSetInnerTexts = false;
+                            setTimeout(this.setInnerTexts, this.delay);
+                        }
                     }
                 }
             }

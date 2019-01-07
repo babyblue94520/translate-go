@@ -6,6 +6,19 @@ var TranslateNodes = /** @class */ (function () {
         this._nodes = [];
     }
     /**
+     * 建立可翻譯Text
+     * @param key
+     * @param text
+     */
+    TranslateNodes.prototype.buildText = function (key, text) {
+        var node = document.createTextNode(text);
+        if (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text)) {
+            this.doSetText(node);
+            this._nodes.push(node);
+            return node;
+        }
+    };
+    /**
      * 新增可翻譯物件
      * @param node
      */

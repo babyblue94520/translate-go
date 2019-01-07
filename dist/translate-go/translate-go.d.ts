@@ -9,6 +9,7 @@ export declare function getTranslateGO(): TranslateGO;
  */
 export declare class TranslateGO {
     private watch;
+    private delay;
     private db;
     private currentLanguage;
     private translateTexts;
@@ -20,6 +21,8 @@ export declare class TranslateGO {
     private elementSetAttributeOrigin;
     private notLoadTextNodes;
     private notCleanTextNodes;
+    private notSetInnerTexts;
+    private innerTexts;
     /**
      * 是否監控中
      */
@@ -60,6 +63,14 @@ export declare class TranslateGO {
      * 停止觀察和翻譯
      */
     stop(): void;
+    /**
+     * 監聽 Element 新增跟異動事件
+     */
+    private addEvents;
+    /**
+     * 移除 Element 新增跟異動事件
+     */
+    private removeEvents;
     /**
      * 攔截alert訊息並翻譯
      */
@@ -112,4 +123,8 @@ export declare class TranslateGO {
      * 執行翻譯
      */
     private doTranslate;
+    /**
+     * 對有TranslateKey的element 新增 text
+     */
+    private setInnerTexts;
 }

@@ -6,6 +6,7 @@ import {
 } from '../translate.interface';
 import { TranslateUtil } from '../translate-util';
 import { TranslateDB } from '../translate-db';
+import { Text } from '@angular/compiler';
 
 export abstract class TranslateNodes {
     protected _nodes = [];
@@ -18,6 +19,20 @@ export abstract class TranslateNodes {
 
     constructor(private db: TranslateDB) {
 
+    }
+
+    /**
+     * 建立可翻譯Text
+     * @param key
+     * @param text
+     */
+    public buildText(key: string, text?: string): TranslateNode {
+        let node = document.createTextNode(text) as any;
+        if (node.translateTextSource = this.db.getTranslateSourceAndLogByKey(key, text)) {
+            this.doSetText(node);
+            this._nodes.push(node);
+            return node;
+        }
     }
 
     /**

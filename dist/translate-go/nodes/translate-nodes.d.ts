@@ -10,6 +10,12 @@ export declare abstract class TranslateNodes {
     abstract findKeyText(node: any): KeyText;
     constructor(db: TranslateDB);
     /**
+     * 建立可翻譯Text
+     * @param key
+     * @param text
+     */
+    buildText(key: string, text?: string): TranslateNode;
+    /**
      * 新增可翻譯物件
      * @param node
      */

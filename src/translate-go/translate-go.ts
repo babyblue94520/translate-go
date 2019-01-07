@@ -23,6 +23,7 @@ export function getTranslateGO(): TranslateGO {
  */
 export class TranslateGO {
     private watch = false;
+    private delay = 10;
     private db: TranslateDB = new TranslateDB();
     // 當前語系
     private currentLanguage = TranslateConfig.defaultLanguage || navigator.language;
@@ -35,7 +36,6 @@ export class TranslateGO {
 
     private translateNodes: TranslateNodes[] = [this.translateTexts, this.translatePlaceholders, this.translateSubmits];
 
-
     // 保留 window.alert 原本方法
     private windowAlert = window.alert;
     // 保留 window.confirm 原本方法
@@ -46,6 +46,9 @@ export class TranslateGO {
     private notLoadTextNodes = true;
     // 控制 cleanTextNodes 只執行一次
     private notCleanTextNodes = true;
+    // 控制 setInnerTexts 只執行一次
+    private notSetInnerTexts = true;
+    private innerTexts = [];
 
     /**
      * 是否監控中
@@ -80,7 +83,7 @@ export class TranslateGO {
         }
         if (this.watch && this.notLoadTextNodes) {
             this.notLoadTextNodes = false;
-            setTimeout(this.loadTextNodes, 30);
+            setTimeout(this.loadTextNodes, this.delay);
         }
     }
 
@@ -133,9 +136,7 @@ export class TranslateGO {
         window.alert = this.proxyAlertHanlder;
         window.confirm = this.proxyConfirmHanlder;
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
-        document.addEventListener('DOMNodeInserted', this.domNodeInserted);
-        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
-        document.addEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
+        this.addEvents();
     }
 
     /**
@@ -146,6 +147,22 @@ export class TranslateGO {
         window.alert = this.windowAlert;
         window.confirm = this.windowConfirm;
         Element.prototype.setAttribute = this.elementSetAttributeOrigin;
+        this.removeEvents();
+    }
+
+    /**
+     * 監聽 Element 新增跟異動事件
+     */
+    private addEvents() {
+        document.addEventListener('DOMNodeInserted', this.domNodeInserted);
+        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
+        document.addEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
+    }
+
+    /**
+     * 移除 Element 新增跟異動事件
+     */
+    private removeEvents() {
         document.removeEventListener('DOMNodeInserted', this.domNodeInserted);
         document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
         document.removeEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
@@ -181,17 +198,20 @@ export class TranslateGO {
                             go.translateSubmits.add(this);
                         }
                     } else {
-                        this.innerText = value;
+                        go.innerTexts.push({
+                            element: this,
+                            key: value
+                        });
+                        if (go.notSetInnerTexts) {
+                            go.notSetInnerTexts = false;
+                            setTimeout(go.setInnerTexts, go.delay);
+                        }
                     }
                     break;
                 case TranslateConst.PlaceholderTranslatekey:
                     go.translatePlaceholders.add(this);
                     break;
                 case TranslateConst.Value:
-                    if (go.translateSubmits.need(this)) {
-                        go.translateSubmits.add(this);
-                    }
-                    break;
                 case TranslateConst.Type:
                     if (go.translateSubmits.need(this)) {
                         go.translateSubmits.add(this);
@@ -221,7 +241,7 @@ export class TranslateGO {
             }
         } else if (this.notCleanTextNodes) {
             this.notCleanTextNodes = false;
-            setTimeout(this.cleanTextNodes, 30);
+            setTimeout(this.cleanTextNodes, this.delay);
         }
     }
 
@@ -268,11 +288,16 @@ export class TranslateGO {
                 this.translateSubmits.add(node);
             } else {
                 let key = node.getAttribute(TranslateConst.Translatekey);
-                let text;
                 if (key != undefined) {
-                    text = node.innerText;
-                    if (text == undefined || text == '') {
-                        text = node.innerText = key;
+                    if (node.innerText == '') {
+                        this.innerTexts.push({
+                            element: node,
+                            key: key
+                        });
+                        if (this.notSetInnerTexts) {
+                            this.notSetInnerTexts = false;
+                            setTimeout(this.setInnerTexts, this.delay);
+                        }
                     }
                 }
             }
@@ -328,5 +353,23 @@ export class TranslateGO {
         this.translatePlaceholders.doTranslate(this.currentLanguage);
         this.translateSubmits.doTranslate(this.currentLanguage);
         document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
+    }
+
+    /**
+     * 對有TranslateKey的element 新增 text
+     */
+    private setInnerTexts = () => {
+        this.removeEvents();
+        this.notSetInnerTexts = true;
+        let element, key;
+        for (let i = 0, l = this.innerTexts.length; i < l; i++) {
+            element = this.innerTexts[i].element;
+            key = this.innerTexts[i].key;
+            if (element.innerText == '') {
+                element.appendChild(this.translateTexts.buildText(key, ''));
+            }
+        }
+        this.innerTexts.length = 0;
+        this.addEvents();
     }
 }
