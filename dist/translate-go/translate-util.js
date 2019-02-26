@@ -43,6 +43,18 @@ var TranslateUtil = /** @class */ (function () {
         }
         return connected;
     };
+    /**
+     * 清除 node 過濾的方法
+     * @param node
+     */
+    TranslateUtil.cleanFilter = function (node) {
+        if (node.translateTextSource) {
+            return TranslateUtil.isConnected(node);
+        }
+        else {
+            return false;
+        }
+    };
     return TranslateUtil;
 }());
 export { TranslateUtil };

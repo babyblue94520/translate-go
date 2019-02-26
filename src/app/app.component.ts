@@ -145,7 +145,7 @@ export class AppComponent {
   /**
    * 更換當前語系
    */
-  public changeLanguage() {
+  public changeLanguage = () => {
     this.translateGO.translate(this.currentLanguage);
   }
 

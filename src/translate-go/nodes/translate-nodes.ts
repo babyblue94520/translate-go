@@ -6,7 +6,6 @@ import {
 } from '../translate.interface';
 import { TranslateUtil } from '../translate-util';
 import { TranslateDB } from '../translate-db';
-import { Text } from '@angular/compiler';
 
 export abstract class TranslateNodes {
     protected _nodes = [];
@@ -74,7 +73,7 @@ export abstract class TranslateNodes {
      * 清除已經移除在畫面的物件
      */
     public clean() {
-        this._nodes = this._nodes.filter(TranslateUtil.isConnected);
+        this._nodes = this._nodes.filter(TranslateUtil.cleanFilter);
     }
 
     /**

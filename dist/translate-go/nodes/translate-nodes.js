@@ -57,7 +57,7 @@ var TranslateNodes = /** @class */ (function () {
      * 清除已經移除在畫面的物件
      */
     TranslateNodes.prototype.clean = function () {
-        this._nodes = this._nodes.filter(TranslateUtil.isConnected);
+        this._nodes = this._nodes.filter(TranslateUtil.cleanFilter);
     };
     /**
      * 翻譯文字依source

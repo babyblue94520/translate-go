@@ -42,4 +42,16 @@ export class TranslateUtil {
         }
         return connected;
     }
+
+    /**
+     * 清除 node 過濾的方法
+     * @param node
+     */
+    public static cleanFilter(node) {
+        if (node.translateTextSource) {
+            return TranslateUtil.isConnected(node);
+        } else {
+            return false;
+        }
+    }
 }

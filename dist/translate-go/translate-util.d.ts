@@ -9,4 +9,9 @@ export declare class TranslateUtil {
      * @param element
      */
     static isConnected(node: any): boolean;
+    /**
+     * 清除 node 過濾的方法
+     * @param node
+     */
+    static cleanFilter(node: any): boolean;
 }
