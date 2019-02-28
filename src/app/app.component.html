@@ -1,4 +1,4 @@
-<div class="ttb-bar" notTranslate>
+<div class="ttb-bar" notTranslate #toolbar>
   <button class="ttb-button" [disabled]="translateGO.isWatch()" (click)="start()">Start</button>
   <button class="ttb-button bg-accent" [disabled]="!translateGO.isWatch()" (click)="stop()">Stop</button>
   <button class="ttb-button bg-dark" (click)="refresh()">Refresh</button>
@@ -6,6 +6,7 @@
   <select class="ttb-bar-select" [(ngModel)]="currentLanguage" (change)="changeLanguage()">
     <option *ngFor="let lang of languages" [value]="lang">{{lang}}</option>
   </select>
+  <button class="ttb-button bg-dark small" #ocButton (click)="openOrClose(toolbar,ocButton)">{{showToolbar?'x':'>'}}</button>
 </div>
 <div class="ttb-screen" *ngIf="show"></div>
 <div class="ttb-tool" *ngIf="show" notTranslate>

@@ -67,6 +67,8 @@ export class AppComponent {
   @ViewChild('sourceDialog')
   public sourceDialog: DialogComponent;
 
+  public showToolbar = true;
+
   public show = false;
 
   constructor() {
@@ -108,6 +110,20 @@ export class AppComponent {
     this.reLoadTranslateGO();
     this.loadNonTranslate();
     this.currentGridLoad();
+  }
+
+  /**
+   * 開啟或關閉
+   */
+  public openOrClose(toolbar: HTMLElement, ocButton: HTMLButtonElement) {
+    if (this.showToolbar) {
+      this.showToolbar = false;
+      let w = toolbar.offsetWidth - ocButton.offsetWidth - 15;
+      CUI.style(toolbar, 'transform', 'translateX(-' + w + 'px)');
+    } else {
+      this.showToolbar = true;
+      CUI.style(toolbar, 'transform', 'translateX(0px)');
+    }
   }
 
   /**

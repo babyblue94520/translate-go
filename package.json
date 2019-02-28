@@ -1,6 +1,6 @@
 {
   "name": "translate-go",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "前端翻譯工具",
   "main": "./dist/translate-go/lib.js",
   "typings": "./dist/translate-go/lib.d.ts",

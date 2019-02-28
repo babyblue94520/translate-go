@@ -127,6 +127,8 @@ translate-toolbar,
     z-index: 99999;
     background-color: #fff;
     @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
+    @include transform(translateX(0px));
+    @include transition(transform 0.3s ease-in-out);
   }
 
   .ttb-bar-select {
