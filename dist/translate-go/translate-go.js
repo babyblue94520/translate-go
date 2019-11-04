@@ -33,10 +33,6 @@ var TranslateGO = /** @class */ (function () {
         // 需要被翻譯的 Input type ="submit"
         this.translateSubmits = new TranslateSubmits(this.db);
         this.translateNodes = [this.translateTexts, this.translatePlaceholders, this.translateSubmits];
-        // 保留 window.alert 原本方法
-        this.windowAlert = window.alert;
-        // 保留 window.confirm 原本方法
-        this.windowConfirm = window.confirm;
         // 保留 setAttribute 原本方法
         this.elementSetAttributeOrigin = Element.prototype.setAttribute;
         // 控制 loadTextNodes 只執行一次
@@ -200,8 +196,14 @@ var TranslateGO = /** @class */ (function () {
         this.stop();
         this.watch = true;
         this.reload();
-        window.alert = this.proxyAlertHanlder;
-        window.confirm = this.proxyConfirmHanlder;
+        if (window.confirm != this.proxyConfirmHanlder) {
+            this.windowConfirm = window.confirm;
+            window.confirm = this.proxyConfirmHanlder;
+        }
+        if (window.alert != this.proxyAlertHanlder) {
+            this.windowAlert = window.alert;
+            window.alert = this.proxyAlertHanlder;
+        }
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
         this.addEvents();
     };
@@ -210,8 +212,12 @@ var TranslateGO = /** @class */ (function () {
      */
     TranslateGO.prototype.stop = function () {
         this.watch = false;
-        window.alert = this.windowAlert;
-        window.confirm = this.windowConfirm;
+        if (this.windowAlert != undefined) {
+            window.alert = this.windowAlert;
+        }
+        if (this.windowConfirm != undefined) {
+            window.confirm = this.windowConfirm;
+        }
         Element.prototype.setAttribute = this.elementSetAttributeOrigin;
         this.removeEvents();
     };

@@ -37,9 +37,9 @@ export class TranslateGO {
     private translateNodes: TranslateNodes[] = [this.translateTexts, this.translatePlaceholders, this.translateSubmits];
 
     // 保留 window.alert 原本方法
-    private windowAlert = window.alert;
+    private windowAlert;
     // 保留 window.confirm 原本方法
-    private windowConfirm = window.confirm;
+    private windowConfirm;
     // 保留 setAttribute 原本方法
     private elementSetAttributeOrigin = Element.prototype.setAttribute;
     // 控制 loadTextNodes 只執行一次
@@ -133,8 +133,14 @@ export class TranslateGO {
         this.stop();
         this.watch = true;
         this.reload();
-        window.alert = this.proxyAlertHanlder;
-        window.confirm = this.proxyConfirmHanlder;
+        if (window.confirm != this.proxyConfirmHanlder) {
+            this.windowConfirm = window.confirm;
+            window.confirm = this.proxyConfirmHanlder;
+        }
+        if (window.alert != this.proxyAlertHanlder) {
+            this.windowAlert = window.alert;
+            window.alert = this.proxyAlertHanlder;
+        }
         Element.prototype.setAttribute = this.buildProxySetAttribute(this);
         this.addEvents();
     }
@@ -144,8 +150,12 @@ export class TranslateGO {
      */
     public stop() {
         this.watch = false;
-        window.alert = this.windowAlert;
-        window.confirm = this.windowConfirm;
+        if (this.windowAlert != undefined) {
+            window.alert = this.windowAlert;
+        }
+        if (this.windowConfirm != undefined) {
+            window.confirm = this.windowConfirm;
+        }
         Element.prototype.setAttribute = this.elementSetAttributeOrigin;
         this.removeEvents();
     }

@@ -19,6 +19,9 @@ const config = {
       jsnext: true,
       main: true
     })
-  ]
+  ],
+  output: {
+    name: 'TranslateModule'
+  }
 }
 export default config;
