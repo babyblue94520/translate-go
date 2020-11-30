@@ -33,16 +33,20 @@
             "styles": [
               "src/scss/styles.scss"
             ],
-            "scripts": [{
-              "input": "node_modules/document-register-element/build/document-register-element.js"
-            }]
+            "scripts": [
+              {
+                "input": "node_modules/document-register-element/build/document-register-element.js"
+              }
+            ]
           },
           "configurations": {
             "production": {
-              "fileReplacements": [{
-                "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -171,5 +175,8 @@
       }
     }
   },
-  "defaultProject": "translate-go"
+  "defaultProject": "translate-go",
+  "cli": {
+    "analytics": "26eac0a1-bbd7-436b-a8d2-5a3ec57bd364"
+  }
 }

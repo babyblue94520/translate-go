@@ -5,8 +5,8 @@
 export class Loader {
     private static readonly defText = '處理中';
     private static readonly loadHtml: string = [
-        ' <div class="cui-loader-block">',
-        '   <div class="cui-loading"></div>',
+        ' <div class="ttb-loader-block">',
+        '   <div class="ttb-loading"></div>',
         '   <div class="text"></div>',
         ' </div>'].join('');
     private element: HTMLElement;
@@ -100,19 +100,19 @@ export class Loader {
      */
     private create = () => {
         let element = document.createElement('div');
-        element.className = 'cui-loader';
+        element.className = 'ttb-loader';
         element.innerHTML = Loader.loadHtml;
         return element;
     }
 
     private addParentClass() {
         if (this.element && this.element.parentElement) {
-            this.element.parentElement.classList.add('cui-loader-hidden');
+            this.element.parentElement.classList.add('ttb-loader-hidden');
         }
     }
     private removeParentClass() {
         if (this.element && this.element.parentElement) {
-            this.element.parentElement.classList.remove('cui-loader-hidden');
+            this.element.parentElement.classList.remove('ttb-loader-hidden');
         }
     }
 }

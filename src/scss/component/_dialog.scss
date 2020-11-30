@@ -10,12 +10,18 @@
 }
 
 .ttb-dialog-window {
-  position: absolute;
+  position: relative;
   z-index: 2;
   display: inline-block;
+  opacity: 0;
   max-width: 100%;
   padding: 0;
-  @include transform(translate(0px, 0px));
+  // @include transform(translate(0px, 0px));
+  @include transition(opacity .3s ease-in-out);
+
+  &.show {
+    opacity: 1;
+  }
 
   .ttb-dialog-content {
     background-color: #FFF;
@@ -29,18 +35,18 @@
       text-indent: .5em;
       font-size: 120%;
       font-weight: bold;
-      background-color: #2196F3;
-      color: #fff;
+      background-color: #fff;
+      color: #344149;
     }
 
-    >.ttb-dialog-close {
+    >.close {
       position: absolute;
       top: 0;
       right: 0;
       z-index: 1;
       padding: .5em;
       cursor: pointer;
-      color: #fff;
+      color: #344149;
 
       &:before {
         font-size: 120%;
@@ -54,7 +60,6 @@
       overflow: hidden;
       word-wrap: break-word;
     }
-
   }
 
 }

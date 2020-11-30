@@ -1,8 +1,10 @@
-import { Cache, CUI, Grid } from '@cui/core';
+import { CCache } from 'ts/decorators/cache';
 import { Component, ViewChild } from '@angular/core';
+import { deepClone } from 'ts/clone';
 import { DialogComponent } from 'app/app-common/component/dialog/dialog.component';
 import { DomUtil } from 'ts/util/dom-util';
 import { getTranslateGO, TranslateConfig } from 'translate-go/lib';
+import { Grid } from '@cui/core';
 import { TranslateConst } from 'translate-go/config/translate-config';
 import { TranslateGroup, TranslateGroupSource, TranslateKeySource } from 'translate-go/translate.interface';
 import { TranslateToolbarData } from 'ts/translate-toolbar-data';
@@ -47,12 +49,12 @@ export class AppComponent {
     sources: []
   };
 
-  @Cache.session('Index', {})
+  @CCache.Session('Index', {})
   public ignoreKeys;
-  @Cache.session('Index', [TranslateConfig.defaultLanguage])
+  @CCache.Session('Index', [TranslateConfig.defaultLanguage])
   public languages;
   // 群組
-  @Cache.session('Index', [{ name: 'All', sources: [] }])
+  @CCache.Session('Index', [{ name: 'All', sources: [] }])
   public groups: TranslateGroupGrid[];
 
   // 重複Key
@@ -119,10 +121,10 @@ export class AppComponent {
     if (this.showToolbar) {
       this.showToolbar = false;
       let w = toolbar.offsetWidth - ocButton.offsetWidth - 15;
-      CUI.style(toolbar, 'transform', 'translateX(-' + w + 'px)');
+      DomUtil.style(toolbar, 'transform', 'translateX(-' + w + 'px)');
     } else {
       this.showToolbar = true;
-      CUI.style(toolbar, 'transform', 'translateX(0px)');
+      DomUtil.style(toolbar, 'transform', 'translateX(0px)');
     }
   }
 
@@ -140,9 +142,9 @@ export class AppComponent {
   public loadWindowGroups() {
     for (let name in window) {
       if (name.indexOf(TranslateConst.GroupPrefix) != -1) {
-        let keySource: TranslateKeySource = window[name];
+        let keySource: TranslateKeySource = <any>window[name];
         let groupName = name.replace(TranslateConst.GroupPrefix, '');
-        this.translateData.load(groupName, CUI.deepClone(keySource));
+        this.translateData.load(groupName, deepClone(keySource));
       }
     }
     this.initGroupGrids();
@@ -194,7 +196,7 @@ export class AppComponent {
   public loadNonTranslate() {
     let sources = [];
     let texts = this.translateGO.getNonTranslateText();
-    if (CUI.isEmptyObject(this.ignoreKeys)) {
+    if (DomUtil.isEmptyObject(this.ignoreKeys)) {
       for (let text in texts) {
         texts[text][TranslateConst.Type] = '0';
         sources.push(texts[text]);
@@ -473,7 +475,7 @@ export class AppComponent {
   private formatGroupSources(sources: TranslateGroupSource[]) {
     let result = {};
     for (let i in sources) {
-      let source = CUI.deepClone(sources[i]);
+      let source = deepClone(sources[i]);
       delete source[TranslateConst.Repeat];
       delete source[TranslateConst.Type];
       result[source[this.keyName]] = source;

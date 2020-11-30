@@ -12,11 +12,20 @@ body {
   left: 0;
   right: 0;
   opacity: 0;
-  display: block;
+  // display: block;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: auto;
   pointer-events: none;
   user-select: none;
   @include transition(opacity .3s ease-in-out);
+
+  &.top {
+    padding-top: 1em;
+    align-items: flex-start;
+  }
 
   &.open {
     opacity: 1;

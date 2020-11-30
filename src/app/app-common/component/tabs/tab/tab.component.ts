@@ -1,3 +1,4 @@
+import { Async } from 'ts/decorators/async';
 import {
   Component,
   Input,
@@ -5,7 +6,6 @@ import {
   ViewChild,
   ChangeDetectorRef,
 } from '@angular/core';
-import { CUI } from '@cui/core';
 
 
 @Component({
@@ -21,6 +21,8 @@ export class TabComponent {
   @ViewChild('label')
   public labelRef: TemplateRef<any>;
 
+  public render = false;
+
   @Input() id = '';
   @Input() label = '';
   @Input() disabled = false;
@@ -28,15 +30,32 @@ export class TabComponent {
 
   @Input() onActive: Function;
 
-  @Input() onClose: Function;
+  @Input()
+  onClose: Function;
 
-  constructor(private cd: ChangeDetectorRef) { }
+  constructor(private cdf: ChangeDetectorRef) { }
 
   public doActive() {
     this.active = true;
-    CUI.callFunction(this.onActive);
-    setTimeout(() => {
-      this.cd.markForCheck();
-    }, 0);
+    if (this.onActive instanceof Function) {
+      this.onActive();
+    }
+    if (this.render) {
+      this.cdf.markForCheck();
+    } else {
+      this.doRender();
+    }
+  }
+
+  @Async(50)
+  private doRender() {
+    this.render = true;
+    this.cdf.markForCheck();
+  }
+
+  public doClose(index: number) {
+    if (this.onClose instanceof Function) {
+      this.doClose(index);
+    }
   }
 }

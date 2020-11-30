@@ -1,8 +1,8 @@
-import * as tslib_1 from "tslib";
+import { __extends } from "tslib";
 import { TranslateNodes } from './translate-nodes';
 import { TranslateConst } from '../config/translate-config';
 var TranslateSubmits = /** @class */ (function (_super) {
-    tslib_1.__extends(TranslateSubmits, _super);
+    __extends(TranslateSubmits, _super);
     function TranslateSubmits() {
         return _super !== null && _super.apply(this, arguments) || this;
     }

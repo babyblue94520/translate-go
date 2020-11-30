@@ -2,10 +2,9 @@ import {
   Directive,
   ElementRef,
   Input,
-  OnDestroy,
-  ChangeDetectorRef
+  OnDestroy
 } from '@angular/core';
-import { CUI } from '@cui/core';
+import { DomUtil } from 'ts/util/dom-util';
 
 @Directive({
   selector: '[appInitElement]'
@@ -20,14 +19,14 @@ export class InitElementDirective implements OnDestroy {
 
   @Input() set appInitElement(element: HTMLElement) {
     if (this.element != element) {
-      CUI.remove(this.element);
+      DomUtil.remove(this.element);
       this.element = element;
       this.el.nativeElement.appendChild(element);
     }
   }
 
   ngOnDestroy() {
-    CUI.remove(this.element);
+    DomUtil.remove(this.element);
     this.element = undefined;
   }
 }

@@ -1,25 +1,26 @@
-import { Delay } from '@cui/core';
-import { TabComponent } from '../tab/tab.component';
 import {
-  AfterContentInit,
+  AfterViewChecked,
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ContentChildren,
   ElementRef,
   Input,
+  OnDestroy,
   QueryList,
-  ViewChildren,
-  ChangeDetectorRef,
+  ViewChildren
 } from '@angular/core';
+import { Async } from 'ts/decorators/async';
+import { Debounce } from 'ts/decorators/debounce';
+import { TabComponent } from '../tab/tab.component';
 
 @Component({
   selector: 'app-tab-group',
   templateUrl: './tab-group.component.html',
   styleUrls: ['./tab-group.component.scss']
 })
-export class TabGroupComponent implements AfterContentInit, AfterViewInit {
+export class TabGroupComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   private header: HTMLElement;
-  private hover: HTMLElement;
   private labels: HTMLElement;
   private contents: HTMLElement;
   private prev: HTMLElement;
@@ -38,69 +39,124 @@ export class TabGroupComponent implements AfterContentInit, AfterViewInit {
   @Input()
   public activeIndex = 0;
 
+  public resizeObserver;
+
+  private labelsWidth;
+  private headerWidth;
+
   constructor(
     private elementRef: ElementRef,
-    private cd: ChangeDetectorRef
+    private cdf: ChangeDetectorRef
   ) {
   }
 
-  ngAfterContentInit() {
+  ngAfterViewChecked() {
+    console.log(this.tabsRef)
+    this.resize();
+  }
+
+  ngAfterViewInit() {
     this.tabsRef.changes.subscribe(() => {
-      this.cd.markForCheck();
       if (this.tabsRef.length) {
         this.initActive();
       } else {
         this.contentClear();
       }
+      this.cdf.markForCheck();
     });
-    this.initActive();
-  }
 
-  ngAfterViewInit() {
     this.labelRef.changes.subscribe(() => {
-      this.cd.markForCheck();
       if (this.labelRef.length) {
         this.hoverBar();
         this.showPrevNext();
       } else {
         this.headerClear();
       }
+      this.cdf.markForCheck();
     });
 
     let element: HTMLElement = this.elementRef.nativeElement;
     this.header = element.querySelector('.ttb-tab-header');
-    this.hover = element.querySelector('.ttb-tab-header-hover');
     this.labels = element.querySelector('.ttb-tab-labels');
     this.contents = element.querySelector('.ttb-tab-contents');
     this.prev = element.querySelector('.ttb-tab-prev');
     this.prev.addEventListener('click', this.prevClick.bind(this));
     this.next = element.querySelector('.ttb-tab-next');
     this.next.addEventListener('click', this.nextClick.bind(this));
+    this.prev.style.display = 'none';
+    this.next.style.display = 'none';
 
-    window.addEventListener('resize', this.resize.bind(this));
-    this.showPrevNext();
-    this.delayAfterViewInit();
+    window.addEventListener('resize', this.delayResize.bind(this));
+
+    this.resizeObserver = new MutationObserver(entries => {
+      this.delayResize();
+    });
+    this.resizeObserver.observe(element, {
+      attributes: true
+      , childList: true
+      , characterData: true
+      , subtree: true
+    });
+    this.initActive();
   }
 
-  @Delay(300)
-  private delayAfterViewInit() {
-    this.showPrevNext();
-    this.hoverBar();
+  ngOnDestroy() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   }
 
+  @Async()
+  private tabsRefChanges() {
+    console.log('tabsRefChanges');
+    if (this.tabsRef.length) {
+      this.initActive();
+    } else {
+      this.contentClear();
+    }
+    this.cdf.markForCheck();
+  }
 
-  @Delay(300)
-  private resize(e) {
-    this.showPrevNext();
+  @Async()
+  private labelRefChanges() {
+    if (this.labelRef.length) {
+      this.hoverBar();
+      this.showPrevNext();
+    } else {
+      this.headerClear();
+    }
+    this.cdf.markForCheck();
+  }
+
+  private hasChange(): boolean {
+    if (this.labels) {
+      if (this.labelsWidth == this.labels.offsetWidth && this.headerWidth == this.header.offsetWidth) {
+        return false;
+      } else {
+        this.labelsWidth = this.labels.offsetWidth;
+        this.headerWidth = this.header.offsetWidth;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Debounce(300)
+  private delayResize() {
+    this.resize();
+  }
+
+  private resize() {
+    if (this.hasChange()) {
+      this.showPrevNext();
+      this.hoverBar();
+      this.cdf.markForCheck();
+    }
   }
 
   private headerClear() {
     if (this.labels) {
       this.labels.style.transform = '';
-    }
-    if (this.hover) {
-      this.hover.style.width = '0px';
-      this.hover.style.transform = '';
     }
   }
 
@@ -109,11 +165,15 @@ export class TabGroupComponent implements AfterContentInit, AfterViewInit {
       this.contents.style.transform = '';
     }
   }
+
+  @Async()
   private initActive() {
     let index = 0;
     let nan = isNaN(this.currentIndex);
     if (nan || this.currentIndex > this.tabsRef.length) {
       index = nan ? this.activeIndex : (this.tabsRef.length - 1);
+    } else {
+      index = this.currentIndex;
     }
     let tabs = this.tabsRef.toArray();
     let tab: TabComponent;
@@ -130,7 +190,6 @@ export class TabGroupComponent implements AfterContentInit, AfterViewInit {
   public active(index: number) {
     if (index < 0) { return; }
     if (!this.tabsRef) { return; }
-    this.cd.markForCheck();
     let l = this.tabsRef.length;
     this.currentIndex = index % l;
     let tabs: TabComponent[] = this.tabsRef.toArray();
@@ -146,6 +205,7 @@ export class TabGroupComponent implements AfterContentInit, AfterViewInit {
       tabs[this.currentIndex].doActive();
     }
     this.hoverBar();
+    this.cdf.markForCheck();
   }
 
   private showPrevNext() {
@@ -199,27 +259,16 @@ export class TabGroupComponent implements AfterContentInit, AfterViewInit {
     if (!this.labelRef) {
       return;
     }
-    if (this.labelRef.length == 0) {
-      if (this.hover) {
-        this.hover.style.width = '0px';
-      }
-      return;
-    }
     let labels = this.labelRef.toArray();
     let label: HTMLElement;
-    let left = 0;
     for (let i = 0, l = labels.length; i < l; i++) {
       label = labels[i].nativeElement;
       if (i == this.currentIndex) {
         break;
-      } else {
-        left += label.offsetWidth;
       }
     }
     if (label) {
       this.contents.style.transform = 'translateX(-' + (this.currentIndex * 100) + '%)';
-      this.hover.style.width = label.offsetWidth + 'px';
-      this.hover.style.transform = 'translateX(' + (left - this.labelsLeft) + 'px)';
     }
   }
 

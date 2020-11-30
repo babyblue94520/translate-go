@@ -6,10 +6,11 @@
   <select class="ttb-bar-select" [(ngModel)]="currentLanguage" (change)="changeLanguage()">
     <option *ngFor="let lang of languages" [value]="lang">{{lang}}</option>
   </select>
-  <button class="ttb-button bg-dark small" #ocButton (click)="openOrClose(toolbar,ocButton)">{{showToolbar?'x':'>'}}</button>
+  <button class="ttb-button bg-dark small" #ocButton
+    (click)="openOrClose(toolbar,ocButton)">{{showToolbar?'x':'>'}}</button>
 </div>
-<div class="ttb-screen" *ngIf="show"></div>
-<div class="ttb-tool" *ngIf="show" notTranslate>
+<div class="ttb-screen" [style.display]="show?'':'none'"></div>
+<div class="ttb-tool" [style.display]="show?'':'none'" notTranslate>
   <div class="space-1"></div>
   <div class="ttb-row">
     <div class="ttb-field ttb-col-sm-3">
@@ -18,16 +19,16 @@
     </div>
   </div>
   <div class="ttb-row">
-    <button class="ttb-button bg-dark" (click)="originSourceDialog.open()">載入翻譯資源</button>
-    <button class="ttb-button bg-dark" (click)="loadWindowGroups()">載入當前翻譯資源</button>
-    <button class="ttb-button " (click)="downloadJSAll()">合併下載JS</button>
-    <button class="ttb-button " (click)="downloadTSAll()">合併下載TS</button>
+    <button class="ttb-button small bg-dark" (click)="originSourceDialog.open()">載入翻譯資源</button>
+    <button class="ttb-button small bg-dark" (click)="loadWindowGroups()">載入當前翻譯資源</button>
+    <button class="ttb-button small" (click)="downloadJSAll()">合併下載JS</button>
+    <button class="ttb-button small" (click)="downloadTSAll()">合併下載TS</button>
   </div>
   <div class="ttb-row">
     <fieldset>
       <legend>
-        <button class="ttb-button" (click)="checkRepeat()">檢查</button>
-        重複Key
+        <button class="ttb-button small" (click)="checkRepeat()">檢查重複Key</button>
+
       </legend>
       {{repeatValue}}
     </fieldset>
@@ -38,7 +39,7 @@
       <label>新增語系</label>
       <div class="error-message">{{newLanguageMessage}}</div>
     </div>
-    <button class="ttb-button bg-dark" (click)="addLanguage()">新增</button>
+    <button class="ttb-button small bg-dark" (click)="addLanguage()">新增</button>
     <ng-container *ngFor="let lang of languages">
       {{lang}}
       <button class="ttb-button bg-accent small ttb-icon-close" (click)="removeLanguage(lang)"></button>
@@ -50,13 +51,13 @@
       <label>新增群組</label>
       <div class="error-message">{{newGroupMessage}}</div>
     </div>
-    <button class="ttb-button bg-dark" (click)="addGroup()">新增</button>
+    <button class="ttb-button small bg-dark" (click)="addGroup()">新增</button>
   </div>
   <app-tab-group>
     <app-tab [onActive]="groupActive.bind(this,nonTranslateGroup)">
       <div tab-label>未處理({{nonTranslateGroup.sources.length}})</div>
       <div class="ttb-row">
-        <button class="ttb-button bg-dark" (click)="refreshNonTranslate()">刷新</button>
+        <button class="ttb-button small bg-dark" (click)="refreshNonTranslate()">刷新</button>
       </div>
       <div class="ttb-row" [appInitElement]="nonTranslateGroup.grid.getElement()"></div>
     </app-tab>
@@ -82,20 +83,22 @@
             <th nowrap width="1%"></th>
             <th>
               <div class="ttb-field">
-                <textarea rows="3" [(ngModel)]="langValues[group.name+keyName]" placeholder="列出{{keyName}}的所有字串，換行隔開"></textarea>
+                <textarea rows="3" [(ngModel)]="langValues[group.name+keyName]"
+                  placeholder="列出{{keyName}}的所有字串，換行隔開"></textarea>
               </div>
               <div class="ttb-button-row">
-                <button class="ttb-button" (click)="sourceToValue(group,keyName)">列出{{keyName}}</button>
-                <button class="ttb-button bg-dark" (click)="valueToSource(group,keyName)">載入</button>
+                <button class="ttb-button small" (click)="sourceToValue(group,keyName)">列出{{keyName}}</button>
+                <button class="ttb-button small bg-dark" (click)="valueToSource(group,keyName)">載入</button>
               </div>
             </th>
             <th *ngFor="let lang of languages;let index = index;">
               <div class="ttb-field">
-                <textarea rows="3" [(ngModel)]="langValues[group.name+lang]" placeholder="列出{{lang}}的所有字串，換行隔開"></textarea>
+                <textarea rows="3" [(ngModel)]="langValues[group.name+lang]"
+                  placeholder="列出{{lang}}的所有字串，換行隔開"></textarea>
               </div>
               <div class="ttb-button-row">
-                <button class="ttb-button" (click)="sourceToValue(group,lang)">列出{{lang}}</button>
-                <button class="ttb-button bg-dark" (click)="valueToSource(group,lang)">載入</button>
+                <button class="ttb-button small" (click)="sourceToValue(group,lang)">列出{{lang}}</button>
+                <button class="ttb-button small bg-dark" (click)="valueToSource(group,lang)">載入</button>
               </div><br>
             </th>
           </tr>

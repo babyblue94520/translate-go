@@ -1,5 +1,6 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ComponentFactoryResolver,
@@ -10,24 +11,28 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import { CUI, Overlay } from '@cui/core';
 import { DomPortalOutlet, TemplatePortal } from '@angular/cdk/portal';
+import { Debounce } from 'ts/decorators/debounce';
+import { Overlay } from 'ts/component/overlay';
 
 
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss']
+  styleUrls: ['./dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialogComponent implements OnDestroy {
   private dialogWindow: HTMLElement;
   private toolbar: HTMLElement;
-  private overlay = new Overlay();
+  private overlay = new Overlay(10000);
   private outlet: DomPortalOutlet;
 
   public marginBottom = '10px';
   public _windowClassName;
+  public show = false;
 
+  public resizeObserver;
   @ViewChild('dialog')
   public templateRef: TemplateRef<any>;
 
@@ -49,12 +54,28 @@ export class DialogComponent implements OnDestroy {
   @Input()
   public width: string;
 
+  private onImgLoad;
+
+  private onResize;
+
+  private _open = false;
+
   constructor(
-    private cd: ChangeDetectorRef,
+    private cdf: ChangeDetectorRef,
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
     private viewContainerRef: ViewContainerRef
   ) {
+
+    this.onImgLoad = this.resize.bind(this);
+    this.onResize = this.resize.bind(this);
+
+    this.resizeObserver = new MutationObserver(entries => {
+      if (this._open) {
+        this.delayAddImageOnload();
+        this.resize();
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -62,16 +83,17 @@ export class DialogComponent implements OnDestroy {
   }
 
   public isOpen(): boolean {
-    return this.outlet ? true : false;
+    return this._open;
   }
 
   /**
    * 打開Dialog
   */
   public open() {
-    if (this.outlet) {
+    if (this._open) {
       return;
     }
+    this._open = true;
     this.overlay.open(this.doOpen);
   }
 
@@ -79,31 +101,40 @@ export class DialogComponent implements OnDestroy {
    * 關閉Dialog
   */
   public close() {
-    window.removeEventListener('resize', this.resize);
-    this.overlay.close(this.doClose);
-    if (this.dialogWindow) {
-      CUI.removeElementContentChangeEvent(this.dialogWindow, this.resize);
+    this._open = false;
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
     }
-    CUI.callFunction(this.onClose);
+    window.removeEventListener('resize', this.onResize);
+    this.overlay.close(this.doClose);
   }
 
   /**
    * 讓overlay 呼叫的callback
   */
   private doOpen = () => {
-    let wrapper = this.overlay.getElement();
-    this.outlet = new DomPortalOutlet(wrapper
-      , this.componentFactoryResolver
-      , this.injector.get<ApplicationRef>(ApplicationRef)
-      , this.injector
-    );
-    this.outlet.attach(new TemplatePortal(
-      this.templateRef,
-      this.viewContainerRef
-    ));
+    this.cdf.markForCheck();
+    if (!this.outlet) {
+      let wrapper = this.overlay.getElement();
+      this.outlet = new DomPortalOutlet(wrapper
+        , this.componentFactoryResolver
+        , this.injector.get<ApplicationRef>(ApplicationRef)
+        , this.injector
+      );
+      this.outlet.attach(new TemplatePortal(
+        this.templateRef
+        , this.viewContainerRef
+      ));
+      this.toolbar = wrapper.querySelector('.ttb-dialog-toolbar');
+      this.dialogWindow = wrapper.querySelector('.ttb-dialog-window');
+      this.resizeObserver.observe(this.dialogWindow, {
+        attributes: true
+        , childList: true
+        , characterData: true
+        , subtree: true
+      });
+    }
 
-    this.toolbar = wrapper.querySelector('.ttb-dialog-toolbar');
-    this.dialogWindow = wrapper.querySelector('.ttb-dialog-window');
     if (this.toolbar.childElementCount == 0) {
       this.toolbar.style.display = 'none';
       this.marginBottom = '10px';
@@ -111,12 +142,29 @@ export class DialogComponent implements OnDestroy {
       this.toolbar.style.display = 'block';
       this.marginBottom = (this.toolbar.offsetHeight + 10) + 'px';
     }
-    CUI.addElementContentChangeEvent(this.dialogWindow, this.resize);
-    window.addEventListener('resize', this.resize);
-    // 第一次開啟，必須重新計算兩次才能抓到正確位置
-    this.resize();
-    this.resize();
-    this.cd.markForCheck();
+    this.addImageOnload();
+    window.addEventListener('resize', this.onResize);
+
+    this.delayShow();
+  }
+
+  @Debounce(50)
+  private delayAddImageOnload() {
+    this.addImageOnload();
+  }
+
+  private addImageOnload() {
+    let imgs = this.dialogWindow.querySelectorAll('img');
+    imgs.forEach(img => {
+      img.removeEventListener('load', this.onImgLoad);
+      img.addEventListener('load', this.onImgLoad);
+    });
+  }
+
+  @Debounce(100)
+  private delayShow() {
+    this.show = true;
+    this.cdf.markForCheck();
   }
 
   /**
@@ -124,66 +172,42 @@ export class DialogComponent implements OnDestroy {
    * 等待動畫結束後才移除物件
   */
   private doClose = () => {
+    this.show = false;
+    if (this.onClose instanceof Function) {
+      this.onClose();
+    }
     if (this.outlet) {
       this.outlet.dispose();
-      this.outlet = undefined;
+      this.outlet = null;
     }
-    this.cd.markForCheck();
   }
 
   /**
    * 移除物件
    */
   private destroy() {
-    window.removeEventListener('resize', this.resize);
-    if (this.dialogWindow) {
-      CUI.removeElementContentChangeEvent(this.dialogWindow, this.resize);
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
     }
+    window.removeEventListener('resize', this.onResize);
     if (this.outlet) {
       this.outlet.dispose();
-      this.outlet = undefined;
+      this.outlet = null;
     }
     if (this.overlay) {
       this.overlay.destory();
-      this.overlay = undefined;
+      this.overlay = null;
     }
   }
 
-  /**
-   * 重新計算Dialog位置
-   * @param e
-   */
-  private resize = (e?) => {
-    this.setCenter(this.dialogWindow);
-  }
-
-  /**
-   * 設定Element Translate置中
-   * @param element
-   */
-  private setCenter(element: HTMLElement) {
-    let winWidth = window.innerWidth;
-    let winHeight = window.innerHeight;
-    let height = element.offsetHeight;
-    let width = element.offsetWidth;
-    let top = '50%';
-    let left = '50%';
-    let translateTop = Math.round(height / 2);
-    let translateLeft = Math.round(width / 2);
-    if (width > winWidth) {
-      left = '10px';
-      translateLeft = 0;
+  @Debounce(100)
+  private resize() {
+    if (this.dialogWindow && this.overlay) {
+      if (this.dialogWindow.clientHeight > window.innerHeight) {
+        this.overlay.top();
+      } else {
+        this.overlay.center();
+      }
     }
-    if (height > winHeight) {
-      top = '20px';
-      translateTop = 0;
-    }
-    if (this.top != undefined) {
-      top = this.top;
-      translateTop = 0;
-    }
-    element.style.top = top;
-    element.style.left = left;
-    CUI.style(element, 'transform', 'translate(-' + translateLeft + 'px,-' + translateTop + 'px)');
   }
 }

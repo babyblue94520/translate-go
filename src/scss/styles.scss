@@ -93,7 +93,7 @@ translate-toolbar,
     background-color: $primary-color3
   }
 
-  .cui-button {
+  .ttb-button {
     text-transform: initial;
   }
 
@@ -181,11 +181,11 @@ translate-toolbar,
   }
 
   .ttb-icon-prev::before {
-    content: '＜'
+    content: '〈'
   }
 
   .ttb-icon-next::before {
-    content: '＞'
+    content: '〉'
   }
 
   .ttb-icon-close::before {
@@ -193,8 +193,43 @@ translate-toolbar,
   }
 }
 
+.load-circle {
+  text-align: center;
+
+  &:before {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px #B2EBF2 solid;
+    border-top: 3px #26C6DA solid;
+    border-radius: 50%;
+    @include animation(spCircRot .8s infinite linear);
+  }
+}
+
+@-webkit-keyframes spCircRot {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+
+
+@keyframes spCircRot {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}
 @import 'lib/cui/grid-system';
-@import 'lib/cui/component/overlay';
-@import 'lib/cui/component/dialog';
-@import 'lib/cui/component/tab-group';
+@import 'component/overlay';
+@import 'component/dialog';
+@import 'component/tab-group';
 @import 'lib/cui/component/grid';

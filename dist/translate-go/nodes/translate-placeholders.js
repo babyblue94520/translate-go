@@ -1,8 +1,8 @@
-import * as tslib_1 from "tslib";
+import { __extends } from "tslib";
 import { TranslateNodes } from './translate-nodes';
 import { TranslateConst } from '../config/translate-config';
 var TranslatePlaceholders = /** @class */ (function (_super) {
-    tslib_1.__extends(TranslatePlaceholders, _super);
+    __extends(TranslatePlaceholders, _super);
     function TranslatePlaceholders() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
