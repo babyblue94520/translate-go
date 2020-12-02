@@ -1,13 +1,14 @@
 import { CCache } from 'ts/decorators/cache';
 import { Component, ViewChild } from '@angular/core';
 import { deepClone } from 'ts/clone';
-import { DialogComponent } from 'app/app-common/component/dialog/dialog.component';
+import { DialogComponent } from 'app/common/component/dialog/dialog.component';
 import { DomUtil } from 'ts/util/dom-util';
 import { getTranslateGO, TranslateConfig } from 'translate-go/lib';
-import { Grid } from '@cui/core';
 import { TranslateConst } from 'translate-go/config/translate-config';
 import { TranslateGroup, TranslateGroupSource, TranslateKeySource } from 'translate-go/translate.interface';
 import { TranslateToolbarData } from 'ts/translate-toolbar-data';
+import { CommonUtil } from 'ts/util/common-util';
+import { Grid } from 'ts/component/grid';
 
 interface TranslateGroupGrid extends TranslateGroup {
   grid?: Grid.Grid<any>;
@@ -26,7 +27,7 @@ export class AppComponent {
 
   private translateData: TranslateToolbarData;
   public translateConfig = TranslateConfig;
-  public newLanguage = 'zh_TW';
+  public newLanguage = '';
   public newLanguageMessage = '';
   public prefix = 'TranslateSource';
   public newGroup = 'New';
@@ -196,7 +197,7 @@ export class AppComponent {
   public loadNonTranslate() {
     let sources = [];
     let texts = this.translateGO.getNonTranslateText();
-    if (DomUtil.isEmptyObject(this.ignoreKeys)) {
+    if (CommonUtil.isEmptyObject(this.ignoreKeys)) {
       for (let text in texts) {
         texts[text][TranslateConst.Type] = '0';
         sources.push(texts[text]);
@@ -328,6 +329,7 @@ export class AppComponent {
     if (this.currentGroup) {
       this.currentGridReLoad();
     }
+    this.newLanguage = '';
   }
 
   /**
@@ -369,6 +371,7 @@ export class AppComponent {
     if (!this.newGroupMessage) {
       group.grid = this.buildGrid(group);
     }
+    this.newGroup = '';
   }
 
   /**
@@ -615,7 +618,7 @@ export class AppComponent {
           });
         }
       }
-      , { value: TranslateConst.Type, name: TranslateConst.Type, align: 'left', width: '1%', canSort: true, onRender: (value, record, index) => value == '0' ? '新增' : '舊' }
+      , { value: TranslateConst.Type, name: TranslateConst.Type, align: 'left', width: '1%', canSort: true, onRender: (value, record, index) => value == '0' ? '新' : '舊' }
       , { value: TranslateConst.Key, name: TranslateConst.Key, align: 'left', width: '1%', canSort: true, maxWidth: '200px' }
     ];
     for (let i in languages) {

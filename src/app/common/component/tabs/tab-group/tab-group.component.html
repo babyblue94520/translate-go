@@ -18,7 +18,7 @@
   <div class="ttb-tab-contents">
     <div *ngFor="let tab of tabsRef;let i = index" class="ttb-tab-content {{currentIndex==i?'active':''}}">
       <ng-container *ngIf="!tab.render">
-        <div class="load-circle"></div>
+        <div class="ttb-load-circle"></div>
       </ng-container>
       <ng-container *ngIf="tab.render">
         <ng-container *ngTemplateOutlet="tab.templateRef">

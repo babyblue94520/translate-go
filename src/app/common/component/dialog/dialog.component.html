@@ -2,7 +2,7 @@
   <div class="ttb-dialog-window {{_windowClassName}} {{show?'show':''}}" [style.width]="width?width:''"
     [style.height]="height?height:''">
     <div class="ttb-dialog-content">
-      <div class="close flaticon-close" (click)="close()"></div>
+      <div class="close ttb-icon-close" (click)="close()"></div>
       <div class="ttb-dialog-header">
         <span *ngIf="title" [innerHTML]="title"></span>
         <ng-content select="[dialogHeader]"></ng-content>

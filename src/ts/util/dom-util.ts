@@ -74,31 +74,13 @@ export class DomUtil {
         }
     }
 
-    /**
-     * 是否為純Object
-     * @param {?} value
-     * @return {Boolean}
-     */
-    public static isObject(value) {
-        if (value === null || value === undefined) {
-            return false;
-        }
-        return (value.constructor === Object);
-    }
-
-    /**
-     * 是否為空物件
-     * @param {?} value
-     * @return {Boolean}
-     */
-    public static isEmptyObject(value) {
-        if (!DomUtil.isObject(value)) {
-            return true;
-        }
-        if ('{}' == JSON.stringify(value)) {
-            return true;
-        } else {
-            return false;
+    public static addListenOnEnter(element: HTMLElement, handler: Function) {
+        if (element instanceof Element) {
+            element.addEventListener('keyup', (e) => {
+                if (e.which == 13 && (element.tagName == 'INPUT' || element.querySelector('input:focus'))) {
+                    handler.call(element, e);
+                }
+            });
         }
     }
 }

@@ -26,9 +26,10 @@
   letter-spacing: 1px;
   background-color: $primary-color1;
   color: #fff;
-  text-transform: uppercase;
+  text-transform: initial;
   font-size: 80%;
   font-family: inherit;
+  white-space: nowrap;
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
@@ -99,6 +100,12 @@
     }
   }
 
+  .right-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
   input[type="checkbox"] {
     width: 1em;
     height: 1em;
@@ -113,7 +120,7 @@
 
   input,
   select {
-    height: 1.5em;
+    height: 1.8em;
   }
 
   input,
@@ -144,9 +151,10 @@
     &~label {
       position: absolute;
       top: 0;
-      left: .5em;
+      left: 0;
       width: 100%;
       font-size: 80%;
+      text-indent: .5em;
       color: $primary-color1;
       cursor: default;
       @include transition(all .2s ease-in-out);
@@ -159,6 +167,7 @@
         margin-right: .5em;
       }
     }
+
   }
 
   input,
@@ -189,11 +198,15 @@
         color: #aaa !important;
       }
     }
+
+    option {
+      cursor: pointer;
+    }
   }
 
   .message {
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: .5em;
     width: 100%;
     font-size: 80%;
@@ -240,5 +253,41 @@
         color: #aaa !important;
       }
     }
+  }
+}
+
+.ttb-load-circle {
+  text-align: center;
+
+  &:before {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px #B2EBF2 solid;
+    border-top: 3px #26C6DA solid;
+    border-radius: 50%;
+    @include animation(spCircRot .8s infinite linear);
+  }
+}
+
+@-webkit-keyframes spCircRot {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+
+
+@keyframes spCircRot {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
   }
 }
