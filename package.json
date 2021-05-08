@@ -65,7 +65,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.0",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
-    "ng-packagr": "^4.4.0",
+    "ng-packagr": "^10.1.1",
     "protractor": "~5.4.1",
     "rollup-plugin-buble": "^0.19.4",
     "rollup-plugin-node-resolve": "^3.4.0",
