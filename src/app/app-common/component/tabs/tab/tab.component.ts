@@ -14,11 +14,11 @@ import { CUI } from '@cui/core';
   styleUrls: ['./tab.component.scss']
 })
 export class TabComponent {
-  @ViewChild('all')
+  @ViewChild('all', { static: true })
   public templateRef: TemplateRef<any>;
-  @ViewChild('content')
+  @ViewChild('content', { static: true })
   public contentRef: TemplateRef<any>;
-  @ViewChild('label')
+  @ViewChild('label', { static: true })
   public labelRef: TemplateRef<any>;
 
   @Input() id = '';

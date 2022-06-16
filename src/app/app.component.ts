@@ -64,7 +64,7 @@ export class AppComponent {
   public currentGroup: TranslateGroupGrid;
   public currentSource;
 
-  @ViewChild('sourceDialog')
+  @ViewChild('sourceDialog', { static: true })
   public sourceDialog: DialogComponent;
 
   public showToolbar = true;
@@ -140,7 +140,7 @@ export class AppComponent {
   public loadWindowGroups() {
     for (let name in window) {
       if (name.indexOf(TranslateConst.GroupPrefix) != -1) {
-        let keySource: TranslateKeySource = window[name];
+        let keySource: TranslateKeySource = (<any>window)[name];
         let groupName = name.replace(TranslateConst.GroupPrefix, '');
         this.translateData.load(groupName, CUI.deepClone(keySource));
       }

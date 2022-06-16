@@ -28,7 +28,7 @@ export class DialogComponent implements OnDestroy {
   public marginBottom = '10px';
   public _windowClassName;
 
-  @ViewChild('dialog')
+  @ViewChild('dialog', { static: true })
   public templateRef: TemplateRef<any>;
 
   @Input()
