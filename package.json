@@ -21,7 +21,8 @@
     "http": "ng build --prod --output-hashing=none && gulp && http-server --gzip",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "update": "ng update @angular/cli@8 @angular/core@8 --allow-dirty --force & ng update @angular/cli@9 @angular/core@9 --allow-dirty --force & ng update @angular/cli@10 @angular/core@10 --allow-dirty --force & ng update @angular/core@11 @angular/cli@11 --allow-dirty --force & npx @angular/cli@12 update @angular/core@12 @angular/cli@12 --allow-dirty --force & npx @angular/cli@13 update @angular/core@13 @angular/cli@13 --allow-dirty --force"
   },
   "private": false,
   "dependencies": {
