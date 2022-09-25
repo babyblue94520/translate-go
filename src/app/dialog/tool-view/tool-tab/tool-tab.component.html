@@ -1,0 +1,148 @@
+<div class="view">
+  <div class="ttb-flex-row">
+    <div class="ttb-field">
+      <button
+        class="ttb-button small cui-icon-ok"
+        [disabled]="!isGroupChange()"
+        (click)="rename()"
+      ></button>
+      <input type="text" [(ngModel)]="value" />
+      <label [innerText]="ToolbarKey.Group"></label>
+    </div>
+    <div class="ttb-field">
+      <input
+        type="text"
+        [(ngModel)]="keyword"
+        (ngModelChange)="filter()"
+        [disabled]="isChange()"
+      />
+      <label [innerText]="ToolbarKey.Keyword"></label>
+    </div>
+  </div>
+  <div class="ttb-button-row center">
+    <button
+      class="ttb-button"
+      (click)="save()"
+      [disabled]="!isChange()"
+      [innerText]="'Save'"
+    ></button>
+    <button
+      class="ttb-button bg-dark"
+      (click)="openDownload()"
+      [innerText]="ToolbarKey.Download"
+    ></button>
+    <button
+      class="ttb-button bg-dark"
+      (click)="reset()"
+      [disabled]="!isChange()"
+      [innerText]="'reset'"
+    ></button>
+  </div>
+  <span>count: {{ filterCount }}</span>
+  <div class="view-content" [attr.nottranslate]="true">
+    <div class="ttb-grid">
+      <div class="ttb-grid-container">
+        <table #table>
+          <thead>
+            <tr>
+              <th>
+                <button
+                  class="button ttb-button cui-icon-add"
+                  (click)="addSource()"
+                ></button>
+              </th>
+              <th>
+                <div class="nowrap">
+                  <span [class]="sortClass(key)" (click)="sortChange(key)"
+                    >Key</span
+                  >
+                  <button
+                    class="ttb-button none small cui-icon-copy"
+                    (click)="copy(key)"
+                  ></button>
+                </div>
+                <textarea
+                  [(ngModel)]="propertyText[key]"
+                  (ngModelChange)="onTextChange(key)"
+                ></textarea>
+              </th>
+              <th *ngFor="let language of _languages">
+                <div>
+                  <span
+                    [class]="sortClass(language)"
+                    (click)="sortChange(language)"
+                  >
+                    {{ language }}</span
+                  >
+                  <button
+                    class="ttb-button small none cui-icon-copy"
+                    (click)="copy(language)"
+                  ></button>
+                </div>
+                <textarea
+                  [(ngModel)]="propertyText[language]"
+                  (ngModelChange)="onTextChange(language)"
+                ></textarea>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody notTranslate>
+            <ng-container *ngFor="let record of records; let i = index">
+              <tr [hidden]="!isFilter(i)">
+                <td class="ttb-grid-column" align="left" nowrap="" width="1%">
+                  <button
+                    class="button ttb-button none small cui-icon-remove"
+                    (click)="removeSource(record)"
+                  ></button>
+                </td>
+                <td
+                  class=" ttb-grid-column {{ getKeyClass(record[key]) }}"
+                  align="left"
+                  nowrap=""
+                  width="1%"
+                  #td
+                  (click)="onFocus(td)"
+                >
+                  <div class="text" [innerText]="record[key]"></div>
+                  <input
+                    class="editor"
+                    *ngIf="isFocus(td)"
+                    [(ngModel)]="record[key]"
+                    (ngModelChange)="onRecordChange(key)"
+                    [placeholder]="'Please enter key'"
+                    (blur)="onBlur()"
+                    required
+                  />
+                </td>
+                <td
+                  *ngFor="let language of _languages; let i = index"
+                  nowrap=""
+                  width="1%"
+                  class="ttb-grid-column"
+                  align="left"
+                  #td
+                  (click)="onFocus(td)"
+                >
+                  <div class="text" [innerText]="record[language]"></div>
+                  <textarea
+                    class="editor"
+                    *ngIf="isFocus(td)"
+                    [value]="record[language]"
+                    [(ngModel)]="record[language]"
+                    (ngModelChange)="onRecordChange(language)"
+                    (blur)="onBlur()"
+                    required
+                    autofocus
+                  ></textarea>
+                </td>
+                <td width="100%"></td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<download-dialog></download-dialog>

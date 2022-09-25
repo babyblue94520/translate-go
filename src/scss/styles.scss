@@ -1,18 +1,32 @@
-@import 'base/function';
-@import 'base/themes';
-
-html,
-body {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
+@import "base/function";
+@import "base/themes";
 
 translate-toolbar,
 .ttb-overlay {
-  @import 'lib/cui/form';
+  @import "lib/cui/form";
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 1px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #fff;
+  }
+
+  ::-webkit-scrollbar-track-piece {
+    background: #fff;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
 
   font-size: 1em;
   font-family: "Microsoft JhengHei", "黑体", "宋体", sans-serif;
@@ -70,53 +84,31 @@ translate-toolbar,
   }
 
   .primary {
-    color: $primary-color1
+    color: $primary-color1;
   }
 
   .accent {
-    color: $primary-color2
+    color: $primary-color2;
   }
 
   .dark {
-    color: $primary-color3
+    color: $primary-color3;
   }
 
   .bg-primary {
-    background-color: $primary-color1
+    background-color: $primary-color1;
   }
 
   .bg-accent {
-    background-color: $primary-color2
+    background-color: $primary-color2;
   }
 
   .bg-dark {
-    background-color: $primary-color3
+    background-color: $primary-color3;
   }
 
-  .cui-button {
+  .ttb-button {
     text-transform: initial;
-  }
-
-
-  .ttb-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9998;
-    background-color: #9f9f9f;
-  }
-
-  .ttb-tool {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9999;
-    background-color: #fff;
-    text-align: left;
-    @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
   }
 
   .ttb-bar {
@@ -124,9 +116,13 @@ translate-toolbar,
     left: 0;
     bottom: 0;
     padding: 3px;
-    z-index: 99999;
+    z-index: 9999;
+    display: inline-flex;
     background-color: #fff;
-    @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
+    @include box-shadow(
+      0 1px 6px rgba(0, 0, 0, 0.12),
+      0 1px 4px rgba(0, 0, 0, 0.24)
+    );
     @include transform(translateX(0px));
     @include transition(transform 0.3s ease-in-out);
   }
@@ -159,42 +155,13 @@ translate-toolbar,
       width: 100% !important;
     }
   }
-
-  .ttb-button {
-    text-transform: initial;
-  }
-
-  .ttb-icon-down::before {
-    content: '▼'
-  }
-
-  .ttb-icon-up::before {
-    content: '▲'
-  }
-
-  .ttb-icon-first::before {
-    content: '≦'
-  }
-
-  .ttb-icon-last::before {
-    content: '≧'
-  }
-
-  .ttb-icon-prev::before {
-    content: '＜'
-  }
-
-  .ttb-icon-next::before {
-    content: '＞'
-  }
-
-  .ttb-icon-close::before {
-    content: 'X'
-  }
 }
 
-@import 'lib/cui/grid-system';
-@import 'lib/cui/component/overlay';
-@import 'lib/cui/component/dialog';
-@import 'lib/cui/component/tab-group';
-@import 'lib/cui/component/grid';
+@import "lib/cui/flex";
+@import "lib/cui/grid-system";
+@import "lib/cui/component/overlay";
+@import "lib/cui/component/dialog";
+@import "lib/cui/component/tab-group";
+@import "lib/cui/component/grid";
+@import "lib/cui/component/loader";
+@import "lib/cui/icon";

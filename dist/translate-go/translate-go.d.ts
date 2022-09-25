@@ -1,68 +1,40 @@
-import { TranslateKeySource } from './translate.interface';
-import { TranslateNodes } from './nodes/translate-nodes';
+import { TranslateArgs, TranslateGroupSource, TranslateLanguageSource, TranslateSource } from './interface';
+import { TranslateEvent } from './constant';
 /**
  * 取得TranslateGO
  */
 export declare function getTranslateGO(): TranslateGO;
-/**
- * 翻譯
- */
-export declare class TranslateGO {
-    private watch;
-    private delay;
+export default class TranslateGO {
+    private readonly listeners;
+    private readonly ignoreMap;
+    private readonly translateGroupMap;
+    private readonly nodeMap;
+    private readonly mutationObserver;
     private db;
-    private currentLanguage;
-    private translateTexts;
-    private translatePlaceholders;
-    private translateSubmits;
-    private translateNodes;
-    private windowAlert;
-    private windowConfirm;
-    private elementSetAttributeOrigin;
-    private notLoadTextNodes;
-    private notCleanTextNodes;
-    private notSetInnerTexts;
-    private innerTexts;
-    /**
-     * 是否監控中
-     */
-    isWatch(): boolean;
-    getTranslateNode(): TranslateNodes[];
-    /**
-     * 取得無法翻譯的文字
-     */
-    getNonTranslateText(): any;
-    /**
-     * 重新載入文字多語資料
-     */
-    reload(data?: TranslateKeySource): void;
-    /**
-     * 取得當前語系
-     */
+    private language;
+    private scanning;
+    private languages;
     getLanguage(): string;
-    /**
-     * 取得當前語系文字
-     * @param text
-     */
-    getText(text: string): string;
-    /**
-     * 取得當前語系文字
-     * @param key
-     */
-    getTextByKey(key: string): string;
-    /**
-     * 依輸入語系進行翻譯
-     * @param language
-     */
-    translate(language: string): void;
-    /**
-     * 觀察並翻譯
-     */
+    getLanguages(): string[];
+    translate(language: string, force?: boolean): void;
+    load(language: string, source: TranslateSource, group?: string): void;
+    loadAll(languageSource: TranslateLanguageSource, group?: string): void;
+    private doLoad;
+    removeLanguageSource(group: string): void;
+    clearSource(): void;
+    isScanning(): boolean;
     start(): void;
-    /**
-     * 停止觀察和翻譯
-     */
     stop(): void;
+    addEventListener(event: TranslateEvent, callback: Function, target?: any): void;
+    removeEventListener(event: TranslateEvent, callback: Function): void;
+    removeAllEventListener(target: any): void;
+    get(key: string, args?: TranslateArgs, language?: string, group?: string): string;
+    getNotFoundKeys(): TranslateLanguageSource;
+    getGroups(): string[];
+    getGroupSource(): TranslateGroupSource;
+    getLanguageSource(group: string): TranslateLanguageSource;
+    private doStart;
+    private mutationObserverHandler;
     /**
      * 監聽 Element 新增跟異動事件
      */
@@ -71,60 +43,15 @@ export declare class TranslateGO {
      * 移除 Element 新增跟異動事件
      */
     private removeEvents;
-    /**
-     * 攔截alert訊息並翻譯
-     */
-    private proxyAlertHanlder;
-    /**
-     * 攔截confirm訊息並翻譯
-     */
-    private proxyConfirmHanlder;
-    /**
-     * 攔截setAttribute
-     * @param go
-     */
-    private buildProxySetAttribute;
-    /**
-     * dom新增node時，找出可翻譯node
-     * @param 事件
-     */
-    private domNodeInserted;
-    /**
-     * dom 有異動的時候檢查node文字是否更新
-     * @param 事件
-     */
-    private domSubtreeModified;
-    /**
-     * 是否非忽略的標籤
-     * @param element
-     */
-    private isNonIgnore;
-    /**
-     * Node 處理
-     * @param node
-     * @param handler
-     */
-    private nodeHandler;
-    /**
-     * NodeList 處理
-     * @param nodes 不重複寫loop
-     * @param handler
-     */
-    private loopNodes;
-    /**
-     * 載入需要翻譯的Node
-     */
-    private loadTextNodes;
-    /**
-     * 清除已經不在畫面上翻譯物件
-     */
-    private cleanTextNodes;
-    /**
-     * 執行翻譯
-     */
+    private scanAttribute;
+    private scan;
+    private scanText;
+    private addNode;
+    private ignore;
+    private findGroup;
+    private getParent;
     private doTranslate;
-    /**
-     * 對有TranslateKey的element 新增 text
-     */
-    private setInnerTexts;
+    private clearRemoveNode;
+    private doClearRemoveNode;
+    private clear;
 }

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>{TranslateGO}</title>
+  <base href="/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="translate-toolbar.css">
+  <style>
+    .container {
+      padding: 1em;
+    }
+
+  </style>
+  <script src="translate-toolbar.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <fieldset>
+      <legend>{DirectTranslate}</legend>
+      <div>{Test1}</div>
+      <div>{Test1}: <span>test</span> {Test5} aaa</div>
+    </fieldset>
+    <fieldset>
+      <legend>{SpecifyTheKeyToTranslation}</legend>
+      <div translateKey="{Test2}">Tessaaa</div>
+    </fieldset>
+    <fieldset>
+      <legend>Submit Input</legend>
+      <input type="submit" value="{Test1}" />
+      <input type="submit" translateKey="{Test2}" />
+    </fieldset>
+    <fieldset>
+      <legend>Input Placeholder</legend>
+      <input placeholder="{Test3}" />
+      <input placeholder="{Test66}" />
+    </fieldset>
+    <fieldset>
+      <legend>{NotTranslate}</legend>
+      <div notTranslate>
+        <div>{Test5}</div>
+        <input placeholder="{Test5}" />
+        <input type="submit" value="{Test5}" />
+        <input type="submit" translateKey="{Test5}" />
+      </div>
+    </fieldset>
+    <fieldset>
+      <div>
+        <span arg1="true">arg1 = {arg1}</span>
+      </div>
+    </fieldset>
+    <fieldset translateGroup="group2">
+      <legend>Group2</legend>
+      <div>{Test1}</div>
+      <div>{Test1}: <span>test</span> {Test5} aaa</div>
+    </fieldset>
+  </div>
+  <script>
+    window.addEventListener("load", onLoad);
+
+    function onLoad() {
+      let toolbar = document.createElement("translate-toolbar");
+      document.body.appendChild(toolbar);
+      toolbar.onLanguageChange = function (...args) {
+        console.log("onLanguageChange", args);
+      };
+
+      var sources = {
+        en: {
+          NotTranslate: "Don't translate blocks",
+          TranslateGO: "TranslateGO",
+          DirectTranslate: "Direct translate",
+          SpecifyTheKeyToTranslation: "Specify the key to translation",
+          Test1: "Test 1",
+          Test2: "Test 2",
+          Test3: "Test 3",
+          Test4: "Test 4",
+          Test5: "Test 5",
+        },
+        "zh-TW": {
+          NotTranslate: "不翻譯區塊",
+          TranslateGO: "Title也可以翻",
+          DirectTranslate: "直接翻譯",
+          SpecifyTheKeyToTranslation: "指定 Key",
+          Test1: "測試1",
+          Test2: "測試2",
+          Test3: "測試3",
+          Test4: "測試4",
+          Test5: "測試5",
+        },
+      };
+      let translateGO = getTranslateGO();
+
+      translateGO.loadAll(sources, "test");
+
+      var group2 = {
+        en: {
+          Test1: "group2 Test 1",
+        },
+        "zh-TW": {
+          Test1: "group2 測試1",
+        },
+      };
+      translateGO.loadAll(group2, "group2");
+    }
+
+  </script>
+</body>
+
+</html>

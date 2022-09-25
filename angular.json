@@ -36,9 +36,11 @@
             "styles": [
               "src/scss/styles.scss"
             ],
-            "scripts": [{
-              "input": "node_modules/document-register-element/build/document-register-element.js"
-            }],
+            "scripts": [
+              {
+                "input": "node_modules/document-register-element/build/document-register-element.js"
+              }
+            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -54,10 +56,15 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "styles": [
+                "src/scss/styles.scss"
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -137,9 +144,9 @@
           },
           "configurations": {
             "production": {
-              "project": "projects/translate-go-test/ng-package.prod.json"
-            ,              "tsConfig": "projects/translate-go-test/tsconfig.lib.prod.json"
-}
+              "project": "projects/translate-go-test/ng-package.prod.json",
+              "tsConfig": "projects/translate-go-test/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {

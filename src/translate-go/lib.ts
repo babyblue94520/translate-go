@@ -1,2 +1,4 @@
-export { getTranslateGO } from './translate-go';
-export { TranslateConfig } from './config/translate-config';
+export * from './interface';
+export * from './constant';
+export * from './translate-db';
+export * from './translate-go';

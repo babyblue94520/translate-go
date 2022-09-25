@@ -1,60 +1,105 @@
-.ttb-dialog-toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 2;
+.ttb-dialog {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  display: flex;
   width: 100%;
-  padding: .5em 1em .5em 1em;
+  height: 100%;
+  flex-direction: column;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+
+  &.over {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    justify-content: flex-start;
+  }
+}
+
+.ttb-dialog-toolbar {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  padding: 0.5em 1em 0.5em 1em;
   background: #fff;
   @include box-shadow(0px -2px 3px rgba(0, 0, 0, 0.3));
 }
 
 .ttb-dialog-window {
-  position: absolute;
+  flex: 0 0 auto;
+  position: relative;
   z-index: 2;
-  display: inline-block;
+  display: inline-flex;
+  opacity: 0;
   max-width: 100%;
   padding: 0;
-  @include transform(translate(0px, 0px));
+  flex-direction: column;
 
-  .ttb-dialog-content {
-    background-color: #FFF;
-    @include box-shadow(0 14px 45px rgba(5, 5, 5, 0.25), 0 10px 18px rgba(0, 0, 0, 0.22));
+  @include box-shadow(
+    0 14px 45px rgba(5, 5, 5, 0.25),
+    0 10px 18px rgba(0, 0, 0, 0.22)
+  );
+  // @include transform(translate(0px, 0px));
+  @include transition(opacity 0.3s ease-in-out);
 
-    >.ttb-dialog-header {
-      position: relative;
+  &.show {
+    opacity: 1;
+  }
+
+  &.full {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    overflow: hidden;
+
+    .ttb-dialog-content {
       width: 100%;
-      padding-right: 2em;
-      line-height: 2em;
-      text-indent: .5em;
-      font-size: 120%;
-      font-weight: bold;
-      background-color: #2196F3;
-      color: #fff;
+      height: 100%;
+      overflow: hidden;
+    }
+  }
+
+  > .ttb-dialog-header {
+    flex: 0 0 auto;
+    position: relative;
+    display: flex;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    align-items: center;
+    line-height: 1em;
+    font-size: 120%;
+    font-weight: bold;
+    background-color: #fff;
+    color: #344149;
+
+    > * {
+      position: relative;
+      flex: 1;
     }
 
-    >.ttb-dialog-close {
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 1;
-      padding: .5em;
+    > .close {
+      flex: 0 0 auto;
+      padding: 10px;
       cursor: pointer;
-      color: #fff;
+      color: #344149;
 
       &:before {
         font-size: 120%;
       }
     }
-
-    .ttb-dialog-panel {
-      display: inline-block;
-      width: 100%;
-      padding: .8em;
-      overflow: hidden;
-      word-wrap: break-word;
-    }
-
   }
 
+  > .ttb-dialog-content {
+    position: relative;
+    z-index: inherit;
+    display: flex;
+    width: 100%;
+    padding: 10px;
+    flex-direction: column;
+    background-color: #fff;
+  }
 }

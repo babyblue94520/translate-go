@@ -1,0 +1,52 @@
+@import "base/function";
+.shrink {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+
+  &.shrink-shadow {
+    @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  }
+
+  .shrink-header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+
+    &.close {
+      .shrink-close {
+        @include transform(rotate(180deg));
+      }
+    }
+
+    .left {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .right {
+      flex-shrink: 0;
+    }
+  }
+
+  .shrink-close {
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    @include transition(transform 0.3s ease-in-out);
+  }
+
+  .shrink-content {
+    overflow: hidden;
+    @include transitions(opacity 0.3s ease-in-out, height 0.3s ease-in-out);
+  }
+
+  .shrink-content-inside {
+    float: left;
+    width: 100%;
+    padding: 0px 10px 10px 10px;
+  }
+}

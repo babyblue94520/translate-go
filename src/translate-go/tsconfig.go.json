@@ -2,13 +2,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "../../dist",
-    "sourceMap": true,
+    "sourceMap": false,
     "declaration": true,
-    "module": "es2015",
+    "module": "ESNext",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es5",
+    "target": "es2017",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -16,21 +16,7 @@
       "es2017",
       "dom"
     ],
-    "baseUrl": "../../src/translate-go/",
-    "paths": {
-      "@cui/core": [
-        "../ts/lib/cui/core"
-      ],
-      "@environment": [
-        "../environments/environment"
-      ],
-      "translate-go-test": [
-        "dist/translate-go-test"
-      ],
-      "translate-go-test/*": [
-        "dist/translate-go-test/*"
-      ]
-    },
+    "baseUrl": "../../src/",
     "plugins": [{
         "name": "@angular/language-service"
       },

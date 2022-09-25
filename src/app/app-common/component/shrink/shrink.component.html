@@ -1,0 +1,19 @@
+<div class="shrink {{ shadow ? 'shrink-shadow' : '' }}" #shrink>
+  <div class="shrink-header" (click)="openOrClose()">
+    <div class="left">
+      <ng-container *ngIf="title">{{ title }}</ng-container>
+      <ng-container *ngTemplateOutlet="header"></ng-container>
+    </div>
+    <div class="right">
+      <div class="shrink-close cui-icon-up"></div>
+    </div>
+  </div>
+  <div class="shrink-content" #content>
+    <div class="shrink-content-inside" #inside>
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+<ng-template #header>
+  <ng-content select="[shrink-title]"></ng-content>
+</ng-template>

@@ -1,20 +1,24 @@
 const gulp = require('gulp');
 const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
-const replace = require('gulp-string-replace');
 
 gulp.task('concat', function () {
   return gulp.src([
-      './dist/runtime.*.js',
-      './dist/polyfills.*.js',
-      './dist/scripts.*.js',
-      './dist/styles.*.js',
-      './dist/main.*.js',
+      './dist/*.js',
     ])
     .pipe(concat('translate-toolbar.js', {
       newLine: ';'
     }))
-    .pipe(gulp.dest('./lib/'));
+    .pipe(gulp.dest('./dist/lib/'));
 });
 
-gulp.task('default', ['concat']);
+gulp.task('css', function () {
+  return gulp.src([
+      './dist/styles.*.css',
+    ])
+    .pipe(concat('translate-toolbar.css', {
+      newLine: ';'
+    }))
+    .pipe(gulp.dest('./dist/lib/'));
+});
+
+gulp.task('default',  gulp.series('concat','css'));

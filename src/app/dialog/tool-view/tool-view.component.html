@@ -1,0 +1,79 @@
+<app-dialog #sourceDialog [windowSize]="'full'">
+  <div class="ttb-tool view">
+    <app-shrink>
+      <div shrink-title [innerText]="ToolbarKey.Settings"></div>
+      <div class="ttb-flex-row">
+        <div class="ttb-flex-shrink">
+          <div>
+            <button
+              class="ttb-button cui-icon-add"
+              [disabled]="isDisableLanguageButton()"
+              (click)="addLanguage()"
+            ></button>
+          </div>
+          <div style="width: 10em">
+            <div class="ttb-field">
+              <input type="text" [(ngModel)]="newLanguage" />
+              <label [innerText]="ToolbarKey.Language"></label>
+              <div class="error-message">{{ newLanguageMessage }}</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="ttb-flex-block" *ngFor="let language of languages">
+            <button
+              class="ttb-button none small cui-icon-remove"
+              (click)="removeLanguage(language)"
+            ></button>
+            {{ language }}
+          </div>
+        </div>
+      </div>
+      <div class="ttb-flex-row">
+        <div class="ttb-flex-shrink">
+          <button
+            class="ttb-button cui-icon-add"
+            [disabled]="isDisableGroupButton()"
+            (click)="addGroup()"
+          ></button>
+        </div>
+        <div>
+          <div class="ttb-field">
+            <input type="text" [(ngModel)]="newGroup" />
+            <label [innerText]="ToolbarKey.Group"></label>
+          </div>
+        </div>
+      </div>
+      <div class="ttb-flex-row">
+        <div class="ttb-flex-shrink">
+          <button
+            class="ttb-button"
+            [innerText]="ToolbarKey.Import"
+            (click)="openSourceDialog()"
+          ></button>
+        </div>
+      </div>
+    </app-shrink>
+
+    <app-tab-group class="view-content column">
+      <app-tab
+        *ngFor="let group of groups; let i = index"
+        [onClose]="onGroupClose"
+        [value]="group"
+      >
+        <div tab-label>
+          <h2>
+            {{ group }}
+          </h2>
+        </div>
+        <tool-tab
+          [(ngModel)]="groups[i]"
+          (ngModelChange)="onGroupChange(groups[i])"
+          [languages]="languages"
+          [onSave]="onSave"
+        ></tool-tab>
+      </app-tab>
+    </app-tab-group>
+  </div>
+  <import-dialog [onImport]="importSource"></import-dialog>
+</app-dialog>

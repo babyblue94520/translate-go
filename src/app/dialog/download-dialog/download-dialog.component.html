@@ -1,0 +1,49 @@
+<app-dialog #downloadDialog [windowSize]="'large'">
+  <ng-container *ngIf="downloadDialog.isOpen()">
+    <div class="ttb-col-xs32-4 ttb-field">
+      <select [(ngModel)]="language" (ngModelChange)="onLanguageChange()">
+        <option *ngFor="let lang of languages" [value]="lang">
+          {{ lang }}
+        </option>
+      </select>
+      <label>Language</label>
+    </div>
+    <div class="ttb-col-xs32-8 ttb-field">
+      <input
+        type="text"
+        [(ngModel)]="keyVarable"
+        (ngModelChange)="onKeyVarableChange()"
+      />
+      <label>Key Class Name</label>
+    </div>
+    <div class="ttb-button-row">
+      <button
+        class="ttb-button bg-dark"
+        (click)="download()"
+        [innerText]="ToolbarKey.Download"
+      ></button>
+    </div>
+    <app-tab-group>
+      <app-tab *ngIf="keyFile">
+        <div tab-label>
+          {{ keyFile.name }}
+        </div>
+        <div style="height: 30em; overflow-y: hidden">
+          <textarea
+            [value]="keyFile.content"
+            style="width: 100%; height: 100%"
+            readonly
+          ></textarea>
+        </div>
+      </app-tab>
+      <app-tab *ngFor="let file of languageFiles">
+        <div tab-label>
+          {{ file.name }}
+        </div>
+        <div style="height: 30em; overflow-y: auto">
+          <div [innerHTML]="jsonToHtml(file.content)"></div>
+        </div>
+      </app-tab>
+    </app-tab-group>
+  </ng-container>
+</app-dialog>

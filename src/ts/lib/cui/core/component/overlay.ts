@@ -1,90 +1,115 @@
+
+import { clone } from '../clone';
 import { CUI } from '../cui';
+import { Async } from '../decorators/async';
 
 export enum OverlayClassName {
-    overlay = 'ttb-overlay',
-    screen = 'ttb-overlay-screen',
-    bodyOpen = 'ttb-overlay-open',
-    open = 'open',
+  overlay = 'ttb-overlay'
+  , screen = 'ttb-overlay-screen'
+  , bodyOpen = 'ttb-overlay-open'
+  , open = 'open'
 }
 
-let overlayZIndexMax = 0;
-let overlayOpenCount = 0;
+interface OverlayConfig {
+  zIndex?: number;
+  onOpen?: Function;
+  canClose?: () => boolean;
+  onClose?: Function;
+}
 
 /**
  * 用來擺放dialog
  */
 export class Overlay {
-    private element: HTMLDivElement;
-    private screenElement: HTMLDivElement;
-    private min = 9999;
+  private static openCount = 0;
+  private static zIndex = 0;
+  private element: HTMLDivElement;
+  private screenElement: HTMLDivElement;
+  private show = false;
+  private config: OverlayConfig;
+  private timer;
 
-    constructor() {
-        this.element = document.createElement('div');
-        this.element.className = OverlayClassName.overlay;
-        this.screenElement = document.createElement('div');
-        this.screenElement.className = OverlayClassName.screen;
+  constructor(config: OverlayConfig = {}) {
+    this.config = clone({
+      zIndex: 100
+      , onOpen: () => { }
+      , onClose: () => { }
+    }, config);
+    this.element = document.createElement('div');
+    this.element.className = OverlayClassName.overlay;
+    this.screenElement = document.createElement('div');
+    this.screenElement.className = OverlayClassName.screen;
+  }
+
+  public getElement(): HTMLElement {
+    return this.element;
+  }
+
+  /**
+   * 順序很重要
+   * 開啟
+  */
+  public open() {
+    if (this.show) {
+      return;
     }
-
-    public getElement(): HTMLElement {
-        return this.element;
+    if (!this.screenElement.isConnected) {
+      document.body.appendChild(this.screenElement);
     }
-
-    /**
-     * 順序很重要
-     * 開啟
-    */
-    public open(render: Function) {
-        overlayOpenCount++;
-        this.screenElement.style.zIndex = String(++overlayZIndexMax + this.min);
-        document.body.appendChild(this.screenElement);
-        this.element.style.zIndex = String(++overlayZIndexMax + this.min);
-        document.body.appendChild(this.element);
-
-        if (render instanceof Function) {
-            render();
-        }
-
-        document.body.classList.add(OverlayClassName.bodyOpen);
-        document.documentElement.classList.add(OverlayClassName.bodyOpen);
-        this.element.classList.add(OverlayClassName.open);
-        this.screenElement.classList.add(OverlayClassName.open);
+    if (!this.element.isConnected) {
+      document.body.appendChild(this.element);
     }
+    this.show = true;
+    Overlay.openCount++;
+    clearTimeout(this.timer);
+    this.timer = this.doOpen();
+  }
 
-    /**
-     * 關閉
-     * callback 等到關閉動畫完成後呼叫
-    */
-    public close(callback?: Function) {
-        overlayOpenCount--;
-        if (overlayOpenCount <= 0) {
-            document.body.classList.remove(OverlayClassName.bodyOpen);
-            document.documentElement.classList.remove(OverlayClassName.bodyOpen);
-            overlayOpenCount = 0;
-            overlayZIndexMax = 0;
-        }
-        this.element.classList.remove(OverlayClassName.open);
-        this.screenElement.classList.remove(OverlayClassName.open);
-        if (callback instanceof Function) {
-            setTimeout(() => {
-                callback();
-                this.element.classList.remove(OverlayClassName.open);
-                this.screenElement.classList.remove(OverlayClassName.open);
-                CUI.remove(this.element);
-                CUI.remove(this.screenElement);
-            }, 337);
-        }
-    }
+  @Async()
+  private doOpen() {
+    this.screenElement.style.zIndex = String(++Overlay.zIndex + this.config.zIndex);
+    this.element.style.zIndex = String(++Overlay.zIndex + this.config.zIndex);
+    this.screenElement.classList.add(OverlayClassName.open);
+    this.element.classList.add(OverlayClassName.open);
 
-    /**
-     * 移除物件
-    */
-    public destory() {
-        if (this.element) {
-            CUI.remove(this.element);
-            CUI.remove(this.screenElement);
-            this.element = undefined;
-            this.screenElement = undefined;
-        }
+    this.config.onOpen();
+  }
+
+  /**
+   * 關閉
+   * callback 等到關閉動畫完成後呼叫
+  */
+  public close() {
+    if (!this.show) {
+      return;
     }
+    this.show = false;
+    if (--Overlay.openCount <= 0) {
+      Overlay.openCount = 0;
+      Overlay.zIndex = 0;
+    }
+    this.element.addEventListener('transitionend', this.doRemove);
+    this.element.classList.remove(OverlayClassName.open);
+    this.screenElement.classList.remove(OverlayClassName.open);
+    clearTimeout(this.timer);
+  }
+
+  private doRemove = () => {
+    this.element.removeEventListener('transitionend', this.doRemove);
+    this.config.onClose();
+    CUI.remove(this.element);
+    CUI.remove(this.screenElement);
+  }
+
+  /**
+   * 移除物件
+  */
+  public destory() {
+    clearTimeout(this.timer);
+    CUI.remove(this.element);
+    CUI.remove(this.screenElement);
+    this.element = null;
+    this.screenElement = null;
+  }
 }
 

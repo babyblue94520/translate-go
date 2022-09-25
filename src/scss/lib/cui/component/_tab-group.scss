@@ -1,6 +1,16 @@
-@import 'base/function';
+@import "base/function";
+
+.ttb-tab-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
 .ttb-tab-header {
+  flex: auto 0 0;
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -10,11 +20,17 @@
   .ttb-tab-next {
     position: absolute;
     top: 0;
-    height: 100%;
-    padding: .8em;
-    background-color: #fff;
     z-index: 1;
+    display: inline-flex;
+    height: 100%;
+    padding: 0.8em;
+    background-color: #fff;
+    align-items: center;
     cursor: pointer;
+
+    &.hide {
+      display: none;
+    }
   }
 
   .ttb-tab-prev {
@@ -27,25 +43,12 @@
     @include box-shadow(-2px 0px 3px #aaa);
   }
 
-  .ttb-tab-header-hover {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    z-index: 1;
-    display: inline-block;
-    width: 0px;
-    height: 2px;
-    background-color: #00bcd4;
-    pointer-events: none;
-    @include transform(translateX(0px));
-    @include transition(transform .3s ease-in-out);
-  }
-
   .ttb-tab-labels {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    color: #ddd;
     white-space: nowrap;
-    @include transition(transform .3s ease-in-out);
+    @include transition(transform 0.3s ease-in-out);
 
     .ttb-tab-label {
       position: relative;
@@ -53,13 +56,28 @@
       font-size: 100%;
       letter-spacing: 3px;
       white-space: nowrap;
-      color: #666;
-      cursor: pointer;
       @include transition;
 
       &.active {
-        color: #344149;
+        color: #00bcd4;
         font-weight: bold;
+
+        &:after {
+          @include transform(scale(1, 1));
+        }
+      }
+
+      &:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 2px;
+        background-color: #00bcd4;
+        @include transform(scale(0, 1));
+        @include transition(transform 0.3s ease-in-out);
       }
 
       &.disabled {
@@ -67,44 +85,52 @@
       }
 
       .ttb-tab-label-text {
-        display: inline-block;
-        margin: 10px 15px 10px 15px;
-        pointer-events: none;
+        display: inline-flex;
+        padding: 10px 15px 10px 15px;
+        cursor: pointer;
       }
 
       .ttb-tab-label-close {
-        display: inline-block;
+        display: inline-flex;
         vertical-align: top;
         font-size: 80%;
+        cursor: pointer;
+
+        &:before {
+          content: "✖";
+        }
       }
     }
   }
 }
 
 .ttb-tab-body {
+  flex: 1;
   position: relative;
   display: inline-block;
   width: 100%;
+  height: 100%;
   overflow: hidden;
 
   .ttb-tab-contents {
     position: relative;
     display: flex;
+    // overflow-y: auto; // 會影響到其他頁tab，下拉待修
     width: 100%;
+    height: 100%;
     white-space: nowrap;
     @include transform(translateX(0%));
-    @include transition(transform .3s ease-in-out);
+    @include transition(transform 0.3s ease-in-out);
 
     .ttb-tab-content {
       display: inline-block;
       width: 100%;
       height: 0;
-      padding: .8em;
       opacity: 0;
       flex-shrink: 0;
       pointer-events: none;
       white-space: normal;
-      @include transition(opacity .3s ease-in-out);
+      @include transition(opacity 0.3s ease-in-out);
 
       &.active {
         height: auto;

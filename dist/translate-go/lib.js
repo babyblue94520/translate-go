@@ -1,3 +1,4 @@
-export { getTranslateGO } from './translate-go';
-export { TranslateConfig } from './config/translate-config';
-//# sourceMappingURL=lib.js.map
+export * from './interface';
+export * from './constant';
+export * from './translate-db';
+export * from './translate-go';

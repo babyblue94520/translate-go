@@ -1,4 +1,4 @@
-@import 'base/function';
+@import "base/function";
 
 :focus {
   outline: none;
@@ -19,7 +19,7 @@
 }
 
 .ttb-button {
-  padding: .5em 1em .5em 1em;
+  padding: 0.5em 1em 0.5em 1em;
   margin: 5px;
   border: 0px;
   border-radius: 2px;
@@ -32,10 +32,24 @@
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
-  @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
+  opacity: 0.9;
+  @include box-shadow(
+    0 1px 6px rgba(0, 0, 0, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.24)
+  );
+
+  &.none {
+    background-color: #fff0;
+    @include box-shadow(none);
+  }
+
+  &:hover {
+    opacity: 1;
+  }
 
   &[disabled] {
-    opacity: .6;
+    opacity: 0.5;
+    cursor: not-allowed;
     @include box-shadow(none);
   }
 
@@ -44,7 +58,7 @@
   }
 
   &.small {
-    padding: .3em;
+    padding: 0.3em;
     margin-right: 5px;
     min-width: auto;
   }
@@ -59,7 +73,7 @@
 }
 
 .ttb-link-button {
-  padding: .2em .8em .2em .8em;
+  padding: 0.2em 0.8em 0.2em 0.8em;
   cursor: pointer;
   text-decoration-line: underline;
 }
@@ -67,19 +81,18 @@
 .ttb-field {
   position: relative;
   padding-top: 1em;
-  padding-left: .5em;
-  padding-right: .5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
   margin-bottom: 1em;
   float: left;
   width: 100%;
   background-color: transparent;
 
   &.float {
-
     input,
     textarea,
     select {
-      &~label {
+      & ~ label {
         @include transform(translate(0, 15px));
         font-size: 100%;
         color: #aaa;
@@ -88,12 +101,12 @@
   }
 
   &.not-empty {
-    border-bottom-color: #2196F3;
+    border-bottom-color: #2196f3;
 
     input,
     textarea,
     select {
-      &~label {
+      & ~ label {
         color: $primary-color1;
       }
     }
@@ -126,51 +139,50 @@
     border-bottom: 1px solid #aaa;
 
     &:focus {
-      border-bottom-color: #2196F3;
+      border-bottom-color: #2196f3;
 
-      &~label {
+      & ~ label {
         color: $primary-color1;
       }
     }
 
     &:hover {
-      border-bottom-color: #2196F3;
+      border-bottom-color: #2196f3;
 
-      &~label {
+      & ~ label {
         color: $primary-color1;
       }
     }
 
-    &~label {
+    & ~ label {
       position: absolute;
       top: 0;
-      left: .5em;
+      left: 0.5em;
       width: 100%;
       font-size: 80%;
       color: $primary-color1;
       cursor: default;
-      @include transition(all .2s ease-in-out);
+      @include transition(all 0.2s ease-in-out);
     }
 
     &[required] {
-      &~label:before {
+      & ~ label:before {
         content: "*";
         color: #f00;
-        margin-right: .5em;
+        margin-right: 0.5em;
       }
     }
   }
 
   input,
   textarea {
-
     &:read-only,
     &:disabled {
       border-bottom: 1px solid #aaa !important;
       cursor: no-drop;
       color: #aaa !important;
 
-      &~label {
+      & ~ label {
         color: #aaa !important;
       }
     }
@@ -185,7 +197,7 @@
       cursor: no-drop;
       color: #aaa !important;
 
-      &~label {
+      & ~ label {
         color: #aaa !important;
       }
     }
@@ -194,7 +206,7 @@
   .message {
     position: absolute;
     bottom: 0;
-    left: .5em;
+    left: 0.5em;
     width: 100%;
     font-size: 80%;
     color: #aaa;
@@ -204,27 +216,27 @@
   .error-message {
     position: absolute;
     bottom: 0;
-    left: .5em;
+    left: 0.5em;
     width: 100%;
     font-size: 80%;
-    color: #FF4081;
+    color: #ff4081;
     @include transform(translateY(80%));
   }
 
-  input[type=checkbox],
-  input[type=radio] {
+  input[type="checkbox"],
+  input[type="radio"] {
     height: 1em;
     width: 1em;
     margin: 0;
     cursor: pointer;
 
     &:checked {
-      &~label {
+      & ~ label {
         color: #000;
       }
     }
 
-    &~label {
+    & ~ label {
       position: relative;
       color: #aaa;
       cursor: pointer;
@@ -236,7 +248,7 @@
       cursor: no-drop;
       color: #aaa !important;
 
-      &~label {
+      & ~ label {
         color: #aaa !important;
       }
     }

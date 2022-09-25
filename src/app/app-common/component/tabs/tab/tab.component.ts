@@ -3,17 +3,17 @@ import {
   Input,
   TemplateRef,
   ViewChild,
-  ChangeDetectorRef,
 } from '@angular/core';
-import { CUI } from '@cui/core';
 
-
+export interface TabCallback<T> {
+  (index: number, value: T, tab: TabComponent<T>): void;
+}
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.scss']
 })
-export class TabComponent {
+export class TabComponent<T = any> {
   @ViewChild('all', { static: true })
   public templateRef: TemplateRef<any>;
   @ViewChild('content', { static: true })
@@ -25,18 +25,25 @@ export class TabComponent {
   @Input() label = '';
   @Input() disabled = false;
   @Input() active = false;
+  @Input() value: T;
 
-  @Input() onActive: Function;
+  @Input() onActive: TabCallback<T>;
 
-  @Input() onClose: Function;
+  @Input() onClose: TabCallback<T>;
 
-  constructor(private cd: ChangeDetectorRef) { }
+  public canClose(): boolean {
+    return this.onClose instanceof Function;
+  }
 
-  public doActive() {
-    this.active = true;
-    CUI.callFunction(this.onActive);
-    setTimeout(() => {
-      this.cd.markForCheck();
-    }, 0);
+  public doActive(index: number) {
+    if (this.onActive instanceof Function) {
+      this.onActive(index, this.value, this);
+    }
+  }
+
+  public doClose(index: number) {
+    if (this.canClose()) {
+      this.onClose(index, this.value, this)
+    }
   }
 }

@@ -1,9 +1,12 @@
-import { TranslateConfig, TranslateConst } from './config/translate-config';
-import { TranslateDB } from './translate-db';
-import { TranslatePlaceholders } from './nodes/translate-placeholders';
-import { TranslateSubmits } from './nodes/translate-submits';
-import { TranslateTexts } from './nodes/translate-texts';
-import { TranslateUtil } from './translate-util';
+import { __decorate } from "tslib";
+import TranslateDB from './translate-db';
+import TranslateNodePlaceholder from './nodes/translate-node-placeholder';
+import TranslateNodeSubmit from './nodes/translate-node-submit';
+import TranslateNodeText from './nodes/translate-node-text';
+import { Delay } from '../ts/lib/cui/core/decorators/delay';
+import { EventListenerContainer } from '../ts/lib/cui/core/listener/event-listener-container';
+import { TranslateConst, TranslateEvent } from './constant';
+window['getTranslateGO'] = getTranslateGO;
 /**
  * 取得TranslateGO
  */
@@ -15,356 +18,325 @@ export function getTranslateGO() {
         return window[TranslateConst.Prefix] = new TranslateGO();
     }
 }
-/**
- * 翻譯
- */
-var TranslateGO = /** @class */ (function () {
-    function TranslateGO() {
-        var _this = this;
-        this.watch = false;
-        this.delay = 10;
+export default class TranslateGO {
+    constructor() {
+        this.listeners = new EventListenerContainer();
+        this.ignoreMap = new Map();
+        this.translateGroupMap = new Map();
+        this.nodeMap = new Map();
+        this.mutationObserver = new MutationObserver((mutations) => {
+            this.mutationObserverHandler(mutations);
+        });
         this.db = new TranslateDB();
-        // 當前語系
-        this.currentLanguage = TranslateConfig.defaultLanguage || navigator.language;
-        // 需要被翻譯的 Text
-        this.translateTexts = new TranslateTexts(this.db);
-        // 需要被翻譯的 Input placeholder
-        this.translatePlaceholders = new TranslatePlaceholders(this.db);
-        // 需要被翻譯的 Input type ="submit"
-        this.translateSubmits = new TranslateSubmits(this.db);
-        this.translateNodes = [this.translateTexts, this.translatePlaceholders, this.translateSubmits];
-        // 保留 setAttribute 原本方法
-        this.elementSetAttributeOrigin = Element.prototype.setAttribute;
-        // 控制 loadTextNodes 只執行一次
-        this.notLoadTextNodes = true;
-        // 控制 cleanTextNodes 只執行一次
-        this.notCleanTextNodes = true;
-        // 控制 setInnerTexts 只執行一次
-        this.notSetInnerTexts = true;
-        this.innerTexts = [];
-        /**
-         * 攔截alert訊息並翻譯
-         */
-        this.proxyAlertHanlder = function (text) {
-            _this.windowAlert.call(window, _this.getText(text));
-        };
-        /**
-         * 攔截confirm訊息並翻譯
-         */
-        this.proxyConfirmHanlder = function (text) {
-            return _this.windowConfirm.call(window, _this.getText(text));
-        };
-        /**
-         * dom新增node時，找出可翻譯node
-         * @param 事件
-         */
-        this.domNodeInserted = function (e) {
-            _this.nodeHandler(e.target);
-        };
-        /**
-         * dom 有異動的時候檢查node文字是否更新
-         * @param 事件
-         */
-        this.domSubtreeModified = function (e) {
-            var node = e.target;
-            if (_this.translateTexts.need(node)) {
-                if (_this.isNonIgnore(node)) {
-                    _this.translateTexts.add(node);
+        this.language = navigator.language;
+        this.scanning = false;
+        this.languages = [];
+        this.doClearRemoveNode = () => {
+            let ignoreSize = this.ignoreMap.size;
+            this.ignoreMap.forEach((v, k, m) => {
+                if (!k.isConnected) {
+                    m.delete(k);
                 }
-            }
-            else if (_this.notCleanTextNodes) {
-                _this.notCleanTextNodes = false;
-                setTimeout(_this.cleanTextNodes, _this.delay);
-            }
-        };
-        /**
-         * 載入需要翻譯的Node
-         */
-        this.loadTextNodes = function () {
-            _this.notLoadTextNodes = true;
-            if (document.head) {
-                _this.nodeHandler(document.head);
-            }
-            if (document.body) {
-                _this.nodeHandler(document.body);
-            }
-            _this.doTranslate();
-        };
-        /**
-         * 清除已經不在畫面上翻譯物件
-         */
-        this.cleanTextNodes = function () {
-            _this.notCleanTextNodes = true;
-            _this.translateTexts.clean();
-            _this.translatePlaceholders.clean();
-            _this.translateSubmits.clean();
-        };
-        /**
-         * 對有TranslateKey的element 新增 text
-         */
-        this.setInnerTexts = function () {
-            _this.removeEvents();
-            _this.notSetInnerTexts = true;
-            var element, key;
-            for (var i = 0, l = _this.innerTexts.length; i < l; i++) {
-                element = _this.innerTexts[i].element;
-                key = _this.innerTexts[i].key;
-                if (element.innerText == '') {
-                    element.appendChild(_this.translateTexts.buildText(key, ''));
+            });
+            let translateSize = this.translateGroupMap.size;
+            this.translateGroupMap.forEach((v, k, m) => {
+                if (!k.isConnected) {
+                    m.delete(k);
                 }
-            }
-            _this.innerTexts.length = 0;
-            _this.addEvents();
+            });
+            console.log('translate clear ignore size ', ignoreSize, '>', this.ignoreMap.size, ' translate size ', translateSize, '>', this.translateGroupMap.size);
         };
     }
-    /**
-     * 是否監控中
-     */
-    TranslateGO.prototype.isWatch = function () {
-        return this.watch;
-    };
-    TranslateGO.prototype.getTranslateNode = function () {
-        return this.translateNodes;
-    };
-    /**
-     * 取得無法翻譯的文字
-     */
-    TranslateGO.prototype.getNonTranslateText = function () {
-        return this.db.getNonTranslate();
-    };
-    /**
-     * 重新載入文字多語資料
-     */
-    TranslateGO.prototype.reload = function (data) {
-        if (data) {
-            this.db.insert(data);
+    getLanguage() {
+        return this.language;
+    }
+    getLanguages() {
+        return this.languages;
+    }
+    translate(language, force = false) {
+        if (!force && this.language == language)
+            return;
+        this.language = language;
+        this.doTranslate(this.nodeMap, force);
+        this.listeners.dispatch(TranslateEvent.LanguageChanged);
+    }
+    load(language, source, group) {
+        this.doLoad(language, source, group);
+        this.doStart();
+        this.listeners.dispatch(TranslateEvent.SourceChanged);
+    }
+    loadAll(languageSource, group) {
+        for (let language in languageSource) {
+            this.doLoad(language, languageSource[language], group);
         }
-        else {
-            for (var name_1 in window) {
-                if (name_1.indexOf(TranslateConst.GroupPrefix) != -1) {
-                    this.db.insert(window[name_1]);
-                }
-            }
+        this.doStart();
+        this.listeners.dispatch(TranslateEvent.SourceChanged);
+    }
+    doLoad(language, source, group = TranslateConst.DefaultGroup) {
+        if (this.languages.indexOf(language) == -1) {
+            this.languages.push(language);
         }
-        if (this.watch && this.notLoadTextNodes) {
-            this.notLoadTextNodes = false;
-            setTimeout(this.loadTextNodes, this.delay);
-        }
-    };
-    /**
-     * 取得當前語系
-     */
-    TranslateGO.prototype.getLanguage = function () {
-        return this.currentLanguage;
-    };
-    /**
-     * 取得當前語系文字
-     * @param text
-     */
-    TranslateGO.prototype.getText = function (text) {
-        if (typeof text == 'string') {
-            return this.db.translate(text, this.currentLanguage);
-        }
-        else {
-            return text;
-        }
-    };
-    /**
-     * 取得當前語系文字
-     * @param key
-     */
-    TranslateGO.prototype.getTextByKey = function (key) {
-        return this.db.translateByKey(key, this.currentLanguage);
-    };
-    /**
-     * 依輸入語系進行翻譯
-     * @param language
-     */
-    TranslateGO.prototype.translate = function (language) {
-        if (this.currentLanguage == language) {
+        this.db.load(language, source, group);
+    }
+    removeLanguageSource(group) {
+        this.db.removeLanguageSource(group);
+        this.listeners.dispatch(TranslateEvent.SourceChanged);
+    }
+    clearSource() {
+        this.db = new TranslateDB();
+        this.languages.length = 0;
+    }
+    isScanning() {
+        return this.scanning;
+    }
+    start() {
+        if (this.scanning) {
             return;
         }
-        if (this.db.hasLanguage(language)) {
-            this.currentLanguage = language;
-        }
-        this.doTranslate();
-    };
-    /**
-     * 觀察並翻譯
-     */
-    TranslateGO.prototype.start = function () {
-        this.stop();
-        this.watch = true;
-        this.reload();
-        if (window.confirm != this.proxyConfirmHanlder) {
-            this.windowConfirm = window.confirm;
-            window.confirm = this.proxyConfirmHanlder;
-        }
-        if (window.alert != this.proxyAlertHanlder) {
-            this.windowAlert = window.alert;
-            window.alert = this.proxyAlertHanlder;
-        }
-        Element.prototype.setAttribute = this.buildProxySetAttribute(this);
-        this.addEvents();
-    };
-    /**
-     * 停止觀察和翻譯
-     */
-    TranslateGO.prototype.stop = function () {
-        this.watch = false;
-        if (this.windowAlert != undefined) {
-            window.alert = this.windowAlert;
-        }
-        if (this.windowConfirm != undefined) {
-            window.confirm = this.windowConfirm;
-        }
-        Element.prototype.setAttribute = this.elementSetAttributeOrigin;
+        this.doStart();
+    }
+    stop() {
         this.removeEvents();
-    };
+        this.scanning = false;
+        this.clear();
+    }
+    addEventListener(event, callback, target) {
+        this.listeners.addListener(event, callback, target);
+    }
+    removeEventListener(event, callback) {
+        this.listeners.removeListener(event, callback);
+    }
+    removeAllEventListener(target) {
+        this.listeners.removeAllListener(target);
+    }
+    get(key, args = {}, language = this.language, group) {
+        return this.db.get(key, args, language, group);
+    }
+    getNotFoundKeys() {
+        return this.db.getNotFoundKeys();
+    }
+    getGroups() {
+        return this.db.getGroups();
+    }
+    getGroupSource() {
+        return this.db.getGroupSource();
+    }
+    getLanguageSource(group) {
+        return this.db.getLanguageSource(group);
+    }
+    doStart() {
+        this.removeEvents();
+        this.scanning = true;
+        this.scan(document.head);
+        this.scan(document.body);
+        this.doTranslate(this.nodeMap, true);
+    }
+    mutationObserverHandler(mutations) {
+        let map = new Map();
+        mutations.forEach((mutation) => {
+            switch (mutation.type) {
+                case 'attributes':
+                    this.scanAttribute(mutation.target, mutation.attributeName, map);
+                    break;
+                case 'characterData':
+                    if (mutation.target instanceof Text) {
+                        this.scanText(mutation.target, map);
+                    }
+                    break;
+                case 'childList':
+                    this.scan(mutation.target, map);
+                    break;
+            }
+        });
+        if (map.size > 0) {
+            this.doTranslate(map);
+            this.clearRemoveNode();
+        }
+    }
     /**
      * 監聽 Element 新增跟異動事件
      */
-    TranslateGO.prototype.addEvents = function () {
-        document.addEventListener('DOMNodeInserted', this.domNodeInserted);
-        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
-        document.addEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
-    };
+    addEvents() {
+        if (this.scanning) {
+            this.mutationObserver.observe(document.documentElement, {
+                attributeFilter: ['value', 'type', TranslateConst.TranslateKey, TranslateConst.IgnoreAttributeName],
+                attributes: true,
+                childList: true,
+                characterData: true,
+                subtree: true
+            });
+        }
+    }
     /**
      * 移除 Element 新增跟異動事件
      */
-    TranslateGO.prototype.removeEvents = function () {
-        document.removeEventListener('DOMNodeInserted', this.domNodeInserted);
-        document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
-        document.removeEventListener('DOMNodeInsertedIntoDocument', this.domNodeInserted);
-    };
-    /**
-     * 攔截setAttribute
-     * @param go
-     */
-    TranslateGO.prototype.buildProxySetAttribute = function (go) {
-        return function (key, value) {
-            go.elementSetAttributeOrigin.apply(this, arguments);
-            key = key.toLowerCase();
-            switch (key) {
-                case TranslateConst.Translatekey:
-                    if (this instanceof HTMLInputElement) {
-                        if (go.translateSubmits.need(this)) {
-                            go.translateSubmits.add(this);
-                        }
-                    }
-                    else {
-                        go.innerTexts.push({
-                            element: this,
-                            key: value
-                        });
-                        if (go.notSetInnerTexts) {
-                            go.notSetInnerTexts = false;
-                            setTimeout(go.setInnerTexts, go.delay);
-                        }
-                    }
-                    break;
-                case TranslateConst.PlaceholderTranslatekey:
-                    go.translatePlaceholders.add(this);
-                    break;
-                case TranslateConst.Value:
-                case TranslateConst.Type:
-                    if (go.translateSubmits.need(this)) {
-                        go.translateSubmits.add(this);
-                    }
-                    break;
-            }
-        };
-    };
-    /**
-     * 是否非忽略的標籤
-     * @param element
-     */
-    TranslateGO.prototype.isNonIgnore = function (element) {
-        if (element) {
-            if (element == document.documentElement) {
-                return true;
-            }
-            if (element.nodeType == 3) {
-                element = TranslateUtil.getParentElement(element);
-            }
-            if (element.nodeType == 1) {
-                if (TranslateConst.IgnoreTagArray.indexOf(element.tagName) == -1) {
-                    if (element.getAttribute(TranslateConst.IgnoreAttributeName) == null) {
-                        return this.isNonIgnore(TranslateUtil.getParentElement(element));
-                    }
-                    else {
-                        return false;
-                    }
+    removeEvents() {
+        this.mutationObserver.disconnect();
+    }
+    scanAttribute(target, key, map) {
+        key = key.toLowerCase();
+        switch (key) {
+            case TranslateConst.TranslateKey:
+                let value = target.getAttribute(key);
+                let translateNode;
+                if (target instanceof HTMLInputElement) {
+                    translateNode = new TranslateNodeSubmit(this, target, value);
+                    this.addNode(translateNode, map);
                 }
                 else {
-                    return false;
+                    translateNode = new TranslateNodeText(this, target, value);
+                    this.addNode(translateNode, map);
                 }
+                break;
+            case TranslateConst.IgnoreAttributeName:
+                if (target.getAttribute(TranslateConst.IgnoreAttributeName) != 'false') {
+                    this.nodeMap.delete(target);
+                    this.translateGroupMap.delete(target);
+                    this.ignoreMap.set(target, true);
+                }
+                break;
+            case 'value':
+            case 'type':
+                this.addNode(new TranslateNodeSubmit(this, target, this.findGroup(target)), map);
+                break;
+        }
+    }
+    scan(node, map, index = -1) {
+        // node is Text
+        if (node instanceof Text) {
+            this.scanText(node, map, index);
+        }
+        else if (node.nodeType == 1) {
+            if (this.ignore(node)) {
+                return;
             }
-        }
-        return false;
-    };
-    /**
-     * Node 處理
-     * @param node
-     * @param handler
-     */
-    TranslateGO.prototype.nodeHandler = function (node) {
-        if (!this.isNonIgnore(node)) {
-            return;
-        }
-        if (this.translateTexts.need(node)) {
-            this.translateTexts.add(node);
-        }
-        else {
-            if (this.translatePlaceholders.need(node)) {
-                this.translatePlaceholders.add(node);
-            }
-            else if (this.translateSubmits.need(node)) {
-                this.translateSubmits.add(node);
+            let element = node;
+            let key = element.getAttribute(TranslateConst.TranslateKey);
+            if (element instanceof HTMLInputElement) {
+                if (element.tagName == 'INPUT'
+                    && element.value != undefined
+                    && ((element === null || element === void 0 ? void 0 : element.type) || '').toLowerCase() == 'submit') {
+                    // find sumbit button
+                    this.addNode(new TranslateNodeSubmit(this, element, key), map);
+                }
+                else if (element.placeholder != undefined && element.placeholder != '') {
+                    // find input or textarea placeholder
+                    this.addNode(new TranslateNodePlaceholder(this, element, this.findGroup(element), key), map);
+                }
             }
             else {
-                var key = node.getAttribute(TranslateConst.Translatekey);
-                if (key != undefined) {
-                    if (node.innerText == '') {
-                        this.innerTexts.push({
-                            element: node,
-                            key: key
-                        });
-                        if (this.notSetInnerTexts) {
-                            this.notSetInnerTexts = false;
-                            setTimeout(this.setInnerTexts, this.delay);
-                        }
-                    }
+                if (key) {
+                    this.addNode(new TranslateNodeText(this, element, this.findGroup(element), key), map);
+                }
+                else {
+                    element.childNodes.forEach((child, i) => {
+                        this.scan(child, map, i);
+                    });
                 }
             }
         }
-        this.loopNodes(node.childNodes);
-    };
-    /**
-     * NodeList 處理
-     * @param nodes 不重複寫loop
-     * @param handler
-     */
-    TranslateGO.prototype.loopNodes = function (nodes) {
-        if (nodes.length == 0) {
+    }
+    scanText(node, map, index = -1) {
+        let parent = this.getParent(node);
+        if (this.ignore(parent)) {
             return;
         }
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            this.nodeHandler(nodes[i]);
+        // node is Text
+        let key = parent.getAttribute(TranslateConst.TranslateKey);
+        this.addNode(new TranslateNodeText(this, parent, this.findGroup(parent), key, index), map);
+    }
+    addNode(translateNode, map) {
+        if (translateNode.match()) {
+            this.nodeMap.set(translateNode.getNode(), translateNode);
+            if (map) {
+                map.set(translateNode.getNode(), translateNode);
+            }
         }
-    };
-    /**
-     * 執行翻譯
-     */
-    TranslateGO.prototype.doTranslate = function () {
-        document.removeEventListener('DOMSubtreeModified', this.domSubtreeModified);
-        // 翻譯
-        this.translateTexts.doTranslate(this.currentLanguage);
-        this.translatePlaceholders.doTranslate(this.currentLanguage);
-        this.translateSubmits.doTranslate(this.currentLanguage);
-        document.addEventListener('DOMSubtreeModified', this.domSubtreeModified);
-    };
-    return TranslateGO;
-}());
-export { TranslateGO };
-//# sourceMappingURL=translate-go.js.map
+    }
+    ignore(node) {
+        if (node) {
+            if (this.ignoreMap.get(node)) {
+                return true;
+            }
+            if (this.translateGroupMap.get(node)) {
+                return false;
+            }
+            if (node == document.documentElement) {
+                return false;
+            }
+            if (node.nodeType == 1) {
+                let element = node;
+                if (TranslateConst.IgnoreTagArray[element.tagName]) {
+                    return true;
+                }
+                let value = element.getAttribute(TranslateConst.IgnoreAttributeName);
+                if (value == undefined || value == 'false') {
+                    let ignore = this.ignore(this.getParent(element));
+                    if (ignore) {
+                        this.ignoreMap.set(element, true);
+                    }
+                    else {
+                        this.translateGroupMap.set(element, element.getAttribute(TranslateConst.TranslateGroup) || TranslateConst.DefaultGroup);
+                    }
+                    return ignore;
+                }
+                else {
+                    this.ignoreMap.set(element, true);
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+    findGroup(element) {
+        while (element != document.documentElement) {
+            let group = element.getAttribute(TranslateConst.TranslateGroup);
+            if (group) {
+                return group;
+            }
+            element = this.getParent(element);
+        }
+        return undefined;
+    }
+    getParent(element) {
+        if (element.parentElement != undefined) {
+            return element.parentElement;
+        }
+        if (element.parentNode != undefined) {
+            return element.parentNode;
+        }
+        return undefined;
+    }
+    doTranslate(map, force = false) {
+        this.removeEvents();
+        if (force) {
+            this.db.clearCache();
+        }
+        let t = Date.now();
+        map.forEach((v, k, m) => {
+            if (v.alive()) {
+                v.translate();
+            }
+            else {
+                v.destroy();
+                m.delete(k);
+            }
+        });
+        console.log('translate count:', map.size, ' time:', Date.now() - t);
+        this.addEvents();
+    }
+    clearRemoveNode() {
+        this.doClearRemoveNode();
+    }
+    clear() {
+        this.nodeMap.forEach(node => {
+            node.destroy();
+        });
+        this.nodeMap.clear();
+        this.ignoreMap.clear();
+        this.translateGroupMap.clear();
+    }
+}
+__decorate([
+    Delay(10000)
+], TranslateGO.prototype, "clearRemoveNode", null);

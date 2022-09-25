@@ -1,8 +1,8 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ComponentFactoryResolver,
   Injector,
   Input,
   OnDestroy,
@@ -10,48 +10,71 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import { CUI, Overlay } from '@cui/core';
+import { Overlay, Delay } from '@cui/core';
 import { DomPortalOutlet, TemplatePortal } from '@angular/cdk/portal';
 
 
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss']
+  styleUrls: ['./dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialogComponent implements OnDestroy {
   private dialogWindow: HTMLElement;
-  private toolbar: HTMLElement;
-  private overlay = new Overlay();
   private outlet: DomPortalOutlet;
 
-  public marginBottom = '10px';
-  public _windowClassName;
+  public show = false;
 
-  @ViewChild('dialog', { static: true })
-  public templateRef: TemplateRef<any>;
+  private readonly resizeObserver = new MutationObserver(entries => {
+    if (this.show) {
+      this.delayAddImageOnload();
+      this.resize();
+    }
+  });
 
-  @Input()
-  set windowClassName(value: string) {
-    this._windowClassName = value;
-  }
-
-  @Input()
-  public title;
+  @ViewChild(TemplateRef)
+  protected templateRef: TemplateRef<any>;
 
   @Input()
-  public onClose: Function;
+  public windowSize: '' | 'large' | 'small' | 'full' = '';
 
   @Input()
-  public top: string;
+  public windowClassName = '';
+
+  @Input()
+  public title = '';
+
   @Input()
   public height: string;
+
   @Input()
   public width: string;
 
+  public over: string = '';
+
+  private overlay = new Overlay({
+    zIndex: 10000
+    , onOpen: this.doOpen.bind(this)
+    , onClose: this.doClose.bind(this)
+  });
+
+  private onImgLoad = () => {
+    this.resize();
+  }
+
+  private onResize = () => {
+    this.resize();
+  }
+
+  @Input()
+  public canClose = (): boolean | Promise<boolean> => true
+
+  @Input()
+  public onClose = () => { }
+
   constructor(
-    private cd: ChangeDetectorRef,
-    private componentFactoryResolver: ComponentFactoryResolver,
+    private cdf: ChangeDetectorRef,
     private injector: Injector,
     private viewContainerRef: ViewContainerRef
   ) {
@@ -62,128 +85,131 @@ export class DialogComponent implements OnDestroy {
   }
 
   public isOpen(): boolean {
-    return this.outlet ? true : false;
+    return this.show;
   }
 
-  /**
-   * 打開Dialog
-  */
   public open() {
-    if (this.outlet) {
+    if (this.show) {
       return;
     }
-    this.overlay.open(this.doOpen);
+    this.show = true;
+    this.overlay.open();
+    this.delayAddImageOnload();
+    this.resize();
   }
 
-  /**
-   * 關閉Dialog
-  */
-  public close() {
-    window.removeEventListener('resize', this.resize);
-    this.overlay.close(this.doClose);
-    if (this.dialogWindow) {
-      CUI.removeElementContentChangeEvent(this.dialogWindow, this.resize);
-    }
-    CUI.callFunction(this.onClose);
+  public async close() {
+    if (!await this.canClose()) { return; }
+    this.resizeObserver.disconnect();
+    this.onClose();
+    this.overlay.close();
   }
 
   /**
    * 讓overlay 呼叫的callback
   */
-  private doOpen = () => {
-    let wrapper = this.overlay.getElement();
-    this.outlet = new DomPortalOutlet(wrapper
-      , this.componentFactoryResolver
-      , this.injector.get<ApplicationRef>(ApplicationRef)
-      , this.injector
-    );
-    this.outlet.attach(new TemplatePortal(
-      this.templateRef,
-      this.viewContainerRef
-    ));
-
-    this.toolbar = wrapper.querySelector('.ttb-dialog-toolbar');
-    this.dialogWindow = wrapper.querySelector('.ttb-dialog-window');
-    if (this.toolbar.childElementCount == 0) {
-      this.toolbar.style.display = 'none';
-      this.marginBottom = '10px';
-    } else {
-      this.toolbar.style.display = 'block';
-      this.marginBottom = (this.toolbar.offsetHeight + 10) + 'px';
+  private doOpen() {
+    this.cdf.markForCheck();
+    if (!this.outlet) {
+      let wrapper = this.overlay.getElement();
+      this.outlet = new DomPortalOutlet(
+        wrapper
+        , null
+        , this.injector.get<ApplicationRef>(ApplicationRef)
+        , this.injector
+      );
+      this.outlet.attach(new TemplatePortal(
+        this.templateRef
+        , this.viewContainerRef
+      ));
+      this.dialogWindow = wrapper.querySelector('.ttb-dialog-window');
     }
-    CUI.addElementContentChangeEvent(this.dialogWindow, this.resize);
-    window.addEventListener('resize', this.resize);
-    // 第一次開啟，必須重新計算兩次才能抓到正確位置
-    this.resize();
-    this.resize();
-    this.cd.markForCheck();
+
+    this.resizeObserver.observe(this.dialogWindow, {
+      attributes: true
+      , childList: true
+      , characterData: true
+      , subtree: true
+    });
+
+    this.addImageOnload();
+    window.addEventListener('resize', this.onResize);
+
+    this.delayShow();
+  }
+
+  @Delay(50)
+  private delayAddImageOnload() {
+    this.cdf.markForCheck();
+    this.addImageOnload();
+  }
+
+  private addImageOnload() {
+    let imgs = this.dialogWindow.querySelectorAll('img');
+    imgs.forEach(img => {
+      img.removeEventListener('load', this.onImgLoad);
+      img.addEventListener('load', this.onImgLoad);
+    });
+  }
+
+  @Delay(100)
+  private delayShow() {
+    this.cdf.markForCheck();
+    this.show = true;
   }
 
   /**
    * 讓overlay 呼叫的callback
    * 等待動畫結束後才移除物件
   */
-  private doClose = () => {
-    if (this.outlet) {
-      this.outlet.dispose();
-      this.outlet = undefined;
+  private doClose() {
+    this.show = false;
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
     }
-    this.cd.markForCheck();
+    window.removeEventListener('resize', this.onResize);
   }
 
   /**
    * 移除物件
    */
   private destroy() {
-    window.removeEventListener('resize', this.resize);
-    if (this.dialogWindow) {
-      CUI.removeElementContentChangeEvent(this.dialogWindow, this.resize);
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
     }
+    window.removeEventListener('resize', this.onResize);
     if (this.outlet) {
       this.outlet.dispose();
-      this.outlet = undefined;
+      this.outlet = null;
     }
     if (this.overlay) {
       this.overlay.destory();
-      this.overlay = undefined;
+      this.overlay = null;
     }
   }
 
-  /**
-   * 重新計算Dialog位置
-   * @param e
-   */
-  private resize = (e?) => {
-    this.setCenter(this.dialogWindow);
+  @Delay(100)
+  private resize() {
+    this.cdf.markForCheck();
+    if (this.dialogWindow) {
+      this.over = this.dialogWindow.clientHeight > window.innerHeight ? 'over' : '';
+    }
   }
 
-  /**
-   * 設定Element Translate置中
-   * @param element
-   */
-  private setCenter(element: HTMLElement) {
-    let winWidth = window.innerWidth;
-    let winHeight = window.innerHeight;
-    let height = element.offsetHeight;
-    let width = element.offsetWidth;
-    let top = '50%';
-    let left = '50%';
-    let translateTop = Math.round(height / 2);
-    let translateLeft = Math.round(width / 2);
-    if (width > winWidth) {
-      left = '10px';
-      translateLeft = 0;
+  public getClassName(): string {
+    return `ttb-dialog-window ${this.getSizeClass()} ${this.windowClassName} ${this.show ? 'show' : ''}`;
+  }
+
+  public getSizeClass(): string {
+    switch (this.windowSize) {
+      case 'small':
+        return 'ttb-col-xs32-8 ttb-col-xs48-6 ttb-col-sm-4';
+      case 'large':
+        return 'ttb-col-xs32-12 ttb-col-xs48-10';
+      case 'full':
+        return 'full';
+      default:
+        return 'ttb-col-xs32-10 ttb-col-xs48-8 ttb-col-sm-6';
     }
-    if (height > winHeight) {
-      top = '20px';
-      translateTop = 0;
-    }
-    if (this.top != undefined) {
-      top = this.top;
-      translateTop = 0;
-    }
-    element.style.top = top;
-    element.style.left = left;
-    CUI.style(element, 'transform', 'translate(-' + translateLeft + 'px,-' + translateTop + 'px)');
   }
 }

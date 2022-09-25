@@ -2,26 +2,24 @@ import typescript from 'rollup-plugin-typescript';
 import buble from 'rollup-plugin-buble';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
-const config = {
-  entry: 'src/translate-go/translate-go.ts',
-  targets: [{
-    dest: 'lib/translate-go.js',
-    format: 'iife',
-    moduleName: 'TranslateModule',
-    sourceMap: false
-  }],
+export default {
+  input: 'src/translate-go/translate-go.ts',
   plugins: [
     typescript({
       typescript: require('typescript')
     }),
-    buble(),
+    buble({
+      transforms: { dangerousForOf: true }
+    }),
     nodeResolve({
       jsnext: true,
       main: true
     })
   ],
   output: {
+    file: 'dist/lib/translate-go.js',
+    format: 'iife',
     name: 'TranslateModule'
   }
-}
-export default config;
+};
+

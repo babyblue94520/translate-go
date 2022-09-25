@@ -1,0 +1,42 @@
+<app-dialog #sourceDialog [windowSize]="'large'" [onClose]="onClose">
+  <ng-container *ngIf="sourceDialog.isOpen()">
+    <div class="ttb-field">
+      <input type="text" [(ngModel)]="group" />
+      <label [innerText]="ToolbarKey.Group"></label>
+    </div>
+    <div class="ttb-button-row center">
+      <button
+        class="ttb-button"
+        (click)="selectFiles()"
+        [innerText]="ToolbarKey.SelectFiles"
+      ></button>
+    </div>
+    <div class="ttb-button-row">
+      <button
+        class="ttb-button"
+        (click)="import()"
+        [disabled]="sourceFiles.length == 0"
+        [innerText]="ToolbarKey.Import"
+      ></button>
+    </div>
+    <app-tab-group>
+      <app-tab *ngFor="let file of sourceFiles">
+        <div tab-label>
+          {{ file.name }}
+        </div>
+        <div class="ttb-field" style="width: 10em">
+          <select [(ngModel)]="file.language">
+            <option
+              *ngFor="let value of languages"
+              [value]="value"
+              [innerText]="value"
+            ></option>
+          </select>
+        </div>
+        <div class="ttb-field" style="height: 30em; overflow-y: auto">
+          <div [innerHTML]="jsonToHtml(file.content)"></div>
+        </div>
+      </app-tab>
+    </app-tab-group>
+  </ng-container>
+</app-dialog>
