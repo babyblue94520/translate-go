@@ -87,8 +87,5 @@
     "ts-node": "~7.0.1",
     "tslint": "~6.1.0",
     "typescript": "~4.6.4"
-  },
-  "publishConfig": {
-    "registry": "http://192.168.3.12:8081/repository/npm-private/"
   }
 }
