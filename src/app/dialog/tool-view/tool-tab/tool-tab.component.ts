@@ -1,14 +1,20 @@
 import Loop from 'ts/util/loop';
 import ToolbarKey from 'ts/translate/toolbar.key';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { Delay } from 'ts/lib/cui/core/decorators/delay';
 import { DomUtil } from 'ts/util/dom-util';
 import { DownloadDialogComponent } from 'app/dialog/download-dialog/download-dialog.component';
 import { getTranslateGO } from 'translate-go/translate-go';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Sort, TranslateEvent } from 'translate-go/constant';
 import { StickyTable } from 'ts/util/sticky-table';
-import { Translate, TranslateOnSave, TranslateRecord, TranslateSource } from 'translate-go/interface';
+import {
+  Translate, TranslateOnSave, TranslateRecord, TranslateSource
+} from 'translate-go/interface';
+
+import {
+  forwardRef, AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy,
+  ViewChild
+} from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'tool-tab',
@@ -246,7 +252,7 @@ export class ToolTabComponent implements AfterViewInit, OnDestroy {
     this.cdf.markForCheck();
     let text = this.propertyText[name] || '';
     if (!text.trim()) { return; }
-    let messages = text.split(this.split);
+    let messages = text.split(/\n-{10,}\n/);
     Loop.of(this.records)
       .handler((record, i) => {
         record[name] = messages[i];
