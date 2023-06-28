@@ -9,7 +9,7 @@
     "module": "es2020",
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "target": "es2015",
+    "target": "ES2022",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -32,13 +32,15 @@
         "dist/translate-go-test/*"
       ]
     },
-    "plugins": [{
+    "plugins": [
+      {
         "name": "@angular/language-service"
       },
       {
         "name": "tslint-language-service"
       }
-    ]
+    ],
+    "useDefineForClassFields": false
   },
   "defaultProject": "translate-go"
 }
