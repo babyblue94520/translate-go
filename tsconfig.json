@@ -39,5 +39,6 @@
         "name": "tslint-language-service"
       }
     ]
-  }
+  },
+  "defaultProject": "translate-go"
 }

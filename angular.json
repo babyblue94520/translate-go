@@ -129,36 +129,6 @@
           }
         }
       }
-    },
-    "translate-go-test": {
-      "root": "projects/translate-go-test",
-      "sourceRoot": "projects/translate-go-test/src",
-      "projectType": "library",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "tsConfig": "projects/translate-go-test/tsconfig.lib.json",
-            "project": "projects/translate-go-test/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "project": "projects/translate-go-test/ng-package.prod.json",
-              "tsConfig": "projects/translate-go-test/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/translate-go-test/src/test.ts",
-            "tsConfig": "projects/translate-go-test/tsconfig.spec.json",
-            "karmaConfig": "projects/translate-go-test/karma.conf.js"
-          }
-        }
-      }
     }
-  },
-  "defaultProject": "translate-go"
+  }
 }
