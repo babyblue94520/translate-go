@@ -21,6 +21,4 @@ export const TranslateConst = {
   TranslateKey: 'translatekey',
   // TranslateGO 在window 中的名稱
   Prefix: '__translateGO',
-  // TranslateGO 在window 中的名稱
-  ConfigPrefix: '__translateConfig',
 };

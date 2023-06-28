@@ -28,6 +28,8 @@ export default class TranslateGO {
   private readonly translateGroupMap = new Map<Node, string>();
   private readonly nodeMap = new Map<Node, TranslateNode>();
 
+  private readonly languageMapping = {};
+
   private readonly mutationObserver = new MutationObserver((mutations) => {
     this.mutationObserverHandler(mutations);
   });
@@ -38,6 +40,22 @@ export default class TranslateGO {
   private scanning = false;
   private languages = [];
 
+
+  /**
+   * 設定其它 language code 的對應
+   * @param mapping {'zh':'zh-TW'}
+   */
+  public setLanguageMapping(mapping: { [key: string]: string }): void {
+    if (!mapping) return;
+    for (let key in mapping) {
+      this.languageMapping[key] = mapping[key];
+    }
+    let language = this.languageMapping[this.language] || this.language;
+    if (this.language != language) {
+      this.translate(language);
+    }
+  }
+
   public getLanguage(): string {
     return this.language;
   }
@@ -46,6 +64,8 @@ export default class TranslateGO {
   }
 
   public translate(language: string, force = false) {
+    language = this.languageMapping[language];
+    if (!language) return;
     if (!force && this.language == language) return;
     this.language = language;
     this.doTranslate(this.nodeMap, force);
@@ -69,6 +89,7 @@ export default class TranslateGO {
   private doLoad(language: string, source: TranslateSource, group: string = TranslateConst.DefaultGroup) {
     if (this.languages.indexOf(language) == -1) {
       this.languages.push(language);
+      this.languageMapping[language] = language;
     }
     this.db.load(language, source, group);
   }

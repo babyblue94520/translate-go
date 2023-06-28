@@ -10,13 +10,13 @@ import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChi
 
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: true,
-    imports: [NgIf, FormsModule, NgFor, ToolViewComponent]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, NgFor, ToolViewComponent]
 })
-export class AppComponent implements AfterViewInit, OnDestroy , TranslateToolbar{
+export class AppComponent implements AfterViewInit, OnDestroy, TranslateToolbar {
   public readonly ToolbarKey = ToolbarKey;
 
   public readonly translateGO = getTranslateGO();
@@ -38,8 +38,9 @@ export class AppComponent implements AfterViewInit, OnDestroy , TranslateToolbar
   public onSave: TranslateOnSave;
 
   constructor(private elementRef: ElementRef, private zone: NgZone) {
-    this.currentLanguage = this.translateGO.getLanguage();
-
+    this.translateGO.setLanguageMapping({
+      'zh': 'zh-TW'
+    });
     let space = document.createElement('div');
     space.className = 'ttb-space';
     document.body.appendChild(space);
@@ -50,6 +51,7 @@ export class AppComponent implements AfterViewInit, OnDestroy , TranslateToolbar
       });
     });
     this.translateGO.loadAll(toolbarSources, this.toolbarGroup);
+    this.currentLanguage = this.translateGO.getLanguage();
   }
 
   ngAfterViewInit(): void {
@@ -58,7 +60,6 @@ export class AppComponent implements AfterViewInit, OnDestroy , TranslateToolbar
         this.currentLanguage = this.translateGO.getLanguage();
       });
     });
-
     this.start();
     this.openToolDialog();
   }

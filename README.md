@@ -291,3 +291,13 @@ var testText = translateGO.get('{Test}');// return '測試';
   * __languageChanged__:
   
     在 __translateGO.translate__ 時，而且語系有改變，才觸發。
+
+8. __setLanguageMapping__
+
+    增加對應表，讓 __zh__ 也能使用 __zh-TW__ 的翻譯資源。
+
+    ```JavaScript
+    translateGO.setLanguageMapping({
+      "zh":"zh-TW"
+    });
+    ```
