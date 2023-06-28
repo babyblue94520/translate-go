@@ -8,8 +8,8 @@ describe('ShrinkComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShrinkComponent ]
-    })
+    imports: [ShrinkComponent]
+})
     .compileComponents();
   }));
 

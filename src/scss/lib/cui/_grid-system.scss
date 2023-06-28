@@ -47,7 +47,7 @@
   }
 }
 
-@media screen and(min-width:480px) {
+@media screen and (min-width:480px) {
   @for $i from 0 to 13 {
     @if $i==0 {
       .ttb-col-xs48-#{$i} {
@@ -71,7 +71,7 @@
   }
 }
 
-@media screen and(min-width:640px) {
+@media screen and (min-width:640px) {
   @for $i from 0 to 13 {
     @if $i==0 {
       .ttb-col-xs64-#{$i} {
@@ -95,7 +95,7 @@
   }
 }
 
-@media screen and(min-width:768px) {
+@media screen and (min-width:768px) {
   @for $i from 0 to 13 {
     @if $i==0 {
       .ttb-col-sm-#{$i} {
@@ -119,7 +119,7 @@
   }
 }
 
-@media screen and(min-width:996px) {
+@media screen and (min-width:996px) {
   @for $i from 0 to 13 {
     @if $i==0 {
       .ttb-col-md-#{$i} {
@@ -143,7 +143,7 @@
   }
 }
 
-@media screen and(min-width:1200px) {
+@media screen and (min-width:1200px) {
   @for $i from 0 to 13 {
     @if $i==0 {
       .ttb-col-lg-#{$i} {
@@ -167,7 +167,7 @@
   }
 }
 
-@media screen and(min-width:1500px) {
+@media screen and (min-width:1500px) {
   @for $i from 0 to 13 {
     @if $i==0 {
       .ttb-col-slg-#{$i} {

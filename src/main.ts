@@ -1,7 +1,9 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-import { AppModule } from './app/app.module';
+import { enableProdMode } from '@angular/core';
+import { createCustomElement } from '@angular/elements';
+import { createApplication } from '@angular/platform-browser';
+import { AppComponent } from 'app/app.component';
+import { TranslateToolbar } from 'translate-go/interface';
 import { environment } from './environments/environment';
 
 if (environment.production) {
@@ -9,9 +11,18 @@ if (environment.production) {
 }
 
 function loadApp() {
-  platformBrowserDynamic().bootstrapModule(AppModule)
-    .catch(err => console.log(err));
+  createApplication({ providers: [] }).then((appRef) => {
+    // create a constructor of a custom element
+    const component = createCustomElement<TranslateToolbar>(
+      AppComponent, // component for Angular element
+      { injector: appRef.injector } // used to inject the component to the DOM
+    );
+  
+    // register in a browser
+    customElements.define('translate-toolbar', component);
+  });
 }
+
 setTimeout(function () {
   if (window['Zone'] === undefined) {
     console.log('Unable to find zone, so loading one...');

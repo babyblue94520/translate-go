@@ -4,12 +4,19 @@ import { CUI } from '@cui/core';
 import { DialogComponent } from 'app/app-common/component/dialog/dialog.component';
 import { getTranslateGO } from 'translate-go/translate-go';
 import { TranslateFile, TranslateRecord } from 'translate-go/interface';
+import { TabComponent } from '../../app-common/component/tabs/tab/tab.component';
+import { TabGroupComponent } from '../../app-common/component/tabs/tab-group/tab-group.component';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor } from '@angular/common';
+import { DialogComponent as DialogComponent_1 } from '../../app-common/component/dialog/dialog.component';
 
 @Component({
-  selector: 'download-dialog',
-  templateUrl: './download-dialog.component.html',
-  styleUrls: ['./download-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'download-dialog',
+    templateUrl: './download-dialog.component.html',
+    styleUrls: ['./download-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [DialogComponent_1, NgIf, FormsModule, NgFor, TabGroupComponent, TabComponent]
 })
 export class DownloadDialogComponent {
   public readonly ToolbarKey = ToolbarKey;

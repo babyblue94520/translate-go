@@ -8,8 +8,8 @@ describe('DownloadDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DownloadDialogComponent ]
-    })
+    imports: [DownloadDialogComponent]
+})
     .compileComponents();
   });
 

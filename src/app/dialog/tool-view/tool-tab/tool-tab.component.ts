@@ -14,17 +14,21 @@ import {
   forwardRef, AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy,
   ViewChild
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
+import { DownloadDialogComponent as DownloadDialogComponent_1 } from '../../download-dialog/download-dialog.component';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
-  selector: 'tool-tab',
-  templateUrl: './tool-tab.component.html',
-  styleUrls: ['./tool-tab.component.scss'],
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => ToolTabComponent),
-    multi: true,
-  }]
+    selector: 'tool-tab',
+    templateUrl: './tool-tab.component.html',
+    styleUrls: ['./tool-tab.component.scss'],
+    providers: [{
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => ToolTabComponent),
+            multi: true,
+        }],
+    standalone: true,
+    imports: [FormsModule, NgFor, NgIf, DownloadDialogComponent_1]
 })
 export class ToolTabComponent implements AfterViewInit, OnDestroy {
   public readonly ToolbarKey = ToolbarKey;

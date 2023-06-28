@@ -8,11 +8,20 @@ import { TabGroupComponent } from 'app/app-common/component/tabs/tab-group/tab-g
 import { TookTime, toTookTimeFn } from 'ts/lib/cui/core/decorators/took-time';
 import { TranslateEvent } from 'translate-go/constant';
 import { TranslateFile, TranslateOnSave } from 'translate-go/interface';
+import { ToolTabComponent } from './tool-tab/tool-tab.component';
+import { TabComponent } from '../../app-common/component/tabs/tab/tab.component';
+import { TabGroupComponent as TabGroupComponent_1 } from '../../app-common/component/tabs/tab-group/tab-group.component';
+import { NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ShrinkComponent } from '../../app-common/component/shrink/shrink.component';
+import { DialogComponent as DialogComponent_1 } from '../../app-common/component/dialog/dialog.component';
 
 @Component({
-  selector: 'tool-view',
-  templateUrl: './tool-view.component.html',
-  styleUrls: ['./tool-view.component.scss']
+    selector: 'tool-view',
+    templateUrl: './tool-view.component.html',
+    styleUrls: ['./tool-view.component.scss'],
+    standalone: true,
+    imports: [DialogComponent_1, ShrinkComponent, FormsModule, NgFor, TabGroupComponent_1, TabComponent, ToolTabComponent, ImportDialogComponent]
 })
 export class ToolViewComponent implements AfterViewInit, OnDestroy {
   public readonly ToolbarKey = ToolbarKey;

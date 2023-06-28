@@ -3,13 +3,20 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild
 import { CUI } from '@cui/core';
 import { DialogComponent } from 'app/app-common/component/dialog/dialog.component';
 import { TranslateFile } from 'translate-go/interface';
+import { TabComponent } from '../../app-common/component/tabs/tab/tab.component';
+import { TabGroupComponent } from '../../app-common/component/tabs/tab-group/tab-group.component';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor } from '@angular/common';
+import { DialogComponent as DialogComponent_1 } from '../../app-common/component/dialog/dialog.component';
 
 
 @Component({
-  selector: 'import-dialog',
-  templateUrl: './import-dialog.component.html',
-  styleUrls: ['./import-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'import-dialog',
+    templateUrl: './import-dialog.component.html',
+    styleUrls: ['./import-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [DialogComponent_1, NgIf, FormsModule, TabGroupComponent, NgFor, TabComponent]
 })
 export class ImportDialogComponent {
   public readonly ToolbarKey = ToolbarKey;

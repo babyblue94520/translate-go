@@ -11,11 +11,14 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
+import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 
 @Component({
-  selector: 'app-tab-group',
-  templateUrl: './tab-group.component.html',
-  styleUrls: ['./tab-group.component.scss']
+    selector: 'app-tab-group',
+    templateUrl: './tab-group.component.html',
+    styleUrls: ['./tab-group.component.scss'],
+    standalone: true,
+    imports: [NgFor, NgIf, NgTemplateOutlet]
 })
 export class TabGroupComponent implements AfterViewInit, OnDestroy {
 

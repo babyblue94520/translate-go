@@ -8,8 +8,8 @@ describe('ToolTabComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToolTabComponent ]
-    })
+    imports: [ToolTabComponent]
+})
     .compileComponents();
   });
 

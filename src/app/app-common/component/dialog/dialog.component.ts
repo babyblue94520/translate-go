@@ -15,10 +15,11 @@ import { DomPortalOutlet, TemplatePortal } from '@angular/cdk/portal';
 
 
 @Component({
-  selector: 'app-dialog',
-  templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-dialog',
+    templateUrl: './dialog.component.html',
+    styleUrls: ['./dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class DialogComponent implements OnDestroy {
   private dialogWindow: HTMLElement;

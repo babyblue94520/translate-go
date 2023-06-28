@@ -9,9 +9,10 @@ export interface TabCallback<T> {
   (index: number, value: T, tab: TabComponent<T>): void;
 }
 @Component({
-  selector: 'app-tab',
-  templateUrl: './tab.component.html',
-  styleUrls: ['./tab.component.scss']
+    selector: 'app-tab',
+    templateUrl: './tab.component.html',
+    styleUrls: ['./tab.component.scss'],
+    standalone: true
 })
 export class TabComponent<T = any> {
   @ViewChild('all', { static: true })

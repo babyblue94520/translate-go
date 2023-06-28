@@ -4,13 +4,13 @@
   width: 100%;
   flex-direction: row;
 
-  > div {
+  >div {
     display: flex;
     flex: 1;
     align-items: center;
   }
 
-  > .ttb-flex-shrink {
+  >.ttb-flex-shrink {
     display: flex;
     flex: 0 0 auto;
   }
@@ -20,7 +20,7 @@
   }
 }
 
-@media screen and(max-width:480px) {
+@media screen and ( max-width: 480px ) {
   .ttb-flex-row {
     flex-direction: column;
   }

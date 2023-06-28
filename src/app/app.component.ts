@@ -1,18 +1,22 @@
 import ToolbarKey from 'ts/translate/toolbar.key';
-import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { getTranslateGO } from 'translate-go/translate-go';
 import { toolbarSources } from 'ts/translate/toolbar.sources';
 import { ToolViewComponent } from './dialog/tool-view/tool-view.component';
 import { TranslateEvent } from 'translate-go/constant';
 import { TranslateOnSave, TranslateToolbar } from 'translate-go/interface';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
 
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: true,
+    imports: [NgIf, FormsModule, NgFor, ToolViewComponent]
 })
-export class AppComponent implements AfterViewInit, TranslateToolbar, OnDestroy {
+export class AppComponent implements AfterViewInit, OnDestroy , TranslateToolbar{
   public readonly ToolbarKey = ToolbarKey;
 
   public readonly translateGO = getTranslateGO();

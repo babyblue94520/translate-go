@@ -8,12 +8,15 @@ import {
   ViewChild
 } from '@angular/core';
 import { Async } from '@cui/core';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 
 @Component({
-  selector: 'app-shrink',
-  templateUrl: './shrink.component.html',
-  styleUrls: ['./shrink.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-shrink',
+    templateUrl: './shrink.component.html',
+    styleUrls: ['./shrink.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, NgTemplateOutlet]
 })
 export class ShrinkComponent implements AfterViewInit {
   private timer;

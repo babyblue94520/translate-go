@@ -8,8 +8,8 @@ describe('TabGroupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TabGroupComponent ]
-    })
+    imports: [TabGroupComponent]
+})
     .compileComponents();
   }));
 

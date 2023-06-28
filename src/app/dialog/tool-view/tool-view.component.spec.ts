@@ -8,8 +8,8 @@ describe('ToolViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToolViewComponent ]
-    })
+    imports: [ToolViewComponent]
+})
     .compileComponents();
   });
 
