@@ -1,6 +1,6 @@
+import { deepClone } from '../clone';
 import { LocalStorageManager } from '../storage/local-storage-manager';
 import { SessionStorageManager } from '../storage/session-storage-manager';
-import { CUI } from '../cui';
 
 /**
  * 緩存
@@ -80,10 +80,10 @@ export namespace Cache {
      */
     function basic(cache, scope: string, defaultValue: any, target, key: string) {
         let _cacheKey = scope + '.' + key;
-        let _val = CUI.deepClone(defaultValue, cache[_cacheKey]);
+        let _val = deepClone(defaultValue, cache[_cacheKey]);
         cache[_cacheKey] = _val;
         cacheUnloadHandlers[_cacheKey] = function () {
-            cache[_cacheKey] = CUI.deepClone(_val);
+            cache[_cacheKey] = deepClone(_val);
         };
         // Delete property.
         if (delete target[key]) {

@@ -1,6 +1,6 @@
 
+
 import { clone } from '../clone';
-import { CUI } from '../cui';
 import { Async } from '../decorators/async';
 
 export enum OverlayClassName {
@@ -97,8 +97,8 @@ export class Overlay {
   private doRemove = () => {
     this.element.removeEventListener('transitionend', this.doRemove);
     this.config.onClose();
-    CUI.remove(this.element);
-    CUI.remove(this.screenElement);
+    this.remove(this.element);
+    this.remove(this.screenElement);
   }
 
   /**
@@ -106,10 +106,20 @@ export class Overlay {
   */
   public destory() {
     clearTimeout(this.timer);
-    CUI.remove(this.element);
-    CUI.remove(this.screenElement);
+    this.remove(this.element);
+    this.remove(this.screenElement);
     this.element = null;
     this.screenElement = null;
+  }
+
+  private remove(element: HTMLElement) {
+    if (element) {
+      if (element.remove) {
+        element.remove();
+      } else if (element.parentElement) {
+        element.parentElement.removeChild(element);
+      }
+    }
   }
 }
 
