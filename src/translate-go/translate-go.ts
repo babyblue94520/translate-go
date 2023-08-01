@@ -1,12 +1,12 @@
-import TranslateDB from './translate-db';
+import { Delay } from '../ts/lib/cui/core/decorators/delay';
+import { EventListenerContainer } from '../ts/lib/cui/core/listener/event-listener-container';
+import { TranslateConst, TranslateEvent } from './constant';
+import { TranslateArgs, TranslateGroupSource, TranslateLanguageSource, TranslateSource } from './interface';
 import TranslateNode from './nodes/translate-node';
 import TranslateNodePlaceholder from './nodes/translate-node-placeholder';
 import TranslateNodeSubmit from './nodes/translate-node-submit';
 import TranslateNodeText from './nodes/translate-node-text';
-import { Delay } from '../ts/lib/cui/core/decorators/delay';
-import { EventListenerContainer } from '../ts/lib/cui/core/listener/event-listener-container';
-import { TranslateArgs, TranslateGroupSource, TranslateLanguageSource, TranslateSource } from './interface';
-import { TranslateConst, TranslateEvent } from './constant';
+import TranslateDB from './translate-db';
 
 
 window['getTranslateGO'] = getTranslateGO;
@@ -351,7 +351,7 @@ export default class TranslateGO {
         m.delete(k);
       }
     });
-    console.log('translate count:', map.size, ' time:', Date.now() - t);
+    console.debug('translate count:', map.size, ' time:', Date.now() - t);
     this.addEvents();
   }
 
