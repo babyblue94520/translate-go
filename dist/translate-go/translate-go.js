@@ -1,11 +1,11 @@
 import { __decorate } from "tslib";
-import TranslateDB from './translate-db';
-import TranslateNodePlaceholder from './nodes/translate-node-placeholder';
-import TranslateNodeSubmit from './nodes/translate-node-submit';
-import TranslateNodeText from './nodes/translate-node-text';
 import { Delay } from '../ts/lib/cui/core/decorators/delay';
 import { EventListenerContainer } from '../ts/lib/cui/core/listener/event-listener-container';
 import { TranslateConst, TranslateEvent } from './constant';
+import TranslateNodePlaceholder from './nodes/translate-node-placeholder';
+import TranslateNodeSubmit from './nodes/translate-node-submit';
+import TranslateNodeText from './nodes/translate-node-text';
+import TranslateDB from './translate-db';
 window['getTranslateGO'] = getTranslateGO;
 /**
  * 取得TranslateGO
@@ -342,7 +342,7 @@ export default class TranslateGO {
                 m.delete(k);
             }
         });
-        console.log('translate count:', map.size, ' time:', Date.now() - t);
+        console.debug('translate count:', map.size, ' time:', Date.now() - t);
         this.addEvents();
     }
     clearRemoveNode() {

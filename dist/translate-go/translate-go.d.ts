@@ -1,5 +1,5 @@
-import { TranslateArgs, TranslateGroupSource, TranslateLanguageSource, TranslateSource } from './interface';
 import { TranslateEvent } from './constant';
+import { TranslateArgs, TranslateGroupSource, TranslateLanguageSource, TranslateSource } from './interface';
 /**
  * 取得TranslateGO
  */
