@@ -374,7 +374,7 @@ export default class TranslateGO {
         m.delete(k);
       }
     });
-    console.log('translate clear ignore size '
+    console.debug('translate clear ignore size '
       , ignoreSize, '>', this.ignoreMap.size
       , ' translate size '
       , translateSize, '>', this.translateGroupMap.size
