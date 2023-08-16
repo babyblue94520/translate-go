@@ -317,7 +317,7 @@ export default class TranslateGO {
   }
 
   private findGroup(element: HTMLElement): string {
-    while (element != document.documentElement) {
+    while (element && element != document.documentElement) {
       let group = element.getAttribute(TranslateConst.TranslateGroup);
       if (group) {
         return group;
@@ -328,11 +328,13 @@ export default class TranslateGO {
   }
 
   private getParent(element: Node): HTMLElement {
-    if (element.parentElement != undefined) {
-      return element.parentElement;
-    }
-    if (element.parentNode != undefined) {
-      return element.parentNode as HTMLElement;
+    if (element) {
+      if (element.parentElement != undefined) {
+        return element.parentElement;
+      }
+      if (element.parentNode != undefined) {
+        return element.parentNode as HTMLElement;
+      }
     }
     return undefined;
   }
