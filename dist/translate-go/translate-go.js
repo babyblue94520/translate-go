@@ -45,7 +45,7 @@ export default class TranslateGO {
                     m.delete(k);
                 }
             });
-            console.log('translate clear ignore size ', ignoreSize, '>', this.ignoreMap.size, ' translate size ', translateSize, '>', this.translateGroupMap.size);
+            console.debug('translate clear ignore size ', ignoreSize, '>', this.ignoreMap.size, ' translate size ', translateSize, '>', this.translateGroupMap.size);
         };
     }
     /**
@@ -309,7 +309,7 @@ export default class TranslateGO {
         return true;
     }
     findGroup(element) {
-        while (element != document.documentElement) {
+        while (element && element != document.documentElement) {
             let group = element.getAttribute(TranslateConst.TranslateGroup);
             if (group) {
                 return group;
@@ -319,11 +319,13 @@ export default class TranslateGO {
         return undefined;
     }
     getParent(element) {
-        if (element.parentElement != undefined) {
-            return element.parentElement;
-        }
-        if (element.parentNode != undefined) {
-            return element.parentNode;
+        if (element) {
+            if (element.parentElement != undefined) {
+                return element.parentElement;
+            }
+            if (element.parentNode != undefined) {
+                return element.parentNode;
+            }
         }
         return undefined;
     }
