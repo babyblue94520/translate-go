@@ -17,21 +17,10 @@ function loadApp() {
       AppComponent, // component for Angular element
       { injector: appRef.injector } // used to inject the component to the DOM
     );
-  
+
     // register in a browser
     customElements.define('translate-toolbar', component);
   });
 }
 
-setTimeout(function () {
-  if (window['Zone'] === undefined) {
-    console.log('Unable to find zone, so loading one...');
-    import('zone.js/dist/zone')
-      .then(() => {
-        loadApp();
-      });
-  } else {
-    console.log('Found an existing Zone, so just reusing it');
-    loadApp();
-  }
-}, 1000);
+loadApp();
