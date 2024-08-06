@@ -29,7 +29,10 @@ translate-toolbar,
   }
 
   font-size: 1em;
-  font-family: "Microsoft JhengHei", "黑体", "宋体", sans-serif;
+  font-family: "Microsoft JhengHei",
+  "黑体",
+  "宋体",
+  sans-serif;
   color: #262d38;
 
   div,
@@ -119,10 +122,8 @@ translate-toolbar,
     z-index: 9999;
     display: inline-flex;
     background-color: #fff;
-    @include box-shadow(
-      0 1px 6px rgba(0, 0, 0, 0.12),
-      0 1px 4px rgba(0, 0, 0, 0.24)
-    );
+    @include box-shadow(0 1px 6px rgba(0, 0, 0, 0.12),
+      0 1px 4px rgba(0, 0, 0, 0.24));
     @include transform(translateX(0px));
     @include transition(transform 0.3s ease-in-out);
   }

@@ -1,34 +1,37 @@
-import Loop from 'ts/util/loop';
-import ToolbarKey from 'ts/translate/toolbar.key';
-import { Delay } from 'ts/lib/cui/core/decorators/delay';
-import { DomUtil } from 'ts/util/dom-util';
 import { DownloadDialogComponent } from 'app/dialog/download-dialog/download-dialog.component';
-import { getTranslateGO } from 'translate-go/translate-go';
 import { Sort, TranslateEvent } from 'translate-go/constant';
-import { StickyTable } from 'ts/util/sticky-table';
 import {
   Translate, TranslateOnSave, TranslateRecord, TranslateSource
 } from 'translate-go/interface';
+import { getTranslateGO } from 'translate-go/translate-go';
+import { Delay } from 'ts/lib/cui/core/decorators/delay';
+import ToolbarKey from 'ts/translate/toolbar.key';
+import { DomUtil } from 'ts/util/dom-util';
+import Loop from 'ts/util/loop';
+import { StickyTable } from 'ts/util/sticky-table';
 
+import { NgFor, NgIf } from '@angular/common';
 import {
-  forwardRef, AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy,
+  AfterViewInit, ChangeDetectorRef, Component, ElementRef,
+  forwardRef,
+  Input,
+  OnDestroy,
   ViewChild
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DownloadDialogComponent as DownloadDialogComponent_1 } from '../../download-dialog/download-dialog.component';
-import { NgFor, NgIf } from '@angular/common';
 
 @Component({
-    selector: 'tool-tab',
-    templateUrl: './tool-tab.component.html',
-    styleUrls: ['./tool-tab.component.scss'],
-    providers: [{
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => ToolTabComponent),
-            multi: true,
-        }],
-    standalone: true,
-    imports: [FormsModule, NgFor, NgIf, DownloadDialogComponent_1]
+  selector: 'tool-tab',
+  templateUrl: './tool-tab.component.html',
+  styleUrls: ['./tool-tab.component.scss'],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => ToolTabComponent),
+    multi: true,
+  }],
+  standalone: true,
+  imports: [FormsModule, NgFor, NgIf, DownloadDialogComponent_1]
 })
 export class ToolTabComponent implements AfterViewInit, OnDestroy {
   public readonly ToolbarKey = ToolbarKey;
@@ -93,14 +96,12 @@ export class ToolTabComponent implements AfterViewInit, OnDestroy {
   private stickyTable: StickyTable;
 
 
-  constructor(private cdf: ChangeDetectorRef, private zone: NgZone) {
+  constructor(private cdf: ChangeDetectorRef) {
   }
 
   ngAfterViewInit() {
     this.translateGO.addEventListener(TranslateEvent.SourceChanged, () => {
-      this.zone.run(() => {
-        this.init();
-      });
+      this.init();
     });
 
     this.stickyTable = new StickyTable(this.tableRef.nativeElement, {

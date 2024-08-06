@@ -1,27 +1,26 @@
-import ToolbarKey from 'ts/translate/toolbar.key';
-import { AfterViewInit, ChangeDetectorRef, Component, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { Delay, toDelayFn } from 'ts/lib/cui/core/decorators/delay';
+import { NgFor } from '@angular/common';
+import { AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DialogComponent } from 'app/app-common/component/dialog/dialog.component';
-import { getTranslateGO } from 'translate-go/translate-go';
-import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
 import { TabGroupComponent } from 'app/app-common/component/tabs/tab-group/tab-group.component';
-import { TookTime, toTookTimeFn } from 'ts/lib/cui/core/decorators/took-time';
 import { TranslateEvent } from 'translate-go/constant';
 import { TranslateFile, TranslateOnSave } from 'translate-go/interface';
-import { ToolTabComponent } from './tool-tab/tool-tab.component';
-import { TabComponent } from '../../app-common/component/tabs/tab/tab.component';
-import { TabGroupComponent as TabGroupComponent_1 } from '../../app-common/component/tabs/tab-group/tab-group.component';
-import { NgFor } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { getTranslateGO } from 'translate-go/translate-go';
+import { Delay, toDelayFn } from 'ts/lib/cui/core/decorators/delay';
+import { TookTime, toTookTimeFn } from 'ts/lib/cui/core/decorators/took-time';
+import ToolbarKey from 'ts/translate/toolbar.key';
 import { ShrinkComponent } from '../../app-common/component/shrink/shrink.component';
-import { DialogComponent as DialogComponent_1 } from '../../app-common/component/dialog/dialog.component';
+import { TabGroupComponent as TabGroupComponent_1 } from '../../app-common/component/tabs/tab-group/tab-group.component';
+import { TabComponent } from '../../app-common/component/tabs/tab/tab.component';
+import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
+import { ToolTabComponent } from './tool-tab/tool-tab.component';
 
 @Component({
-    selector: 'tool-view',
-    templateUrl: './tool-view.component.html',
-    styleUrls: ['./tool-view.component.scss'],
-    standalone: true,
-    imports: [DialogComponent_1, ShrinkComponent, FormsModule, NgFor, TabGroupComponent_1, TabComponent, ToolTabComponent, ImportDialogComponent]
+  selector: 'tool-view',
+  templateUrl: './tool-view.component.html',
+  styleUrls: ['./tool-view.component.scss'],
+  standalone: true,
+  imports: [DialogComponent, ShrinkComponent, FormsModule, NgFor, TabGroupComponent_1, TabComponent, ToolTabComponent, ImportDialogComponent]
 })
 export class ToolViewComponent implements AfterViewInit, OnDestroy {
   public readonly ToolbarKey = ToolbarKey;
@@ -52,15 +51,13 @@ export class ToolViewComponent implements AfterViewInit, OnDestroy {
   @Input()
   public onSave: TranslateOnSave;
 
-  constructor(private cdf: ChangeDetectorRef, private zone: NgZone) {
+  constructor(private cdf: ChangeDetectorRef) {
   }
 
   ngAfterViewInit() {
     this.translateGO.addEventListener(TranslateEvent.SourceChanged, () => {
       if (this.dialog.isOpen()) {
-        this.zone.run(() => {
-          this.init();
-        });
+        this.init();
       }
     });
   }

@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "base/function";
 
 .ttb-row {
@@ -6,11 +7,6 @@
   word-break: break-word;
 }
 
-.ttb-col-xs32-*,
-.ttb-col-xs48-*,
-.ttb-col-xs64-* {
-  float: left;
-}
 
 @for $i from 0 to 13 {
 
@@ -38,11 +34,11 @@
 
   @else {
     .ttb-col-xs32-#{$i} {
-      width: (floor(1000*$i)/120)*1%;
+      width: math.div(floor(1000*$i), 120) * 1%;
     }
 
     .ttb-col-xs32-offset-#{$i} {
-      margin-left: (floor(1000*$i)/120)*1%;
+      margin-left: math.div(floor(1000*$i), 120) * 1%;
     }
   }
 }
@@ -61,11 +57,11 @@
 
     @else {
       .ttb-col-xs48-#{$i} {
-        width: (floor(1000*$i)/120)*1%;
+        width: math.div(floor(1000*$i), 120)* 1%;
       }
 
       .ttb-col-xs48-offset-#{$i} {
-        margin-left: (floor(1000*$i)/120)*1%;
+        margin-left: math.div(floor(1000*$i), 120)* 1%;
       }
     }
   }
@@ -85,11 +81,11 @@
 
     @else {
       .ttb-col-xs64-#{$i} {
-        width: (floor(1000*$i)/120)*1%;
+        width: math.div(floor(1000*$i), 120)* 1%;
       }
 
       .ttb-col-xs64-offset-#{$i} {
-        margin-left: (floor(1000*$i)/120)*1%;
+        margin-left: math.div(floor(1000*$i), 120)* 1%;
       }
     }
   }
@@ -109,11 +105,11 @@
 
     @else {
       .ttb-col-sm-#{$i} {
-        width: (floor(1000*$i)/120)*1%;
+        width: math.div(floor(1000*$i), 120)* 1%;
       }
 
       .ttb-col-sm-offset-#{$i} {
-        margin-left: (floor(1000*$i)/120)*1%;
+        margin-left: math.div(floor(1000*$i), 120)* 1%;
       }
     }
   }
@@ -133,11 +129,11 @@
 
     @else {
       .ttb-col-md-#{$i} {
-        width: (floor(1000*$i)/120)*1%;
+        width: math.div(floor(1000*$i), 120)* 1%;
       }
 
       .ttb-col-md-offset-#{$i} {
-        margin-left: (floor(1000*$i)/120)*1%;
+        margin-left: math.div(floor(1000*$i), 120)* 1%;
       }
     }
   }
@@ -157,11 +153,11 @@
 
     @else {
       .ttb-col-lg-#{$i} {
-        width: (floor(1000*$i)/120)*1%;
+        width: math.div(floor(1000*$i), 120)* 1%;
       }
 
       .ttb-col-lg-offset-#{$i} {
-        margin-left: (floor(1000*$i)/120)*1%;
+        margin-left: math.div(floor(1000*$i), 120)* 1%;
       }
     }
   }
@@ -181,11 +177,11 @@
 
     @else {
       .ttb-col-slg-#{$i} {
-        width: (floor(1000*$i)/120)*1%;
+        width: math.div(floor(1000*$i), 120)* 1%;
       }
 
       .ttb-col-slg-offset-#{$i} {
-        margin-left: (floor(1000*$i)/120)*1%;
+        margin-left: math.div(floor(1000*$i), 120)* 1%;
       }
     }
   }

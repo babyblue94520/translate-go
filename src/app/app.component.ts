@@ -1,12 +1,12 @@
-import ToolbarKey from 'ts/translate/toolbar.key';
-import { getTranslateGO } from 'translate-go/translate-go';
-import { toolbarSources } from 'ts/translate/toolbar.sources';
-import { ToolViewComponent } from './dialog/tool-view/tool-view.component';
+import { NgFor, NgIf } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslateEvent } from 'translate-go/constant';
 import { TranslateOnSave, TranslateToolbar } from 'translate-go/interface';
-import { FormsModule } from '@angular/forms';
-import { NgIf, NgFor } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { getTranslateGO } from 'translate-go/translate-go';
+import ToolbarKey from 'ts/translate/toolbar.key';
+import { toolbarSources } from 'ts/translate/toolbar.sources';
+import { ToolViewComponent } from './dialog/tool-view/tool-view.component';
 
 
 @Component({
@@ -37,7 +37,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, TranslateToolbar 
   @Input()
   public onSave: TranslateOnSave;
 
-  constructor(private elementRef: ElementRef, private zone: NgZone) {
+  constructor(private elementRef: ElementRef) {
     this.translateGO.setLanguageMapping({
       'zh': 'zh-TW'
     });
@@ -46,9 +46,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, TranslateToolbar 
     document.body.appendChild(space);
 
     this.translateGO.addEventListener(TranslateEvent.SourceChanged, () => {
-      this.zone.run(() => {
-        this.languages = this.translateGO.getLanguages();
-      });
+      this.languages = this.translateGO.getLanguages();
     });
     this.translateGO.loadAll(toolbarSources, this.toolbarGroup);
     this.currentLanguage = this.translateGO.getLanguage();
@@ -56,9 +54,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, TranslateToolbar 
 
   ngAfterViewInit(): void {
     this.translateGO.addEventListener(TranslateEvent.LanguageChanged, () => {
-      this.zone.run(() => {
-        this.currentLanguage = this.translateGO.getLanguage();
-      });
+      this.currentLanguage = this.translateGO.getLanguage();
     });
     this.start();
     this.openToolDialog();
