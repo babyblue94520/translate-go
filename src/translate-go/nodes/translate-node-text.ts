@@ -3,7 +3,7 @@ import TranslateNode from './translate-node';
 export default class TranslateNodeText extends TranslateNode<HTMLElement> {
 
   protected initKey() {
-    return (<Text>this.node.childNodes?.item(this.index))?.data || '';
+    return (<Text>this.node.childNodes?.item(this.index == -1 ? 0 : this.index))?.data || '';
   }
 
   protected setValue(data: string) {
