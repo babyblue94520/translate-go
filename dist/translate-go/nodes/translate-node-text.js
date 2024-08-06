@@ -2,7 +2,7 @@ import TranslateNode from './translate-node';
 export default class TranslateNodeText extends TranslateNode {
     initKey() {
         var _a, _b;
-        return ((_b = (_a = this.node.childNodes) === null || _a === void 0 ? void 0 : _a.item(this.index)) === null || _b === void 0 ? void 0 : _b.data) || '';
+        return ((_b = (_a = this.node.childNodes) === null || _a === void 0 ? void 0 : _a.item(this.index == -1 ? 0 : this.index)) === null || _b === void 0 ? void 0 : _b.data) || '';
     }
     setValue(data) {
         if (this.index == -1) {

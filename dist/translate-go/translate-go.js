@@ -237,7 +237,7 @@ export default class TranslateGO {
                     && element.value != undefined
                     && ((element === null || element === void 0 ? void 0 : element.type) || '').toLowerCase() == 'submit') {
                     // find sumbit button
-                    this.addNode(new TranslateNodeSubmit(this, element, key), map);
+                    this.addNode(new TranslateNodeSubmit(this, element, this.findGroup(element), key), map);
                 }
                 else if (element.placeholder != undefined && element.placeholder != '') {
                     // find input or textarea placeholder
@@ -263,6 +263,9 @@ export default class TranslateGO {
         }
         // node is Text
         let key = parent.getAttribute(TranslateConst.TranslateKey);
+        if (index == -1) {
+            index = this.findIndex(parent, node);
+        }
         this.addNode(new TranslateNodeText(this, parent, this.findGroup(parent), key, index), map);
     }
     addNode(translateNode, map) {
@@ -328,6 +331,16 @@ export default class TranslateGO {
             }
         }
         return undefined;
+    }
+    findIndex(parent, node) {
+        let childNodes = parent.childNodes;
+        for (let i = 0; i < childNodes.length; i++) {
+            let item = childNodes.item(i);
+            if (item == node) {
+                return i;
+            }
+        }
+        return -1;
     }
     doTranslate(map, force = false) {
         this.removeEvents();

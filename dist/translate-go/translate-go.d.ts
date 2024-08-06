@@ -58,6 +58,7 @@ export default class TranslateGO {
     private ignore;
     private findGroup;
     private getParent;
+    private findIndex;
     private doTranslate;
     private clearRemoveNode;
     private doClearRemoveNode;
